@@ -22,6 +22,8 @@ TODO: To be added
 
 ### 1.3. Use cases
 
+Start screen looks like iPfone photo app. It shows last photos in library sorted by date from latest to early. 
+
 TODO: To be added
 
 ## 2. Architecture Constraints
