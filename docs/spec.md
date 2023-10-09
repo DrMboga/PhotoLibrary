@@ -22,7 +22,16 @@ TODO: To be added
 
 ### 1.3. Use cases
 
-Start screen looks like iPfone photo app. It shows last photos in library sorted by date from latest to early. 
+Start screen looks like iPfone photo app. It shows last photos in library sorted by date from latest to early.
+
+### 1.3.1. Home screen
+
+![MainScreen](./img/MainScreen.png)
+
+1. Photos shown in the list ordered by date from latest photo.
+2. Photos loading by chunks while user scrolls.
+3. While scrolling the appropriate chip in the top becomes active.
+4. By clicking the chip in the top, photos shows selected year - sorted from bottom tot top
 
 TODO: To be added
 
