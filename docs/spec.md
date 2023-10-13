@@ -58,6 +58,9 @@ Solution would be like this:
 4. Make a cron job in host OS which will run that script by some timetable
 5. In the backend make a separate long-run task which will check if thumbnails are created, then grab them to the DB and delete them from file system
 
+| :memo: | Actually, if backend runs under the OS without docker, it would be much simpler - we can run bash shell with `ffmpeg` right from the code and the file access to the attached HDD would be much easier |
+| ------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+
 ## 3. Context and Scope
 
 ## 4. Solution Strategy
