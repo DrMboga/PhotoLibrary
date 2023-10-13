@@ -39,6 +39,25 @@ TODO: To be added
 
 Application can not be accessible outside of the local home network
 
+### 2.1. Making the thumbnails from videos
+
+There is a way to make a thumbnail from video file using the `NReco.VideoConverter` nuget library. But `NReco.VideoConverter` is only for Windows. There is an alternative lib - `NReco.VideoConverter.LT`, but there is a license needed (75$).
+
+But fortunately, the Raspberry PI OS contains the `ffmpeg` utility by default. And there is a way to make thumbnails using this command:
+
+```bash
+ffmpeg -i IMG_6976.MOV -ss 00:00:01.000 -vframes 1 _thumbnail_IMG_6976.jpg
+```
+
+We need this thumbnails while ASP.NET backend indexing (importing) photo library. The backend runs under the docker container.
+Solution would be like this:
+
+1. For video file, write the line to some file in the host OS (Raspberry PI)
+2. Mark in the DB that this file is sent to host OS to make a thumbnail and save how the thumbnail file should be named.
+3. In the host OS make some bash script which will read this file, execute command `ffmpeg ...` and save thumbnails somewhere in host file system
+4. Make a cron job in host OS which will run that script by some timetable
+5. In the backend make a separate long-run task which will check if thumbnails are created, then grab them to the DB and delete them from file system
+
 ## 3. Context and Scope
 
 ## 4. Solution Strategy
