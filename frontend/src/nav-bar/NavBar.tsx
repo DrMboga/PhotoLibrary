@@ -98,7 +98,7 @@ export const NavBar = ({ routesInfo }: Props) => {
               }}
             >
               {routesInfo.map((page) => (
-                <Link to={page.route}>
+                <Link to={page.route} key={page.key}>
                   <MenuItem key={page.key} onClick={handleCloseNavMenu}>
                     <ListItemIcon>{page.iconElement}</ListItemIcon>
                     <Typography textAlign="center">{page.displayName}</Typography>
