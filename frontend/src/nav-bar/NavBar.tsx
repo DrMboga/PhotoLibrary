@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { PageRouteInfo } from './page-route-info';
+import { PageRouteInfo } from './pageRouteInfo';
 import { useState } from 'react';
 import {
   AppBar,
@@ -20,6 +20,8 @@ import { Link } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
+import { useAppDispatch, useAppSelector } from '../storeHooks';
+import { selectTheme, toggleTheme } from '../appSlice';
 
 type Props = {
   routesInfo: PageRouteInfo[];
@@ -30,6 +32,8 @@ const logo = 'Photos';
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export const NavBar = ({ routesInfo }: Props) => {
+  const theme = useAppSelector(selectTheme);
+  const dispatch = useAppDispatch();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -48,7 +52,9 @@ export const NavBar = ({ routesInfo }: Props) => {
     setAnchorElUser(null);
   };
 
-  const handleToggleTheme = () => {};
+  const handleToggleTheme = () => {
+    dispatch(toggleTheme());
+  };
 
   return (
     <AppBar position="static">
@@ -147,9 +153,9 @@ export const NavBar = ({ routesInfo }: Props) => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Light">
+            <Tooltip title={theme === 'light' ? 'Dark' : 'Light'}>
               <IconButton onClick={handleToggleTheme} sx={{ p: 2 }}>
-                <LightModeIcon />
+                {theme === 'light' ? <DarkModeIcon sx={{ color: 'white' }} /> : <LightModeIcon />}
               </IconButton>
             </Tooltip>
           </Box>

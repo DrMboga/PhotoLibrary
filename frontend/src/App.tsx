@@ -6,8 +6,10 @@ import SettingsPage from './settings/SettingsPage';
 import { Container, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { PageRouteInfo } from './nav-bar/page-route-info';
+import { PageRouteInfo } from './nav-bar/pageRouteInfo';
 import { NavBar } from './nav-bar/NavBar';
+import { useAppSelector } from './storeHooks';
+import { selectTheme } from './appSlice';
 
 const pages: PageRouteInfo[] = [
   {
@@ -26,9 +28,10 @@ const pages: PageRouteInfo[] = [
   },
 ];
 function App() {
+  const mode = useAppSelector(selectTheme);
   const theme = createTheme({
     palette: {
-      mode: 'dark',
+      mode: mode,
     },
   });
 
