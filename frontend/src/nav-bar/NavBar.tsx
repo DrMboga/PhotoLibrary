@@ -18,12 +18,15 @@ import CameraIcon from '@mui/icons-material/Camera';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Link } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 
 type Props = {
   routesInfo: PageRouteInfo[];
 };
 
 const logo = 'Photos';
+// TODO: rearrange this after keycloack auth implementation
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export const NavBar = ({ routesInfo }: Props) => {
@@ -44,6 +47,8 @@ export const NavBar = ({ routesInfo }: Props) => {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  const handleToggleTheme = () => {};
 
   return (
     <AppBar position="static">
@@ -142,8 +147,16 @@ export const NavBar = ({ routesInfo }: Props) => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            <Tooltip title="Light">
+              <IconButton onClick={handleToggleTheme} sx={{ p: 2 }}>
+                <LightModeIcon />
+              </IconButton>
+            </Tooltip>
+          </Box>
+
+          <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <IconButton onClick={handleOpenUserMenu} sx={{ p: 1 }}>
                 <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
               </IconButton>
             </Tooltip>
