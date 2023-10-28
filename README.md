@@ -7,11 +7,11 @@ Your entire family's cherished memories, beautifully organized and easily access
 
 # Useful resources:
 
-[Hands on react tutorial](https://handsonreact.com/docs/)
-[Redux toolkit tutorial](https://redux-toolkit.js.org/tutorials/overview)
-[Keycloak js adapter](https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter)
-[Material UI library](https://mui.com/material-ui/getting-started/)
-[Material UI icons search](https://mui.com/material-ui/material-icons/)
+- [Hands on react tutorial](https://handsonreact.com/docs/)
+- [Redux toolkit tutorial](https://redux-toolkit.js.org/tutorials/overview)
+- [Keycloak js adapter](https://www.keycloak.org/docs/latest/securing_apps/index.html#_javascript_adapter)
+- [Material UI library](https://mui.com/material-ui/getting-started/)
+- [Material UI icons search](https://mui.com/material-ui/material-icons/)
 
 ## Keycloack setup
 
