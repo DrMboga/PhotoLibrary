@@ -1,10 +1,5 @@
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import {
-  initKeycloak,
-  selectAuthenticated,
-  selectAuthError,
-  selectTokenExpiration,
-} from './authSlice';
+import { initKeycloak, selectAuthenticated, selectTokenExpiration } from './authSlice';
 import { useEffect } from 'react';
 import { currentDateLinuxTime } from '../helpers/date-helper';
 
