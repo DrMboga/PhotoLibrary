@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from './appSlice';
+import authReducer from './keycloak-auth/authSlice';
 import {
   persistStore,
   persistReducer,
@@ -13,17 +14,25 @@ import {
 import storage from 'redux-persist/lib/storage';
 
 // Persist appReducer to the local storage via redux-persist
-const persistConfig = {
-  key: 'photo-lib',
+const persistAppConfig = {
+  key: 'photo-lib-app',
   version: 1,
   storage,
 };
 
-const persistedAppReducer = persistReducer(persistConfig, appReducer);
+const persistAuthConfig = {
+  key: 'photo-lib-auth',
+  version: 1,
+  storage,
+};
+
+const persistedAppReducer = persistReducer(persistAppConfig, appReducer);
+const persistedAuthReducer = persistReducer(persistAuthConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
     app: persistedAppReducer,
+    auth: persistedAuthReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

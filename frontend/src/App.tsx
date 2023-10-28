@@ -10,6 +10,7 @@ import { PageRouteInfo } from './nav-bar/pageRouteInfo';
 import { NavBar } from './nav-bar/NavBar';
 import { useAppSelector } from './storeHooks';
 import { selectTheme } from './appSlice';
+import { useAuth } from './keycloak-auth/useAuth';
 
 const pages: PageRouteInfo[] = [
   {
@@ -28,6 +29,8 @@ const pages: PageRouteInfo[] = [
   },
 ];
 function App() {
+  useAuth();
+
   const mode = useAppSelector(selectTheme);
   const theme = createTheme({
     palette: {

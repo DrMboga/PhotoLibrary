@@ -22,17 +22,18 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { selectTheme, toggleTheme } from '../appSlice';
+import { logoutKeycloak, selectAuthenticated, selectUserName } from '../keycloak-auth/authSlice';
 
 type Props = {
   routesInfo: PageRouteInfo[];
 };
 
 const logo = 'Photos';
-// TODO: rearrange this after keycloack auth implementation
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 export const NavBar = ({ routesInfo }: Props) => {
   const theme = useAppSelector(selectTheme);
+  const authenticated = useAppSelector(selectAuthenticated);
+  const userName = useAppSelector(selectUserName);
   const dispatch = useAppDispatch();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -50,6 +51,11 @@ export const NavBar = ({ routesInfo }: Props) => {
 
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
+  };
+
+  const handleLogout = () => {
+    dispatch(logoutKeycloak());
+    handleCloseUserMenu();
   };
 
   const handleToggleTheme = () => {
@@ -160,35 +166,35 @@ export const NavBar = ({ routesInfo }: Props) => {
             </Tooltip>
           </Box>
 
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 1 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
+          {authenticated && (
+            <Box sx={{ flexGrow: 0 }}>
+              <Tooltip title={userName}>
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 1 }}>
+                  <Avatar alt={userName} src="/public/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                <MenuItem key="log-out" onClick={handleLogout}>
+                  <Typography textAlign="center">Logout</Typography>
                 </MenuItem>
-              ))}
-            </Menu>
-          </Box>
+              </Menu>
+            </Box>
+          )}
         </Toolbar>
       </Container>
     </AppBar>
