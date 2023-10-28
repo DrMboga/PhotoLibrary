@@ -2,7 +2,6 @@ import keycloak from './keycloak';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ensureError } from '../helpers/error-helper';
 import { RootState } from '../store';
-import Keycloak from 'keycloak-js';
 import { currentDateLinuxTime } from '../helpers/date-helper';
 
 export interface AuthState {
@@ -19,12 +18,11 @@ export const initialState: AuthState = {
 
 export const initKeycloak = createAsyncThunk('init', async (_, { rejectWithValue }) => {
   try {
-    const authenticated = await keycloak.init({
+    await keycloak.init({
       onLoad: 'login-required',
       enableLogging: true,
       redirectUri: process.env.REACT_APP_REDIRECT_URL,
     });
-
     const currentDateNumber = currentDateLinuxTime();
 
     let userName: string | undefined;

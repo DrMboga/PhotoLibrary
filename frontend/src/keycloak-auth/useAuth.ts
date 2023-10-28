@@ -11,7 +11,6 @@ import { currentDateLinuxTime } from '../helpers/date-helper';
 export function useAuth() {
   const authenticated = useAppSelector(selectAuthenticated);
   const tokenExpiration = useAppSelector(selectTokenExpiration);
-  const error = useAppSelector(selectAuthError);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
