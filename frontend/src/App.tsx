@@ -11,25 +11,34 @@ import { NavBar } from './nav-bar/NavBar';
 import { useAppSelector } from './storeHooks';
 import { selectTheme } from './appSlice';
 import { useAuth } from './keycloak-auth/useAuth';
+import { RequireAuth } from './keycloak-auth/RequireAuth';
 
 const pages: PageRouteInfo[] = [
   {
     key: 'home',
     route: '/',
     displayName: 'All Photos',
-    element: <HomePage />,
+    element: (
+      <RequireAuth>
+        <HomePage />
+      </RequireAuth>
+    ),
     iconElement: <CollectionsIcon fontSize="small" />,
   },
   {
     key: 'settings',
     route: '/settings',
     displayName: 'Settings',
-    element: <SettingsPage />,
+    element: (
+      <RequireAuth>
+        <SettingsPage />
+      </RequireAuth>
+    ),
     iconElement: <SettingsIcon fontSize="small" />,
   },
 ];
 function App() {
-  useAuth();
+  const keycloakRef = useAuth();
 
   const mode = useAppSelector(selectTheme);
   const theme = createTheme({
@@ -42,7 +51,7 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <NavBar routesInfo={pages} />
+        <NavBar routesInfo={pages} keycloakRef={keycloakRef} />
         <Container maxWidth={false}>
           <Routes>
             {pages.map((page) => (

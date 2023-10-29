@@ -1,8 +1,8 @@
-import keycloak from './keycloak';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { ensureError } from '../helpers/error-helper';
 import { RootState } from '../store';
 import { currentDateLinuxTime } from '../helpers/date-helper';
+import Keycloak from 'keycloak-js';
 
 export interface AuthState {
   authenticated: boolean;
@@ -16,7 +16,7 @@ export const initialState: AuthState = {
   authenticated: false,
 };
 
-export const initKeycloak = createAsyncThunk('init', async (_: void) => {
+export const initKeycloak = createAsyncThunk('init', async (keycloak: Keycloak) => {
   try {
     await keycloak.init({
       onLoad: 'login-required',
@@ -43,7 +43,7 @@ export const initKeycloak = createAsyncThunk('init', async (_: void) => {
   }
 });
 
-export const logoutKeycloak = createAsyncThunk('logout', async (_) => {
+export const logoutKeycloak = createAsyncThunk('logout', async (keycloak: Keycloak) => {
   try {
     await keycloak.logout({ redirectUri: process.env.REACT_APP_REDIRECT_URL });
   } catch (err) {
@@ -83,7 +83,7 @@ export const authSlice = createSlice({
           state.error = error.message;
         }
       })
-      .addCase(logoutKeycloak.fulfilled, (state) => {
+      .addCase(logoutKeycloak.pending, (state) => {
         state.authenticated = false;
         state.token = undefined;
         state.userName = undefined;
