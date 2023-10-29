@@ -16,13 +16,14 @@ export const initialState: AuthState = {
   authenticated: false,
 };
 
-export const initKeycloak = createAsyncThunk('init', async (_, { rejectWithValue }) => {
+export const initKeycloak = createAsyncThunk('init', async (_: void) => {
   try {
     await keycloak.init({
       onLoad: 'login-required',
       enableLogging: true,
       redirectUri: process.env.REACT_APP_REDIRECT_URL,
     });
+
     const currentDateNumber = currentDateLinuxTime();
 
     let userName: string | undefined;
@@ -38,15 +39,15 @@ export const initKeycloak = createAsyncThunk('init', async (_, { rejectWithValue
     }
     return { authenticated: keycloak.authenticated, userName, token, tokenExpiration };
   } catch (err) {
-    rejectWithValue(err);
+    throw ensureError(err);
   }
 });
 
-export const logoutKeycloak = createAsyncThunk('logout', async (_, { rejectWithValue }) => {
+export const logoutKeycloak = createAsyncThunk('logout', async (_) => {
   try {
     await keycloak.logout({ redirectUri: process.env.REACT_APP_REDIRECT_URL });
   } catch (err) {
-    rejectWithValue(err);
+    throw ensureError(err);
   }
 });
 
@@ -56,6 +57,13 @@ export const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(initKeycloak.pending, (state) => {
+        state.authenticated = false;
+        state.token = undefined;
+        state.userName = undefined;
+        state.tokenExpiration = undefined;
+        state.error = undefined;
+      })
       .addCase(initKeycloak.fulfilled, (state, action) => {
         if (!action.payload) {
           return;
@@ -67,8 +75,13 @@ export const authSlice = createSlice({
         state.error = undefined;
       })
       .addCase(initKeycloak.rejected, (state, action) => {
-        const error = ensureError(action.payload);
-        state.error = error.message;
+        console.log('rejected', action);
+        if (action?.error?.message) {
+          state.error = action.error.message;
+        } else {
+          const error = ensureError(action.error);
+          state.error = error.message;
+        }
       })
       .addCase(logoutKeycloak.fulfilled, (state) => {
         state.authenticated = false;
@@ -78,8 +91,12 @@ export const authSlice = createSlice({
         state.error = undefined;
       })
       .addCase(logoutKeycloak.rejected, (state, action) => {
-        const error = ensureError(action.payload);
-        state.error = error.message;
+        if (action?.error?.message) {
+          state.error = action.error.message;
+        } else {
+          const error = ensureError(action.error);
+          state.error = error.message;
+        }
         state.authenticated = false;
         state.token = undefined;
         state.userName = undefined;
