@@ -15,7 +15,7 @@ function HomePage() {
     dispatch(getPhotos());
   }, []);
 
-  const year = photos.length > 0 ? new Date(photos[0].dateTimeOriginal * 1000).getFullYear() : 1980;
+  // const year = photos.length > 0 ? new Date(photos[0].dateTimeOriginal * 1000).getFullYear() : 1980;
 
   return (
     <>

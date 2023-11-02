@@ -19,7 +19,8 @@ function delay(ms: number): Promise<any> {
 
 export const getPhotos = createAsyncThunk('getPhotos', async (_) => {
   await delay(1000);
-  const sortedMockPhotos = MEDIA_INFOS_MOCK.sort((a, b) => b.dateTimeOriginal - a.dateTimeOriginal);
+  const sortByDateDesc = (a: MediaInfo, b: MediaInfo) => b.dateTimeOriginal - a.dateTimeOriginal;
+  const sortedMockPhotos = MEDIA_INFOS_MOCK.sort(sortByDateDesc);
   return sortedMockPhotos.slice(0, 20);
 });
 
