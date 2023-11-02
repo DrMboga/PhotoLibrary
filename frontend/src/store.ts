@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from './appSlice';
 import authReducer from './keycloak-auth/authSlice';
+import photosReducer from './photos/photosSlice';
 import {
   persistStore,
   persistReducer,
@@ -33,6 +34,7 @@ export const store = configureStore({
   reducer: {
     app: persistedAppReducer,
     auth: persistedAuthReducer,
+    photos: photosReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
