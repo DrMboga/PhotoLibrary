@@ -1,11 +1,8 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { getPhotos, selectPhotos } from './photosSlice';
-import { Box, ImageList, ImageListItem, ListSubheader } from '@mui/material';
-
-// TODO: Add thumbnail width and height to the media data model
-const largestSize = 224;
-const smallestSize = 168;
+import { Box } from '@mui/material';
+import { MediaCard } from './MediaCard';
 
 function HomePage() {
   const photos = useAppSelector(selectPhotos);
@@ -27,40 +24,11 @@ function HomePage() {
           gap: '10px',
           rowGap: '10px',
           justifyContent: 'space-evenly',
+          alignItems: 'center',
         }}
       >
-        {photos.length > 0 &&
-          photos.map((photo) => (
-            <img
-              key={photo.id}
-              src={`${photo.thumbnailUrl}?w=${
-                photo.width > photo.height ? largestSize : smallestSize
-              }&h=${photo.width < photo.height ? largestSize : smallestSize}`}
-              alt={photo.fileName}
-              loading="lazy"
-            />
-          ))}
+        {photos.length > 0 && photos.map((photo) => <MediaCard media={photo} />)}
       </Box>
-      {/*<ImageList cols={4}>*/}
-      {/*  <ImageListItem key="Subheader" cols={4}>*/}
-      {/*    <ListSubheader component="div">{year}</ListSubheader>*/}
-      {/*  </ImageListItem>*/}
-      {/*  {photos.length > 0 &&*/}
-      {/*    photos.map((photo) => (*/}
-      {/*      <ImageListItem key={photo.id}>*/}
-      {/*        <img*/}
-      {/*          srcSet={`${photo.thumbnailUrl}?w=${*/}
-      {/*            photo.width > photo.height ? largestSize : smallestSize*/}
-      {/*          }&fit=crop&auto=format&dpr=2 2x`}*/}
-      {/*          src={`${photo.thumbnailUrl}?w=${*/}
-      {/*            photo.width > photo.height ? largestSize : smallestSize*/}
-      {/*          }&fit=crop&auto=format`}*/}
-      {/*          alt={photo.fileName}*/}
-      {/*          loading="lazy"*/}
-      {/*        />*/}
-      {/*      </ImageListItem>*/}
-      {/*    ))}*/}
-      {/*</ImageList>*/}
     </>
   );
 }

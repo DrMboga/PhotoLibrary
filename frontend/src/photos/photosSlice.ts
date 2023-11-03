@@ -21,7 +21,7 @@ export const getPhotos = createAsyncThunk('getPhotos', async (_) => {
   await delay(1000);
   const sortByDateDesc = (a: MediaInfo, b: MediaInfo) => b.dateTimeOriginal - a.dateTimeOriginal;
   const sortedMockPhotos = MEDIA_INFOS_MOCK.sort(sortByDateDesc);
-  return sortedMockPhotos.slice(0, 20);
+  return sortedMockPhotos; //.slice(0, 20);
 });
 
 const photoSlice = createSlice({
