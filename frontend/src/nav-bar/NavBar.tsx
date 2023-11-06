@@ -65,7 +65,7 @@ export const NavBar = ({ routesInfo, keycloakRef }: Props) => {
   };
 
   return (
-    <AppBar position="static">
+    <AppBar position="sticky">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <CameraIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }}></CameraIcon>
