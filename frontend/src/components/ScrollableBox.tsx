@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useEffect, useRef, useState } from 'react';
+import { ReactElement, useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 
 type Props = {

@@ -1,4 +1,4 @@
-import React, { ReactElement, useEffect, useRef, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { getPhotos, selectPhotos } from './photosSlice';
 import { Box } from '@mui/material';
