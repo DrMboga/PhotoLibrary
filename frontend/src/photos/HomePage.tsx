@@ -15,12 +15,24 @@ function HomePage() {
     dispatch(getPhotos());
   }, []);
 
+  const handleScrollToTop = (): void => {
+    console.log('Scroll to top!!');
+  };
+
+  const handleScrollToBottom = (): void => {
+    console.log('Scroll to bottom!!');
+  };
+
   return (
     <>
       <Box>
         <p> Hello there, {topBarHeight} </p>
       </Box>
-      <ScrollableBox indent={topBarHeight}>
+      <ScrollableBox
+        indent={topBarHeight}
+        scrollToTop={handleScrollToTop}
+        scrollToBottom={handleScrollToBottom}
+      >
         <Box
           sx={{
             display: 'flex',
