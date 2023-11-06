@@ -18,20 +18,26 @@ The following goals have been established for this system:
 
 ### 1.2. UI design
 
-TODO: To be added
+![MainScreen](./img/MainScreen.png)
 
 ### 1.3. Use cases
 
-Start screen looks like iPfone photo app. It shows last photos in library sorted by date from latest to early.
+### 1.3.1. Spotlight screen
 
-### 1.3.1. Home screen
+![SpotlightScreen](./img/Spotlight%20screen.png)
 
-![MainScreen](./img/MainScreen.png)
+1. Random photo shows a random photo which has tag `People`. It is shown in a Carousel with 3 photos before and 3 after sorted by date from the random photo and also have `People` tag
+2. This dat by years shows a list of carousels with the random photo shoot this day with the same logic as random photo. Each carousel in the list shows phot of the day ib hte different year
+
+### 1.3.2. Library screen
+
+![LibraryScreen](./img/LibraryScreen.png)
 
 1. Photos shown in the list ordered by date from latest photo.
 2. Photos loading by chunks while user scrolls.
 3. While scrolling the appropriate chip in the top becomes active.
 4. By clicking the chip in the top, photos shows selected year - sorted from bottom tot top
+5. By clicking the photo, selected photo becomes bigger right in the list
 
 TODO: To be added
 
