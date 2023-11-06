@@ -12,8 +12,6 @@ function HomePage() {
     dispatch(getPhotos());
   }, []);
 
-  // const year = photos.length > 0 ? new Date(photos[0].dateTimeOriginal * 1000).getFullYear() : 1980;
-
   return (
     <>
       <p>Hello there</p>
@@ -27,7 +25,8 @@ function HomePage() {
           alignItems: 'center',
         }}
       >
-        {photos.length > 0 && photos.map((photo) => <MediaCard media={photo} />)}
+        {photos.length > 0 &&
+          photos.map((photo) => <MediaCard key={`media-card-id-${photo.id}`} media={photo} />)}
       </Box>
     </>
   );
