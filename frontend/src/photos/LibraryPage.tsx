@@ -7,19 +7,23 @@ import { ScrollableBox } from '../components/ScrollableBox';
 
 const topBarHeight = 56;
 
-function HomePage() {
+function LibraryPage() {
+  // TODO: Add nullable DateOfLastPhoto to the photos store
   const photos = useAppSelector(selectPhotos);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    // TODO: Pass nullable DateOfLastPhoto to getPhotos to filter
     dispatch(getPhotos());
   }, []);
 
   const handleScrollToTop = (): void => {
+    // TODO: Introduce new thunk - getPreviousChunk, and pass there DateOfLastPhoto
     console.log('Scroll to top!!');
   };
 
   const handleScrollToBottom = (): void => {
+    // TODO: Introduce new thunk - getNextChunk, and pass there DateOfLastPhoto
     console.log('Scroll to bottom!!');
   };
 
@@ -51,4 +55,4 @@ function HomePage() {
   );
 }
 
-export default HomePage;
+export default LibraryPage;

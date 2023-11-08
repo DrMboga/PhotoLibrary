@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './photos/HomePage';
+import LibraryPage from './photos/LibraryPage';
 import SettingsPage from './settings/SettingsPage';
 import { Container, createTheme, CssBaseline, ThemeProvider } from '@mui/material';
 import CollectionsIcon from '@mui/icons-material/Collections';
@@ -15,12 +15,12 @@ import { RequireAuth } from './keycloak-auth/RequireAuth';
 
 const pages: PageRouteInfo[] = [
   {
-    key: 'home',
-    route: '/',
+    key: 'library',
+    route: '/', // TODO: Change path when spotlight page added
     displayName: 'All Photos',
     element: (
       <RequireAuth>
-        <HomePage />
+        <LibraryPage />
       </RequireAuth>
     ),
     iconElement: <CollectionsIcon fontSize="small" />,
