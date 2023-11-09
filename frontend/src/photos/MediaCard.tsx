@@ -5,6 +5,7 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import PlaceIcon from '@mui/icons-material/Place';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
+import { dateFromUnixTime } from '../helpers/date-helper';
 
 // TODO: Add thumbnail width and height to the media data model
 const largestSize = 224;
@@ -14,7 +15,7 @@ type Props = {
   media: MediaInfo;
 };
 export const MediaCard = ({ media }: Props) => {
-  const mediaDate = new Date(media.dateTimeOriginal * 1000);
+  const mediaDate = dateFromUnixTime(media.dateTimeOriginal);
   const country = media.country ?? '';
   const city = media.locality ?? media.region ?? '';
 

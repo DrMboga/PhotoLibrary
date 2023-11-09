@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ReactElement, useEffect, useRef } from 'react';
+import { ReactElement, SyntheticEvent, useEffect, useRef } from 'react';
 import { Box } from '@mui/material';
 
 type Props = {
@@ -15,6 +15,23 @@ export const ScrollableBox = ({ children, indent, scrollToTop, scrollToBottom }:
   const fullIndent = indent + appBarHeight;
   const divRef = useRef<HTMLDivElement>(null);
 
+  const handleScroll = (event: SyntheticEvent) => {
+    const targetDiv = event.target as HTMLDivElement;
+    if (!targetDiv) {
+      return;
+    }
+    if (
+      targetDiv?.scrollTop + targetDiv.offsetHeight >= targetDiv?.scrollHeight &&
+      scrollToBottom
+    ) {
+      scrollToBottom();
+    }
+
+    if (targetDiv?.scrollTop === 0 && scrollToTop) {
+      scrollToTop();
+    }
+  };
+
   useEffect(() => {
     const handleResize = () => {
       const currentHeight = window.innerHeight;
@@ -27,33 +44,15 @@ export const ScrollableBox = ({ children, indent, scrollToTop, scrollToBottom }:
 
     handleResize();
 
-    const handleScroll = () => {
-      if (!divRef.current) {
-        return;
-      }
-      if (
-        divRef.current?.scrollTop + divRef.current.offsetHeight === divRef.current?.scrollHeight &&
-        scrollToBottom
-      ) {
-        scrollToBottom();
-      }
-
-      if (divRef.current?.scrollTop === 0 && scrollToTop) {
-        scrollToTop();
-      }
-    };
-
     window.addEventListener('resize', handleResize);
-    divRef.current?.addEventListener('scroll', handleScroll);
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      divRef.current?.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   return (
-    <Box ref={divRef} sx={{ overflow: 'auto' }}>
+    <Box ref={divRef} onScroll={handleScroll} sx={{ overflow: 'auto' }}>
       {children}
     </Box>
   );

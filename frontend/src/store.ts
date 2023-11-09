@@ -27,14 +27,22 @@ const persistAuthConfig = {
   storage,
 };
 
+const persistPhotosConfig = {
+  key: 'photo-lib-photos',
+  version: 1,
+  storage,
+  blacklist: ['photos', 'loadingTop', 'loadingBottom'],
+};
+
 const persistedAppReducer = persistReducer(persistAppConfig, appReducer);
 const persistedAuthReducer = persistReducer(persistAuthConfig, authReducer);
+const persistedPhotoReducer = persistReducer(persistPhotosConfig, photosReducer);
 
 export const store = configureStore({
   reducer: {
     app: persistedAppReducer,
     auth: persistedAuthReducer,
-    photos: photosReducer,
+    photos: persistedPhotoReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

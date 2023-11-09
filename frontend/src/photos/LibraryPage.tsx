@@ -1,36 +1,57 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import { getPhotos, selectPhotos } from './photosSlice';
+import {
+  getNextPhotosChunk,
+  getPhotos,
+  getPreviousPhotosChunk,
+  selectDateOfFirstPhoto,
+  selectDateOfLastPhoto,
+  selectPhotos,
+  selectPhotosLoadingBottom,
+  selectPhotosLoadingTop,
+} from './photosSlice';
 import { Box } from '@mui/material';
 import { MediaCard } from './MediaCard';
 import { ScrollableBox } from '../components/ScrollableBox';
+import { dateFromUnixTime } from '../helpers/date-helper';
+import CircularProgress from '@mui/material/CircularProgress';
 
 const topBarHeight = 56;
 
 function LibraryPage() {
-  // TODO: Add nullable DateOfLastPhoto to the photos store
+  const loadingTop = useAppSelector(selectPhotosLoadingTop);
+  const loadingBottom = useAppSelector(selectPhotosLoadingBottom);
+  const dateOfFirstPhoto = useAppSelector(selectDateOfFirstPhoto);
+  const dateOfLastPhoto = useAppSelector(selectDateOfLastPhoto);
   const photos = useAppSelector(selectPhotos);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    // TODO: Pass nullable DateOfLastPhoto to getPhotos to filter
-    dispatch(getPhotos());
-  }, []);
+    dispatch(getPhotos(dateOfFirstPhoto));
+  }, [dispatch]);
 
   const handleScrollToTop = (): void => {
-    // TODO: Introduce new thunk - getPreviousChunk, and pass there DateOfLastPhoto
-    console.log('Scroll to top!!');
+    if (dateOfFirstPhoto) {
+      dispatch(getPreviousPhotosChunk(dateOfFirstPhoto));
+    }
   };
 
   const handleScrollToBottom = (): void => {
-    // TODO: Introduce new thunk - getNextChunk, and pass there DateOfLastPhoto
-    console.log('Scroll to bottom!!');
+    if (dateOfLastPhoto) {
+      dispatch(getNextPhotosChunk(dateOfLastPhoto));
+    }
   };
 
   return (
     <>
       <Box>
-        <p> Hello there, {topBarHeight} </p>
+        <p>
+          {dateOfFirstPhoto && dateOfLastPhoto
+            ? `${dateFromUnixTime(dateOfFirstPhoto).toLocaleString('ru-RU')} - ${dateFromUnixTime(
+                dateOfLastPhoto,
+              ).toLocaleString('ru-RU')}`
+            : ''}
+        </p>
       </Box>
       <ScrollableBox
         indent={topBarHeight}
@@ -47,8 +68,10 @@ function LibraryPage() {
             alignItems: 'center',
           }}
         >
+          {loadingTop && <CircularProgress />}
           {photos.length > 0 &&
             photos.map((photo) => <MediaCard key={`media-card-id-${photo.id}`} media={photo} />)}
+          {loadingBottom && <CircularProgress />}
         </Box>
       </ScrollableBox>
     </>
