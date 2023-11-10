@@ -4,3 +4,9 @@ export const currentDateLinuxTime = (): number => {
 };
 
 export const dateFromUnixTime = (unixTime: number): Date => new Date(unixTime * 1000);
+
+export const secondsToTimeFormat = (totalSeconds: number): string => {
+  const minutes: number = Math.trunc(totalSeconds / 60);
+  let seconds: number = totalSeconds - minutes * 60;
+  return `${minutes}:${seconds}`;
+};

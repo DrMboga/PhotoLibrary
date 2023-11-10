@@ -1,11 +1,8 @@
 import * as React from 'react';
 import { MediaInfo } from '../model/mediaInfo';
-import { Card, CardActions, CardContent, CardMedia, IconButton, Typography } from '@mui/material';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
-import PlaceIcon from '@mui/icons-material/Place';
+import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
-import { dateFromUnixTime } from '../helpers/date-helper';
+import { dateFromUnixTime, secondsToTimeFormat } from '../helpers/date-helper';
 
 // TODO: Add thumbnail width and height to the media data model
 const largestSize = 224;
@@ -20,64 +17,53 @@ export const MediaCard = ({ media }: Props) => {
   const city = media.locality ?? media.region ?? '';
 
   const address = city && country ? `${city}, ${country}` : '';
+  const videoDuration: string = media.videoDurationSec
+    ? secondsToTimeFormat(media.videoDurationSec)
+    : '';
   // #004d40
 
   return (
     <Card key={`card-${media.id}`}>
-      <CardMedia
-        key={`card-media-${media.id}`}
-        component="img"
-        width={media.width > media.height ? largestSize : smallestSize}
-        height={media.width < media.height ? largestSize : smallestSize}
-        image={media.thumbnailUrl}
-      />
-      <CardContent
-        id={`card-content-1-${media.id}`}
-        sx={{ paddingTop: '1px', paddingBottom: '0px' }}
-      >
+      <Box sx={{ position: 'relative' }}>
+        <CardMedia
+          key={`card-media-${media.id}`}
+          component="img"
+          width={media.width > media.height ? largestSize : smallestSize}
+          height={media.width < media.height ? largestSize : smallestSize}
+          image={media.thumbnailUrl}
+        ></CardMedia>
         {media.mediaType === 'video' && (
           <Typography
             id={`typography-0-${media.id}`}
-            sx={{ fontSize: '10px', display: 'flex', alignItems: 'center' }}
-            color="text.secondary"
-            align="right"
+            sx={{
+              fontSize: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              position: 'absolute',
+              top: '10px',
+              left: '10px',
+              gap: '5px',
+              color: 'white',
+            }}
           >
             <PlayCircleIcon />
-            {media.videoDurationSec}
+            {videoDuration}
           </Typography>
         )}
-        <Typography
-          id={`typography-2-${media.id}`}
-          sx={{ fontSize: '10px' }}
-          color="text.secondary"
-          align="right"
-        >
-          {media.fullPath}
-        </Typography>
+      </Box>
+      <CardContent
+        id={`card-content-1-${media.id}`}
+        sx={{
+          padding: '2px',
+          '&:last-child': {
+            paddingBottom: 0,
+          },
+        }}
+      >
         <Typography id={`typography-1-${media.id}`} variant="body2" align="right">
           {mediaDate.toLocaleString('ru-RU')}
         </Typography>
-        {address && (
-          <Typography
-            id={`typography-1-${media.id}`}
-            sx={{ fontSize: '12px', display: 'flex', alignItems: 'center' }}
-            color="text.secondary"
-            align="right"
-          >
-            <PlaceIcon />
-            {address}
-          </Typography>
-        )}
       </CardContent>
-
-      <CardActions disableSpacing sx={{ paddingTop: '1px', paddingBottom: '1px' }}>
-        <IconButton aria-label="add to favorites" size="small">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share" size="small">
-          <ShareIcon />
-        </IconButton>
-      </CardActions>
     </Card>
   );
 };
