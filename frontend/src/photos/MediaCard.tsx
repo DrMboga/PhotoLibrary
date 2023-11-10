@@ -10,20 +10,17 @@ const smallestSize = 168;
 
 type Props = {
   media: MediaInfo;
+  onClick: (mediaId: string) => void;
 };
-export const MediaCard = ({ media }: Props) => {
+export const MediaCard = ({ media, onClick }: Props) => {
   const mediaDate = dateFromUnixTime(media.dateTimeOriginal);
-  const country = media.country ?? '';
-  const city = media.locality ?? media.region ?? '';
-
-  const address = city && country ? `${city}, ${country}` : '';
   const videoDuration: string = media.videoDurationSec
     ? secondsToTimeFormat(media.videoDurationSec)
     : '';
   // #004d40
 
   return (
-    <Card key={`card-${media.id}`}>
+    <Card key={`card-${media.id}`} onClick={() => onClick(media.id)}>
       <Box sx={{ position: 'relative' }}>
         <CardMedia
           key={`card-media-${media.id}`}
