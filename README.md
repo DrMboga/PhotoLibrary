@@ -38,3 +38,14 @@ docker run -p 8070:8080 -e KEYCLOAK_ADMIN=<username> -e KEYCLOAK_ADMIN_PASSWORD=
 2. Set up id (`photo-library-app`), add name (optional), choose OpenID
 3. Setup valid redirect URL (`http://localhost:3000` or prod root url)
 4. Setup valid origins (`http://localhost:3000` or prod root url)
+
+# Deploy to Rasberry PI
+
+## 1. Install .Net
+
+[source](https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian)
+
+```bash
+sudo apt-get update
+sudo apt-get install -y aspnetcore-runtime-8.0
+```
