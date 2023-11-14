@@ -1,7 +1,7 @@
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -16,29 +16,44 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
 
-app.MapGet("/weatherforecast", () =>
+// TODO: Test end poind to make a thumbnail from image
+app.MapGet("/testImageThumbnail", (IMediaReaderService mediaReaderService) =>
 {
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
+    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_4160.JPG");
+    var thumbnail = mediaReaderService.MakePhotoThumbnail(filePath);
+    if (thumbnail != null)
+    {
+        return Results.File(thumbnail, "image/png", Path.GetFileName(filePath)); 
+    }
+    return Results.NotFound();
 })
-.WithName("GetWeatherForecast")
+.WithName("GetTestImageThumbnail")
+.WithOpenApi();
+
+app.MapGet("/testVideoThumbnail", async (IMediaReaderService mediaReaderService) => 
+{
+    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_6976.MOV");
+    var thumbnail = await mediaReaderService.MakeVideoThumbnail(filePath);
+    if (thumbnail != null)
+    {
+        try {
+            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
+            return Results.File(thumbnail, "image/png", $"{fileNameWithoutExt}.jpg");
+        }
+        catch(ShellExecuteException shellException)
+        {
+            return Results.BadRequest(shellException.Message);
+        }
+        catch(Exception e)
+        {
+            return Results.BadRequest(e.Message);
+        }
+    }
+    return Results.NotFound();
+})
+.WithName("GetTestVideoThumbnail")
 .WithOpenApi();
 
 app.Run();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
