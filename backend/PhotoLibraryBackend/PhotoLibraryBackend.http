@@ -1,0 +1,6 @@
+@PhotoLibraryBackend_HostAddress = http://localhost:5101
+
+GET {{PhotoLibraryBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
