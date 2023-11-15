@@ -45,7 +45,30 @@ docker run -p 8070:8080 -e KEYCLOAK_ADMIN=<username> -e KEYCLOAK_ADMIN_PASSWORD=
 
 [source](https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian)
 
+For the first time, add the Microsoft package signing key to your list of trusted keys and add the package repository.:
+
+```bash
+wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
+sudo dpkg -i packages-microsoft-prod.deb
+rm packages-microsoft-prod.deb
+```
+
+Install the runtime
+
 ```bash
 sudo apt-get update
 sudo apt-get install -y aspnetcore-runtime-8.0
+```
+
+Update runtime:
+
+```bash
+sudo apt-get update
+sudo apt-get upgrade
+```
+
+## 2. Publish backend
+
+```bash
+dotnet publish -c release -r linux-x64
 ```
