@@ -1,4 +1,15 @@
+using System.Net;
+using Microsoft.AspNetCore.HttpOverrides;
+
+const string HostServer = "192.168.0.65:8850";
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure forwarded headers
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.KnownProxies.Add(IPAddress.Parse(HostServer));
+});
 
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 
@@ -14,10 +25,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
 
-// TODO: Test end poind to make a thumbnail from image
+// app.MapGet("/", () => HostServer);
+
+// TODO: Test end point to make a thumbnail from image
 app.MapGet("/testImageThumbnail", (IMediaReaderService mediaReaderService) =>
 {
     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_4160.JPG");

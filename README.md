@@ -39,36 +39,41 @@ docker run -p 8070:8080 -e KEYCLOAK_ADMIN=<username> -e KEYCLOAK_ADMIN_PASSWORD=
 3. Setup valid redirect URL (`http://localhost:3000` or prod root url)
 4. Setup valid origins (`http://localhost:3000` or prod root url)
 
-# Deploy to Rasberry PI
+# Deploy backend to Raspberry PI
 
-## 1. Install .Net
+[Host asp.net core in Linux with NGINX](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-8.0&tabs=linux-sles)
+[Raspberry Pi 4 specifications](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/)
+`Quad core Cortex-A72 (ARM v8) 64-bit SoC` -> ARM 64
 
-[source](https://learn.microsoft.com/en-us/dotnet/core/install/linux-debian)
+## 1. Publish backend
 
-For the first time, add the Microsoft package signing key to your list of trusted keys and add the package repository.:
+[RID catalog](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog)
 
-```bash
-wget https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb -O packages-microsoft-prod.deb
-sudo dpkg -i packages-microsoft-prod.deb
-rm packages-microsoft-prod.deb
-```
-
-Install the runtime
+- Publish backend as self-contained app. And copy it to the raspberry:
 
 ```bash
-sudo apt-get update
-sudo apt-get install -y aspnetcore-runtime-8.0
+cd ./backend/PhotoLibraryBackend
+
+dotnet publish -c release -r linux-arm64 --self-contained
+
+scp -r ./bin/release/net8.0/linux-arm64/publish pi@192.168.0.65:/home/pi/projects/photo-library
 ```
 
-Update runtime:
+= Using ssh, add run permissions and run app:
 
 ```bash
-sudo apt-get update
-sudo apt-get upgrade
+cd projects/photo-library/publish
+chmod +x ./PhotoLibraryBackend
+./PhotoLibraryBackend
 ```
 
-## 2. Publish backend
+## 2. Install and setup nginx
+
+[instructions](https://pimylifeup.com/raspberry-pi-nginx/)
 
 ```bash
-dotnet publish -c release -r linux-x64
+sudo apt install nginx
+sudo systemctl start nginx
 ```
+
+- Setup nginx.config
