@@ -107,6 +107,8 @@ Add this to http section:
   }
 ```
 
+TODO: add settings for SignalR [like here](https://learn.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-8.0#linux-with-nginx)
+
 ## 3. Run backed as linux service
 
 1. Create a service file
