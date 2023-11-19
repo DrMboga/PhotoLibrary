@@ -59,7 +59,7 @@ dotnet publish -c release -r linux-arm64 --self-contained
 scp -r ./bin/release/net8.0/linux-arm64/publish pi@192.168.0.65:/home/pi/projects/photo-library
 ```
 
-= Using ssh, add run permissions and run app:
+= Using ssh, add run permissions and run app (just for test, in point 3, we should create a service to run it):
 
 ```bash
 cd projects/photo-library/publish
@@ -77,3 +77,37 @@ sudo systemctl start nginx
 ```
 
 - Setup nginx.config
+
+```bash
+cd etc/nginx
+sudo nano nginx.conf
+```
+
+Add this to http section:
+
+```json
+  map $http_connection $connection_upgrade {
+    "~*Upgrade" $http_connection;
+    default keep-alive;
+  }
+
+  server {
+    listen        8850;
+    server_name   example.com *.example.com;
+    location / {
+        proxy_pass         http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header   Upgrade $http_upgrade;
+        proxy_set_header   Connection $connection_upgrade;
+        proxy_set_header   Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto $scheme;
+    }
+  }
+```
+
+## 3. Run backed as linux service
+
+1. Create a service file
+2. Register a service as `systemctl`
