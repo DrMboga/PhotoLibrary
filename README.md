@@ -59,7 +59,7 @@ dotnet publish -c release -r linux-arm64 --self-contained
 scp -r ./bin/release/net8.0/linux-arm64/publish pi@192.168.0.65:/home/pi/projects/photo-library
 ```
 
-= Using ssh, add run permissions and run app (just for test, in point 3, we should create a service to run it):
+- Using ssh, add run permissions and run app (just for test, in point 3, we should create a service to run it):
 
 ```bash
 cd projects/photo-library/publish
@@ -111,5 +111,59 @@ TODO: add settings for SignalR [like here](https://learn.microsoft.com/en-us/asp
 
 ## 3. Run backed as linux service
 
-1. Create a service file
+1. Copy a service file
+
+```bash
+scp -r ./photo-library.service pi@192.168.0.65:/home/pi/projects/photo-library
+```
+
 2. Register a service as `systemctl`
+
+ssh:
+
+```bash
+# Restart daemon
+sudo systemctl daemon-reload
+# Start services
+sudo systemctl start photo-library.service
+# Enable auto start
+sudo systemctl enable photo-library.service
+```
+
+## 4. Rollout a new version on already existing environment:
+
+1. ssh:
+
+```bash
+sudo systemctl stop photo-library.service
+```
+
+2. dev machine:
+
+```bash
+cd ./backend/PhotoLibraryBackend
+
+dotnet publish -c release -r linux-arm64 --self-contained
+
+scp -r ./bin/release/net8.0/linux-arm64/publish pi@192.168.0.65:/home/pi/projects/photo-library
+```
+
+3. ssh:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl start photo-library.service
+```
+
+## Linux services helpful commands
+
+```bash
+# Some service tune commands
+sudo systemctl stop photo-library.service
+sudo systemctl disable photo-library.service
+# Service logs
+sudo journalctl -u photo-library.service
+# Services list
+sudo systemctl list-units --type=service --all
+(q for exit)
+```

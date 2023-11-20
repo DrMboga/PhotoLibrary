@@ -1,0 +1,11 @@
+[Unit]
+Description=Photo library ASP.NET service
+[Service]
+Type=simple
+ExecStart=/home/pi/projects/photo-library/publish
+WorkingDirectory=/home/pi/projects/photo-library/publish
+Restart=on-failure
+RestartSec=10
+KillMode=process
+[Install]
+WantedBy=multi-user.target
