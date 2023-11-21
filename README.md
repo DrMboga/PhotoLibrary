@@ -167,3 +167,18 @@ sudo journalctl -u photo-library.service
 sudo systemctl list-units --type=service --all
 (q for exit)
 ```
+
+# How to teach ML model to classify images using ML Net CLI
+
+1. Create a folder which contain a model data to learn. Each subfolder contains a set of images, and subfolder name will be used as a label name
+2. Install ML CLI
+
+```bash
+dotnet tool install --global mlnet-win-x64 --version 16.13.9
+```
+
+3. Train model. (A test console application will be generated)
+
+```bash
+mlnet image-classification --dataset "..\photo-library-lib\ML" --log-file-path "..\mlTests" --name "PhotoLibraryModel"
+```

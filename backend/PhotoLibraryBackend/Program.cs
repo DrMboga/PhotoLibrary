@@ -1,6 +1,8 @@
 using System.Net;
+using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
 
+// For deploy on Raspberry PI home server
 const string HostServer = "192.168.0.65:8850";
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 });
 
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
+builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -19,11 +22,11 @@ builder.Services.AddSwaggerGen();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
+// if (app.Environment.IsDevelopment())
+// {
     app.UseSwagger();
     app.UseSwaggerUI();
-}
+// }
 
 // app.UseHttpsRedirection();
 
@@ -32,44 +35,20 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-// app.MapGet("/", () => HostServer);
-
-// TODO: Test end point to make a thumbnail from image
-app.MapGet("/testImageThumbnail", (IMediaReaderService mediaReaderService) =>
+// TODO: Test end point to test ML Net predictions
+app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionService) =>
 {
-    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_4160.JPG");
-    var thumbnail = mediaReaderService.MakePhotoThumbnail(filePath);
-    if (thumbnail != null)
+    string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
+    var results = new StringBuilder();
+    
+    foreach (var photoFile in Directory.GetFiles(folderPath))
     {
-        return Results.File(thumbnail, "image/png", Path.GetFileName(filePath)); 
+        var predictedLabel = labelPredictionService.PredictLabel(photoFile);
+        results.AppendLine($"'{Path.GetFileName(photoFile)}': {predictedLabel.Label}; Others score: {predictedLabel.OtherLabelScore:0.000}; People score: {predictedLabel.PeopleLabelScore:0.000}; Document score: {predictedLabel.DocumentLabelScore:0.000}");
     }
-    return Results.NotFound();
+    return Results.Text(results.ToString());
 })
-.WithName("GetTestImageThumbnail")
-.WithOpenApi();
-
-app.MapGet("/testVideoThumbnail", async (IMediaReaderService mediaReaderService) => 
-{
-    string filePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_6976.MOV");
-    var thumbnail = await mediaReaderService.MakeVideoThumbnail(filePath);
-    if (thumbnail != null)
-    {
-        try {
-            var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-            return Results.File(thumbnail, "image/png", $"{fileNameWithoutExt}.jpg");
-        }
-        catch(ShellExecuteException shellException)
-        {
-            return Results.BadRequest(shellException.Message);
-        }
-        catch(Exception e)
-        {
-            return Results.BadRequest(e.Message);
-        }
-    }
-    return Results.NotFound();
-})
-.WithName("GetTestVideoThumbnail")
+.WithName("PredictPhotoLabelsTest")
 .WithOpenApi();
 
 app.Run();
