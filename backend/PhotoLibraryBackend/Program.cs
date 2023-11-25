@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
+using Serilog;
+
 
 // For deploy on Raspberry PI home server
 const string HostServer = "192.168.0.65:8850";
@@ -13,6 +15,15 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Add(IPAddress.Parse(HostServer));
 });
 
+// Configure Serilog
+builder.Logging.ClearProviders();
+var logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Configuration)
+                .WriteTo.Console()
+                .CreateLogger();
+builder.Logging.AddSerilog(logger);
+
+// Setup PhotoLibrary services
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 
