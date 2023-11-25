@@ -24,8 +24,8 @@ public static class BashHelper
         process.Exited += (sender, args) =>
             {
                 string errorMessage = process.StandardError.ReadToEnd();
-                logger.LogWarning(errorMessage);
-                logger.LogInformation(process.StandardOutput.ReadToEnd());
+                logger.BashWarning(cmd, errorMessage);
+                logger.BashInfo(cmd, process.StandardOutput.ReadToEnd());
                 if (process.ExitCode == 0)
                 {
                     source.SetResult(0);
@@ -43,7 +43,7 @@ public static class BashHelper
         }
         catch (Exception e)
         {
-            logger.LogError(e, "Command {} failed", cmd);
+            logger.BashError(cmd, e);
             source.SetException(e);
         }
 
