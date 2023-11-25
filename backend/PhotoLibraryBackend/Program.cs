@@ -1,6 +1,7 @@
 using System.Net;
 using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
+using PhotoLibraryBackend;
 using Serilog;
 
 
@@ -30,6 +31,9 @@ builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>(
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// SignalR
+builder.Services.AddSignalR();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -45,6 +49,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
+
+app.MapHub<MediaHub>("/Media");
 
 // TODO: Test end point to test ML Net predictions
 app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionService) =>
