@@ -91,7 +91,13 @@ High level architecture
 
 ## 8. Crosscutting Concepts
 
-TODO: To be added -> backend endpoints, API, UI structure and so on
+Backend sends media files one by one via SignalR. The message structure should be single for both Backend and Client app. For this purpose the `Protobuf` structure used.
+
+To generate a c# class from protobuf message use following:
+
+```bash
+protoc --proto_path=protobuf --csharp_out=backend/PhotoLibraryBackend.Common --csharp_opt=base_namespace=PhotoLibraryBackend.Common media-info.proto
+```
 
 ## 9. Architecture Decisions
 
