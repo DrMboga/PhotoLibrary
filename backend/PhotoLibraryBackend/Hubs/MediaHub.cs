@@ -5,21 +5,30 @@ namespace PhotoLibraryBackend;
 public class MediaHub: Hub
 {
     private readonly ILogger<MediaHub> _logger;
+    private readonly IMediaReader _mediaReader;
 
-    public MediaHub(ILogger<MediaHub> logger)
+    public MediaHub(ILogger<MediaHub> logger, IMediaReader mediaReader)
     {
         _logger = logger;
+        _mediaReader = mediaReader;
     }
 
-    public Task GetNextPhotosChunk(string user, double dateFrom)
+    public async Task GetNextPhotosChunk(double dateFrom)
     {
-        _logger.DebugHubMessage("GetNextPhotosChunk", user, dateFrom);
-        return Clients.User(user).SendAsync("GetNextPhotosChunk", dateFrom);
+        _logger.DebugHubMessage("GetNextPhotosChunk", dateFrom);
+        var photosChunk = await _mediaReader.GetNextPhotosChunk(dateFrom);
+        foreach (var media in photosChunk)
+        {
+            await Clients.All.SendAsync("GetNextPhotosChunk", media);
+        }
     }
 
-    public Task GetPreviousPhotosChunk(string user, double dateTo)
+    public async Task GetPreviousPhotosChunk(double dateTo)
     {
-        _logger.DebugHubMessage("GetPreviousPhotosChunk", user, dateTo);
-        return Clients.User(user).SendAsync("GetNextPhotosChunk", dateTo);
-    }
+        _logger.DebugHubMessage("GetPreviousPhotosChunk", dateTo);
+        var photosChunk = await _mediaReader.GetPreviousPhotosChunk(dateTo);
+        foreach (var media in photosChunk)
+        {
+            await Clients.All.SendAsync("GetPreviousPhotosChunk", media);
+        }    }
 }

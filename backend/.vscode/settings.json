@@ -19,5 +19,6 @@
     "titleBar.inactiveBackground": "#003e7999",
     "titleBar.inactiveForeground": "#e7e7e799"
   },
-  "peacock.color": "#003e79"
+  "peacock.color": "#003e79",
+  "cSpell.words": ["Protobuf"]
 }
