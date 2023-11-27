@@ -34,6 +34,6 @@ message MediaInfo {
     optional string address = 24;
     optional string venue = 25;
     bytes thumbnail = 26;
-    optional bool is_favourite = 27;
+    optional bool is_favorite = 27;
     optional string albumName = 28;
 }  

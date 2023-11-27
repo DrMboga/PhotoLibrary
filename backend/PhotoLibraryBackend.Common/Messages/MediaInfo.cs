@@ -24,7 +24,7 @@ namespace PhotoLibraryBackend.Common.Messages {
     static MediaInfoReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBtZWRpYS1pbmZvLnByb3RvItYGCglNZWRpYUluZm8SCgoCaWQYASABKAkS",
+            "ChBtZWRpYS1pbmZvLnByb3RvItQGCglNZWRpYUluZm8SCgoCaWQYASABKAkS",
             "FQoNdGh1bWJuYWlsX3VybBgCIAEoCRIRCgltZWRpYV91cmwYAyABKAkSEQoJ",
             "ZnVsbF9wYXRoGAQgASgJEhEKCWZpbGVfbmFtZRgFIAEoCRIWCg5maWxlX2V4",
             "dGVuc2lvbhgGIAEoCRIeCgptZWRpYV90eXBlGAcgASgOMgouTWVkaWFUeXBl",
@@ -37,19 +37,19 @@ namespace PhotoLibraryBackend.Common.Messages {
             "aXR1ZGUYEyABKAFIBYgBARIbCg5sb25naXR1ZGVfc2lkZRgUIAEoCUgGiAEB",
             "EhQKB2NvdW50cnkYFSABKAlIB4gBARITCgZyZWdpb24YFiABKAlICIgBARIV",
             "Cghsb2NhbGl0eRgXIAEoCUgJiAEBEhQKB2FkZHJlc3MYGCABKAlICogBARIS",
-            "CgV2ZW51ZRgZIAEoCUgLiAEBEhEKCXRodW1ibmFpbBgaIAEoDBIZCgxpc19m",
-            "YXZvdXJpdGUYGyABKAhIDIgBARIWCglhbGJ1bU5hbWUYHCABKAlIDYgBAUIV",
-            "ChNfdmlkZW9fZHVyYXRpb25fc2VjQhAKDl9waWN0dXJlX21ha2VyQgYKBF90",
-            "YWdCCwoJX2xhdGl0dWRlQhAKDl9sYXRpdHVkZV9wb2xlQgwKCl9sb25naXR1",
-            "ZGVCEQoPX2xvbmdpdHVkZV9zaWRlQgoKCF9jb3VudHJ5QgkKB19yZWdpb25C",
-            "CwoJX2xvY2FsaXR5QgoKCF9hZGRyZXNzQggKBl92ZW51ZUIPCg1faXNfZmF2",
-            "b3VyaXRlQgwKCl9hbGJ1bU5hbWUqIQoJTWVkaWFUeXBlEgkKBUlNQUdFEAAS",
-            "CQoFVklERU8QAUImqgIjUGhvdG9MaWJyYXJ5QmFja2VuZC5Db21tb24uTWVz",
-            "c2FnZXNiBnByb3RvMw=="));
+            "CgV2ZW51ZRgZIAEoCUgLiAEBEhEKCXRodW1ibmFpbBgaIAEoDBIYCgtpc19m",
+            "YXZvcml0ZRgbIAEoCEgMiAEBEhYKCWFsYnVtTmFtZRgcIAEoCUgNiAEBQhUK",
+            "E192aWRlb19kdXJhdGlvbl9zZWNCEAoOX3BpY3R1cmVfbWFrZXJCBgoEX3Rh",
+            "Z0ILCglfbGF0aXR1ZGVCEAoOX2xhdGl0dWRlX3BvbGVCDAoKX2xvbmdpdHVk",
+            "ZUIRCg9fbG9uZ2l0dWRlX3NpZGVCCgoIX2NvdW50cnlCCQoHX3JlZ2lvbkIL",
+            "CglfbG9jYWxpdHlCCgoIX2FkZHJlc3NCCAoGX3ZlbnVlQg4KDF9pc19mYXZv",
+            "cml0ZUIMCgpfYWxidW1OYW1lKiEKCU1lZGlhVHlwZRIJCgVJTUFHRRAAEgkK",
+            "BVZJREVPEAFCJqoCI1Bob3RvTGlicmFyeUJhY2tlbmQuQ29tbW9uLk1lc3Nh",
+            "Z2VzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::PhotoLibraryBackend.Common.Messages.MediaType), }, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::PhotoLibraryBackend.Common.Messages.MediaInfo), global::PhotoLibraryBackend.Common.Messages.MediaInfo.Parser, new[]{ "Id", "ThumbnailUrl", "MediaUrl", "FullPath", "FileName", "FileExtension", "MediaType", "FileSizeKb", "DateTimeOriginal", "Width", "Height", "ThumbnailWidth", "ThumbnailHeight", "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "Thumbnail", "IsFavourite", "AlbumName" }, new[]{ "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "IsFavourite", "AlbumName" }, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::PhotoLibraryBackend.Common.Messages.MediaInfo), global::PhotoLibraryBackend.Common.Messages.MediaInfo.Parser, new[]{ "Id", "ThumbnailUrl", "MediaUrl", "FullPath", "FileName", "FileExtension", "MediaType", "FileSizeKb", "DateTimeOriginal", "Width", "Height", "ThumbnailWidth", "ThumbnailHeight", "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "Thumbnail", "IsFavorite", "AlbumName" }, new[]{ "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "IsFavorite", "AlbumName" }, null, null, null)
           }));
     }
     #endregion
@@ -126,7 +126,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       address_ = other.address_;
       venue_ = other.venue_;
       thumbnail_ = other.thumbnail_;
-      isFavourite_ = other.isFavourite_;
+      isFavorite_ = other.isFavorite_;
       albumName_ = other.albumName_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -596,28 +596,28 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "is_favourite" field.</summary>
-    public const int IsFavouriteFieldNumber = 27;
-    private bool isFavourite_;
+    /// <summary>Field number for the "is_favorite" field.</summary>
+    public const int IsFavoriteFieldNumber = 27;
+    private bool isFavorite_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool IsFavourite {
-      get { if ((_hasBits0 & 8) != 0) { return isFavourite_; } else { return false; } }
+    public bool IsFavorite {
+      get { if ((_hasBits0 & 8) != 0) { return isFavorite_; } else { return false; } }
       set {
         _hasBits0 |= 8;
-        isFavourite_ = value;
+        isFavorite_ = value;
       }
     }
-    /// <summary>Gets whether the "is_favourite" field is set</summary>
+    /// <summary>Gets whether the "is_favorite" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public bool HasIsFavourite {
+    public bool HasIsFavorite {
       get { return (_hasBits0 & 8) != 0; }
     }
-    /// <summary>Clears the value of the "is_favourite" field</summary>
+    /// <summary>Clears the value of the "is_favorite" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public void ClearIsFavourite() {
+    public void ClearIsFavorite() {
       _hasBits0 &= ~8;
     }
 
@@ -686,7 +686,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Address != other.Address) return false;
       if (Venue != other.Venue) return false;
       if (Thumbnail != other.Thumbnail) return false;
-      if (IsFavourite != other.IsFavourite) return false;
+      if (IsFavorite != other.IsFavorite) return false;
       if (AlbumName != other.AlbumName) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -721,7 +721,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (HasAddress) hash ^= Address.GetHashCode();
       if (HasVenue) hash ^= Venue.GetHashCode();
       if (Thumbnail.Length != 0) hash ^= Thumbnail.GetHashCode();
-      if (HasIsFavourite) hash ^= IsFavourite.GetHashCode();
+      if (HasIsFavorite) hash ^= IsFavorite.GetHashCode();
       if (HasAlbumName) hash ^= AlbumName.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -845,9 +845,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(210, 1);
         output.WriteBytes(Thumbnail);
       }
-      if (HasIsFavourite) {
+      if (HasIsFavorite) {
         output.WriteRawTag(216, 1);
-        output.WriteBool(IsFavourite);
+        output.WriteBool(IsFavorite);
       }
       if (HasAlbumName) {
         output.WriteRawTag(226, 1);
@@ -967,9 +967,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(210, 1);
         output.WriteBytes(Thumbnail);
       }
-      if (HasIsFavourite) {
+      if (HasIsFavorite) {
         output.WriteRawTag(216, 1);
-        output.WriteBool(IsFavourite);
+        output.WriteBool(IsFavorite);
       }
       if (HasAlbumName) {
         output.WriteRawTag(226, 1);
@@ -1063,7 +1063,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Thumbnail.Length != 0) {
         size += 2 + pb::CodedOutputStream.ComputeBytesSize(Thumbnail);
       }
-      if (HasIsFavourite) {
+      if (HasIsFavorite) {
         size += 2 + 1;
       }
       if (HasAlbumName) {
@@ -1159,8 +1159,8 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (other.Thumbnail.Length != 0) {
         Thumbnail = other.Thumbnail;
       }
-      if (other.HasIsFavourite) {
-        IsFavourite = other.IsFavourite;
+      if (other.HasIsFavorite) {
+        IsFavorite = other.IsFavorite;
       }
       if (other.HasAlbumName) {
         AlbumName = other.AlbumName;
@@ -1285,7 +1285,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 216: {
-            IsFavourite = input.ReadBool();
+            IsFavorite = input.ReadBool();
             break;
           }
           case 226: {
@@ -1412,7 +1412,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 216: {
-            IsFavourite = input.ReadBool();
+            IsFavorite = input.ReadBool();
             break;
           }
           case 226: {
