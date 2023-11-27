@@ -99,6 +99,12 @@ To generate a c# class from protobuf message use following:
 protoc --proto_path=protobuf --csharp_out=backend/PhotoLibraryBackend.Common --csharp_opt=base_namespace=PhotoLibraryBackend.Common media-info.proto
 ```
 
+To generate typescript file from protobuf message use following:
+
+```bash
+protoc --proto_path=protobuf --ts_out=frontend/src/model media-info.proto
+```
+
 ## 9. Architecture Decisions
 
 ## 10. Quality Requirements
