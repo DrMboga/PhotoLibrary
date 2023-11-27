@@ -1,8 +1,8 @@
-import { MediaInfo } from '../model/mediaInfo';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { MEDIA_INFOS_MOCK } from '../model/mock/mediaInfosMock';
 import { RootState } from '../store';
 import { ensureError } from '../helpers/error-helper';
+import { MediaInfo } from '../model/media-info';
 
 const ChunkSize = 30;
 

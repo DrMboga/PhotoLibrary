@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { MediaInfo } from '../model/mediaInfo';
 import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { dateFromUnixTime, secondsToTimeFormat } from '../helpers/date-helper';
+import { MediaInfo, MediaType } from '../model/media-info';
 
 // TODO: Add thumbnail width and height to the media data model
 const largestSize = 224;
@@ -29,7 +29,7 @@ export const MediaCard = ({ media, onClick }: Props) => {
           height={media.width < media.height ? largestSize : smallestSize}
           image={media.thumbnailUrl}
         ></CardMedia>
-        {media.mediaType === 'video' && (
+        {media.mediaType === MediaType.VIDEO && (
           <Typography
             id={`typography-0-${media.id}`}
             sx={{

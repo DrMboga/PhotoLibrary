@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { MediaInfo } from '../model/mediaInfo';
 import {
   Card,
   CardContent,
@@ -12,6 +11,7 @@ import {
 import { dateFromUnixTime } from '../helpers/date-helper';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
+import { MediaInfo } from '../model/media-info';
 
 // TODO: Add thumbnail width and height to the media data model
 const largestSize = 224;
