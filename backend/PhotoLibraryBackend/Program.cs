@@ -8,12 +8,26 @@ using Serilog;
 // For deploy on Raspberry PI home server
 const string HostServer = "192.168.0.65:8850";
 
+const string AllowCors = "AllowEverything";
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure forwarded headers
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
     options.KnownProxies.Add(IPAddress.Parse(HostServer));
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowCors,
+        policy =>
+        {
+            policy.AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed((host) => true)
+                .AllowCredentials();
+        });
 });
 
 // Configure Serilog
@@ -37,6 +51,8 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+app.UseCors(AllowCors);
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
@@ -45,6 +61,7 @@ var app = builder.Build();
 // }
 
 // app.UseHttpsRedirection();
+
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {

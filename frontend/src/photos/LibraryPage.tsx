@@ -16,6 +16,7 @@ import { ScrollableBox } from '../components/ScrollableBox';
 import { dateFromUnixTime } from '../helpers/date-helper';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MediaPreview } from './MediaPreview';
+import { useMediaSignalRHub } from './useMediaSignalRHub';
 
 const topBarHeight = 56;
 
@@ -28,6 +29,8 @@ function LibraryPage() {
   const dispatch = useAppDispatch();
 
   const [selectedMediaId, setSelectedMediaId] = useState('');
+
+  const { connection, getNextPhotosChunkFromBackend } = useMediaSignalRHub(dateOfLastPhoto);
 
   useEffect(() => {
     dispatch(getPhotos(dateOfFirstPhoto));
@@ -43,6 +46,12 @@ function LibraryPage() {
   const handleScrollToBottom = (): void => {
     if (dateOfLastPhoto) {
       setSelectedMediaId('');
+      console.log('hubConnection.state', connection?.state);
+      if (connection) {
+        getNextPhotosChunkFromBackend(dateOfLastPhoto, connection).catch((err) =>
+          console.error(err),
+        );
+      }
       dispatch(getNextPhotosChunk(dateOfLastPhoto));
     }
   };

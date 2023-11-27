@@ -13,26 +13,38 @@ Your entire family's cherished memories, beautifully organized and easily access
 - [Material UI library](https://mui.com/material-ui/getting-started/)
 - [Material UI icons search](https://mui.com/material-ui/material-icons/)
 
-## Keycloack setup
+# Frontend environment values
 
-### On Dev machine
+There is a `.env` file in the root of frontend near the package.json. It is excluded from source control and contains some environment setting which used by frontend. Here is the example of such `.env` file:
+
+```
+REACT_APP_KEYCLOAK_URL=http://localhost:8070
+REACT_APP_KEYCLOAK_REALM=photo-library
+REACT_APP_KEYCLOAK_CLIENT_ID=photo-library-app
+REACT_APP_REDIRECT_URL=http://localhost:3000
+REACT_APP_BACKEND_URL=https://localhost:7056
+```
+
+# Keycloack setup
+
+## On Dev machine
 
 [Spec](https://www.keycloak.org/getting-started/getting-started-docker)
 
-### 1.
+## 1.
 
 ```bash
 docker run -p 8070:8080 -e KEYCLOAK_ADMIN=<username> -e KEYCLOAK_ADMIN_PASSWORD=<password> quay.io/keycloak/keycloak:22.0.5 start-dev
 ```
 
-### 2. Add user
+## 2. Add user
 
 1. Go to `http://localhost:8070/admin/`
 2. Create new realm (`photo-library`)
 3. Create new user (set e-mail verified)
 4. Go to credentials and set password for created user
 
-### 3. Add app to the keycloak
+## 3. Add app to the keycloak
 
 1. Open admin console. Go to clients, click Create
 2. Set up id (`photo-library-app`), add name (optional), choose OpenID
@@ -181,4 +193,16 @@ dotnet tool install --global mlnet-win-x64 --version 16.13.9
 
 ```bash
 mlnet image-classification --dataset "..\photo-library-lib\ML" --log-file-path "..\mlTests" --name "PhotoLibraryModel"
+```
+
+# How to regenerate proto messages on backend and frontend.
+
+After making changes in \*.proto file, run following:
+
+```bash
+protoc --proto_path=protobuf --csharp_out=backend/PhotoLibraryBackend.Common --csharp_opt=base_namespace=PhotoLibraryBackend.Common media-info.proto
+```
+
+```bash
+protoc --proto_path=protobuf --ts_out=frontend/src/model media-info.proto
 ```

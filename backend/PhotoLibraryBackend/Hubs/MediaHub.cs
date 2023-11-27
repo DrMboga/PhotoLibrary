@@ -30,5 +30,18 @@ public class MediaHub: Hub
         foreach (var media in photosChunk)
         {
             await Clients.All.SendAsync("GetPreviousPhotosChunk", media);
-        }    }
+        }    
+    }
+
+    public override Task OnConnectedAsync()
+    {
+        _logger.LogDebug("On connected");
+        return base.OnConnectedAsync();
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        _logger.LogDebug("On disconnected");
+        return base.OnDisconnectedAsync(exception);
+    }
 }
