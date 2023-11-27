@@ -9,31 +9,31 @@ enum MediaType {
 
 message MediaInfo {
     string id = 1;
-    string thumbnail_url = 2;
-    string media_url = 3;
-    string full_path = 4;
-    string file_name = 5;
-    string file_extension = 6;
-    MediaType media_type = 7;
-    int64 file_size_kb = 8;
-    int32 date_time_original = 9;
+    string thumbnailUrl = 2;
+    string mediaUrl = 3;
+    string fullPath = 4;
+    string fileName = 5;
+    string fileExtension = 6;
+    MediaType mediaType = 7;
+    int64 fileSizeKb = 8;
+    int32 dateTimeOriginal = 9;
     int32 width = 10;
     int32 height = 11;
-    int32 thumbnail_width = 12;
-    int32 thumbnail_height = 13;
-    optional int32 video_duration_sec = 14;
-    optional string picture_maker = 15;
+    int32 thumbnailWidth = 12;
+    int32 thumbnailHeight = 13;
+    optional int32 videoDurationSec = 14;
+    optional string pictureMaker = 15;
     optional string tag = 16;
     optional double latitude = 17;
-    optional string latitude_pole = 18;
+    optional string latitudePole = 18;
     optional double longitude = 19;
-    optional string longitude_side = 20;
+    optional string longitudeSide = 20;
     optional string country = 21;
     optional string region = 22;
     optional string locality = 23;
     optional string address = 24;
     optional string venue = 25;
     bytes thumbnail = 26;
-    optional bool is_favorite = 27;
+    optional bool isFavorite = 27;
     optional string albumName = 28;
 }  

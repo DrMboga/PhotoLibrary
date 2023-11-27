@@ -24,28 +24,27 @@ namespace PhotoLibraryBackend.Common.Messages {
     static MediaInfoReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChBtZWRpYS1pbmZvLnByb3RvItQGCglNZWRpYUluZm8SCgoCaWQYASABKAkS",
-            "FQoNdGh1bWJuYWlsX3VybBgCIAEoCRIRCgltZWRpYV91cmwYAyABKAkSEQoJ",
-            "ZnVsbF9wYXRoGAQgASgJEhEKCWZpbGVfbmFtZRgFIAEoCRIWCg5maWxlX2V4",
-            "dGVuc2lvbhgGIAEoCRIeCgptZWRpYV90eXBlGAcgASgOMgouTWVkaWFUeXBl",
-            "EhQKDGZpbGVfc2l6ZV9rYhgIIAEoAxIaChJkYXRlX3RpbWVfb3JpZ2luYWwY",
-            "CSABKAUSDQoFd2lkdGgYCiABKAUSDgoGaGVpZ2h0GAsgASgFEhcKD3RodW1i",
-            "bmFpbF93aWR0aBgMIAEoBRIYChB0aHVtYm5haWxfaGVpZ2h0GA0gASgFEh8K",
-            "EnZpZGVvX2R1cmF0aW9uX3NlYxgOIAEoBUgAiAEBEhoKDXBpY3R1cmVfbWFr",
-            "ZXIYDyABKAlIAYgBARIQCgN0YWcYECABKAlIAogBARIVCghsYXRpdHVkZRgR",
-            "IAEoAUgDiAEBEhoKDWxhdGl0dWRlX3BvbGUYEiABKAlIBIgBARIWCglsb25n",
-            "aXR1ZGUYEyABKAFIBYgBARIbCg5sb25naXR1ZGVfc2lkZRgUIAEoCUgGiAEB",
-            "EhQKB2NvdW50cnkYFSABKAlIB4gBARITCgZyZWdpb24YFiABKAlICIgBARIV",
-            "Cghsb2NhbGl0eRgXIAEoCUgJiAEBEhQKB2FkZHJlc3MYGCABKAlICogBARIS",
-            "CgV2ZW51ZRgZIAEoCUgLiAEBEhEKCXRodW1ibmFpbBgaIAEoDBIYCgtpc19m",
-            "YXZvcml0ZRgbIAEoCEgMiAEBEhYKCWFsYnVtTmFtZRgcIAEoCUgNiAEBQhUK",
-            "E192aWRlb19kdXJhdGlvbl9zZWNCEAoOX3BpY3R1cmVfbWFrZXJCBgoEX3Rh",
-            "Z0ILCglfbGF0aXR1ZGVCEAoOX2xhdGl0dWRlX3BvbGVCDAoKX2xvbmdpdHVk",
-            "ZUIRCg9fbG9uZ2l0dWRlX3NpZGVCCgoIX2NvdW50cnlCCQoHX3JlZ2lvbkIL",
-            "CglfbG9jYWxpdHlCCgoIX2FkZHJlc3NCCAoGX3ZlbnVlQg4KDF9pc19mYXZv",
-            "cml0ZUIMCgpfYWxidW1OYW1lKiEKCU1lZGlhVHlwZRIJCgVJTUFHRRAAEgkK",
-            "BVZJREVPEAFCJqoCI1Bob3RvTGlicmFyeUJhY2tlbmQuQ29tbW9uLk1lc3Nh",
-            "Z2VzYgZwcm90bzM="));
+            "ChBtZWRpYS1pbmZvLnByb3RvIrwGCglNZWRpYUluZm8SCgoCaWQYASABKAkS",
+            "FAoMdGh1bWJuYWlsVXJsGAIgASgJEhAKCG1lZGlhVXJsGAMgASgJEhAKCGZ1",
+            "bGxQYXRoGAQgASgJEhAKCGZpbGVOYW1lGAUgASgJEhUKDWZpbGVFeHRlbnNp",
+            "b24YBiABKAkSHQoJbWVkaWFUeXBlGAcgASgOMgouTWVkaWFUeXBlEhIKCmZp",
+            "bGVTaXplS2IYCCABKAMSGAoQZGF0ZVRpbWVPcmlnaW5hbBgJIAEoBRINCgV3",
+            "aWR0aBgKIAEoBRIOCgZoZWlnaHQYCyABKAUSFgoOdGh1bWJuYWlsV2lkdGgY",
+            "DCABKAUSFwoPdGh1bWJuYWlsSGVpZ2h0GA0gASgFEh0KEHZpZGVvRHVyYXRp",
+            "b25TZWMYDiABKAVIAIgBARIZCgxwaWN0dXJlTWFrZXIYDyABKAlIAYgBARIQ",
+            "CgN0YWcYECABKAlIAogBARIVCghsYXRpdHVkZRgRIAEoAUgDiAEBEhkKDGxh",
+            "dGl0dWRlUG9sZRgSIAEoCUgEiAEBEhYKCWxvbmdpdHVkZRgTIAEoAUgFiAEB",
+            "EhoKDWxvbmdpdHVkZVNpZGUYFCABKAlIBogBARIUCgdjb3VudHJ5GBUgASgJ",
+            "SAeIAQESEwoGcmVnaW9uGBYgASgJSAiIAQESFQoIbG9jYWxpdHkYFyABKAlI",
+            "CYgBARIUCgdhZGRyZXNzGBggASgJSAqIAQESEgoFdmVudWUYGSABKAlIC4gB",
+            "ARIRCgl0aHVtYm5haWwYGiABKAwSFwoKaXNGYXZvcml0ZRgbIAEoCEgMiAEB",
+            "EhYKCWFsYnVtTmFtZRgcIAEoCUgNiAEBQhMKEV92aWRlb0R1cmF0aW9uU2Vj",
+            "Qg8KDV9waWN0dXJlTWFrZXJCBgoEX3RhZ0ILCglfbGF0aXR1ZGVCDwoNX2xh",
+            "dGl0dWRlUG9sZUIMCgpfbG9uZ2l0dWRlQhAKDl9sb25naXR1ZGVTaWRlQgoK",
+            "CF9jb3VudHJ5QgkKB19yZWdpb25CCwoJX2xvY2FsaXR5QgoKCF9hZGRyZXNz",
+            "QggKBl92ZW51ZUINCgtfaXNGYXZvcml0ZUIMCgpfYWxidW1OYW1lKiEKCU1l",
+            "ZGlhVHlwZRIJCgVJTUFHRRAAEgkKBVZJREVPEAFCJqoCI1Bob3RvTGlicmFy",
+            "eUJhY2tlbmQuQ29tbW9uLk1lc3NhZ2VzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::PhotoLibraryBackend.Common.Messages.MediaType), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -149,7 +148,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "thumbnail_url" field.</summary>
+    /// <summary>Field number for the "thumbnailUrl" field.</summary>
     public const int ThumbnailUrlFieldNumber = 2;
     private string thumbnailUrl_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -161,7 +160,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "media_url" field.</summary>
+    /// <summary>Field number for the "mediaUrl" field.</summary>
     public const int MediaUrlFieldNumber = 3;
     private string mediaUrl_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -173,7 +172,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "full_path" field.</summary>
+    /// <summary>Field number for the "fullPath" field.</summary>
     public const int FullPathFieldNumber = 4;
     private string fullPath_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -185,7 +184,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "file_name" field.</summary>
+    /// <summary>Field number for the "fileName" field.</summary>
     public const int FileNameFieldNumber = 5;
     private string fileName_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -197,7 +196,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "file_extension" field.</summary>
+    /// <summary>Field number for the "fileExtension" field.</summary>
     public const int FileExtensionFieldNumber = 6;
     private string fileExtension_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -209,7 +208,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "media_type" field.</summary>
+    /// <summary>Field number for the "mediaType" field.</summary>
     public const int MediaTypeFieldNumber = 7;
     private global::PhotoLibraryBackend.Common.Messages.MediaType mediaType_ = global::PhotoLibraryBackend.Common.Messages.MediaType.Image;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -221,7 +220,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "file_size_kb" field.</summary>
+    /// <summary>Field number for the "fileSizeKb" field.</summary>
     public const int FileSizeKbFieldNumber = 8;
     private long fileSizeKb_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -233,7 +232,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "date_time_original" field.</summary>
+    /// <summary>Field number for the "dateTimeOriginal" field.</summary>
     public const int DateTimeOriginalFieldNumber = 9;
     private int dateTimeOriginal_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -269,7 +268,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "thumbnail_width" field.</summary>
+    /// <summary>Field number for the "thumbnailWidth" field.</summary>
     public const int ThumbnailWidthFieldNumber = 12;
     private int thumbnailWidth_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -281,7 +280,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "thumbnail_height" field.</summary>
+    /// <summary>Field number for the "thumbnailHeight" field.</summary>
     public const int ThumbnailHeightFieldNumber = 13;
     private int thumbnailHeight_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -293,7 +292,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "video_duration_sec" field.</summary>
+    /// <summary>Field number for the "videoDurationSec" field.</summary>
     public const int VideoDurationSecFieldNumber = 14;
     private int videoDurationSec_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -305,20 +304,20 @@ namespace PhotoLibraryBackend.Common.Messages {
         videoDurationSec_ = value;
       }
     }
-    /// <summary>Gets whether the "video_duration_sec" field is set</summary>
+    /// <summary>Gets whether the "videoDurationSec" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool HasVideoDurationSec {
       get { return (_hasBits0 & 1) != 0; }
     }
-    /// <summary>Clears the value of the "video_duration_sec" field</summary>
+    /// <summary>Clears the value of the "videoDurationSec" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void ClearVideoDurationSec() {
       _hasBits0 &= ~1;
     }
 
-    /// <summary>Field number for the "picture_maker" field.</summary>
+    /// <summary>Field number for the "pictureMaker" field.</summary>
     public const int PictureMakerFieldNumber = 15;
     private string pictureMaker_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -329,13 +328,13 @@ namespace PhotoLibraryBackend.Common.Messages {
         pictureMaker_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
-    /// <summary>Gets whether the "picture_maker" field is set</summary>
+    /// <summary>Gets whether the "pictureMaker" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool HasPictureMaker {
       get { return pictureMaker_ != null; }
     }
-    /// <summary>Clears the value of the "picture_maker" field</summary>
+    /// <summary>Clears the value of the "pictureMaker" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void ClearPictureMaker() {
@@ -391,7 +390,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       _hasBits0 &= ~2;
     }
 
-    /// <summary>Field number for the "latitude_pole" field.</summary>
+    /// <summary>Field number for the "latitudePole" field.</summary>
     public const int LatitudePoleFieldNumber = 18;
     private string latitudePole_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -402,13 +401,13 @@ namespace PhotoLibraryBackend.Common.Messages {
         latitudePole_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
-    /// <summary>Gets whether the "latitude_pole" field is set</summary>
+    /// <summary>Gets whether the "latitudePole" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool HasLatitudePole {
       get { return latitudePole_ != null; }
     }
-    /// <summary>Clears the value of the "latitude_pole" field</summary>
+    /// <summary>Clears the value of the "latitudePole" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void ClearLatitudePole() {
@@ -440,7 +439,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       _hasBits0 &= ~4;
     }
 
-    /// <summary>Field number for the "longitude_side" field.</summary>
+    /// <summary>Field number for the "longitudeSide" field.</summary>
     public const int LongitudeSideFieldNumber = 20;
     private string longitudeSide_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -451,13 +450,13 @@ namespace PhotoLibraryBackend.Common.Messages {
         longitudeSide_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
-    /// <summary>Gets whether the "longitude_side" field is set</summary>
+    /// <summary>Gets whether the "longitudeSide" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool HasLongitudeSide {
       get { return longitudeSide_ != null; }
     }
-    /// <summary>Clears the value of the "longitude_side" field</summary>
+    /// <summary>Clears the value of the "longitudeSide" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void ClearLongitudeSide() {
@@ -596,7 +595,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "is_favorite" field.</summary>
+    /// <summary>Field number for the "isFavorite" field.</summary>
     public const int IsFavoriteFieldNumber = 27;
     private bool isFavorite_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -608,13 +607,13 @@ namespace PhotoLibraryBackend.Common.Messages {
         isFavorite_ = value;
       }
     }
-    /// <summary>Gets whether the "is_favorite" field is set</summary>
+    /// <summary>Gets whether the "isFavorite" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public bool HasIsFavorite {
       get { return (_hasBits0 & 8) != 0; }
     }
-    /// <summary>Clears the value of the "is_favorite" field</summary>
+    /// <summary>Clears the value of the "isFavorite" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
     public void ClearIsFavorite() {
