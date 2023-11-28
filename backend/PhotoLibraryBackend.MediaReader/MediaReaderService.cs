@@ -20,8 +20,8 @@ public class MediaReaderService : IMediaReaderService
     {
         // TODO: Mock implementation
         var allMedias = MediaInfos.MediaInfosList
-            .OrderBy(m => m.DateTimeOriginal)
-            .Where(m => m.DateTimeOriginal >= dateFrom)
+            .OrderByDescending(m => m.DateTimeOriginal)
+            .Where(m => m.DateTimeOriginal <= dateFrom)
             .Take(PhotosSizeChunk);
         if (allMedias == null)
         {
@@ -46,8 +46,9 @@ public class MediaReaderService : IMediaReaderService
         // TODO: Mock implementation
         var allMedias = MediaInfos.MediaInfosList
             .OrderBy(m => m.DateTimeOriginal)
-            .Where(m => m.DateTimeOriginal < dateTo)
-            .Take(PhotosSizeChunk);
+            .Where(m => m.DateTimeOriginal > dateTo)
+            .Take(PhotosSizeChunk)
+            .Reverse();
         if (allMedias == null)
         {
             return [];
