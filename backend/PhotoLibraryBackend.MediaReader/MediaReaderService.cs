@@ -1,43 +1,67 @@
-﻿
+﻿using Google.Protobuf;
+using PhotoLibraryBackend.Common.Messages;
+
 namespace PhotoLibraryBackend.MediaReader;
 
-/// <inheritdoc />
 public class MediaReaderService : IMediaReaderService
 {
-    const string TempFolder = "VideoThumbnailsTemp";
-    private readonly string _tempFolderPath;
+    private const int PhotosSizeChunk = 30;
+    private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
 
     private readonly ILogger<MediaReaderService> _logger;
 
     public MediaReaderService(ILogger<MediaReaderService> logger)
     {
-        _tempFolderPath = Path.Combine(Directory.GetCurrentDirectory(), TempFolder);
-        if (!Directory.Exists(_tempFolderPath))
-        {
-            Directory.CreateDirectory(_tempFolderPath);
-        }
         _logger = logger;
     }
 
     /// <inheritdoc />
-    public byte[]? MakePhotoThumbnail(string filePath)
+    public async Task<MediaInfo[]> GetNextPhotosChunk(double dateFrom)
     {
-        return filePath.MakePhotoThumbnail();
+        // TODO: Mock implementation
+        var allMedias = MediaInfos.MediaInfosList
+            .OrderBy(m => m.DateTimeOriginal)
+            .Where(m => m.DateTimeOriginal >= dateFrom)
+            .Take(PhotosSizeChunk);
+        if (allMedias == null)
+        {
+            return [];
+        }
+
+        var dateStart = allMedias.FirstOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
+        var dateEnd = allMedias.LastOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
+        _logger.MediaReadChunk(allMedias.Count(), dateStart, dateEnd);
+
+        foreach (var media in allMedias)
+        {
+            var thumbnail = await File.ReadAllBytesAsync(Path.Combine(_folderPath, media.FileName));
+            media.Thumbnail = ByteString.CopyFrom(thumbnail);
+        }
+        return allMedias.ToArray();
     }
 
     /// <inheritdoc />
-    public async Task<byte[]?> MakeVideoThumbnail(string filePath)
+    public async Task<MediaInfo[]> GetPreviousPhotosChunk(double dateTo)
     {
-        var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
-        var videoThumbnailFilePath = Path.Combine(_tempFolderPath, $"{fileNameWithoutExt}.jpg");
-        await $"ffmpeg -i {filePath} -ss 00:00:01.000 -vframes 1 {videoThumbnailFilePath}".Bash(_logger);
+        // TODO: Mock implementation
+        var allMedias = MediaInfos.MediaInfosList
+            .OrderBy(m => m.DateTimeOriginal)
+            .Where(m => m.DateTimeOriginal < dateTo)
+            .Take(PhotosSizeChunk);
+        if (allMedias == null)
+        {
+            return [];
+        }
 
-        // Resize the big picture
-        var smallThumbnail = videoThumbnailFilePath.MakePhotoThumbnail();
+        var dateStart = allMedias.FirstOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
+        var dateEnd = allMedias.LastOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
+        _logger.MediaReadChunk(allMedias.Count(), dateStart, dateEnd);
 
-        // Delete temp thumbnail
-        File.Delete(videoThumbnailFilePath);
-
-        return smallThumbnail;
+        foreach (var media in allMedias)
+        {
+            var thumbnail = await File.ReadAllBytesAsync(Path.Combine(_folderPath, media.FileName));
+            media.Thumbnail = ByteString.CopyFrom(thumbnail);
+        }
+        return allMedias.ToArray();
     }
 }

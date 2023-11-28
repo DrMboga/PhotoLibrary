@@ -1,21 +1,16 @@
-﻿namespace PhotoLibraryBackend.Common;
+﻿using PhotoLibraryBackend.Common.Messages;
 
-/// <summary>
-/// Service for reading media metadata and thumbnail creation
-/// </summary>
+namespace PhotoLibraryBackend.Common;
+
 public interface IMediaReaderService
 {
     /// <summary>
-    /// Makes a thumbnail from a photo.
+    /// Returns a bunch of photos after the date from
     /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
-    byte[]? MakePhotoThumbnail(string filePath);
+    Task<MediaInfo[]> GetNextPhotosChunk(double dateFrom);
 
     /// <summary>
-    /// Makes a thumbnail from video file
+    /// Returns a bunch of photos before the date to
     /// </summary>
-    /// <param name="filePath"></param>
-    /// <returns></returns>
-    Task<byte[]?> MakeVideoThumbnail(string filePath);
+    Task<MediaInfo[]> GetPreviousPhotosChunk(double dateTo);
 }

@@ -5,9 +5,9 @@ namespace PhotoLibraryBackend;
 public class MediaHub: Hub
 {
     private readonly ILogger<MediaHub> _logger;
-    private readonly IMediaReader _mediaReader;
+    private readonly IMediaReaderService _mediaReader;
 
-    public MediaHub(ILogger<MediaHub> logger, IMediaReader mediaReader)
+    public MediaHub(ILogger<MediaHub> logger, IMediaReaderService mediaReader)
     {
         _logger = logger;
         _mediaReader = mediaReader;

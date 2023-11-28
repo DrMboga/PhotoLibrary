@@ -39,9 +39,9 @@ var logger = new LoggerConfiguration()
 builder.Logging.AddSerilog(logger);
 
 // Setup PhotoLibrary services
-builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
+builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
 builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
-builder.Services.AddTransient<IMediaReader, MediaReader>();
+builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
