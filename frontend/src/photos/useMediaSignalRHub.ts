@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { MediaInfo } from '../model/media-info';
+import { useAppDispatch } from '../storeHooks';
+import { changeDateOfFirstPhoto, changeDateOfLastPhoto } from './photosSlice';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
@@ -12,6 +14,8 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const [connection, setConnection] = useState<HubConnection>();
   // https://react.dev/learn/updating-arrays-in-state
   const [photos, setPhotos] = useState<MediaInfo[]>([]);
+
+  const dispatch = useAppDispatch();
 
   const getNextPhotosChunkFromBackend = async (dateFrom: number, connection: HubConnection) => {
     if (connection.state === HubConnectionState.Connected) {
@@ -28,17 +32,22 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   };
 
   const handleNextPhotoPushed = (media: MediaInfo) => {
-    console.log('GetNextPhotosChunk -> media received', media.fileName, media.dateTimeOriginal);
+    console.log(
+      'GetNextPhotosChunk -> media received',
+      media.fileName,
+      media.dateTimeOriginal,
+      photos.length,
+    );
 
+    // TODO: Not working yet, because photos is always empty
     let updatedPhotos = [...photos, media];
     if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
       // Remove first ChunkSize elements
       updatedPhotos = updatedPhotos.slice(maxSizeOfPhotosOnAPage);
     }
     if (updatedPhotos.length > 0) {
-      // TODO: Dispatch
-      // state.dateOfFirstPhoto = photosArray[0].dateTimeOriginal;
-      // state.dateOfLastPhoto = photosArray[photosArray.length - 1].dateTimeOriginal;
+      dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
+      dispatch(changeDateOfLastPhoto(updatedPhotos[updatedPhotos.length - 1].dateTimeOriginal));
     }
     setPhotos(updatedPhotos);
   };

@@ -3,10 +3,7 @@ import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import PlayCircleIcon from '@mui/icons-material/PlayCircle';
 import { dateFromUnixTime, secondsToTimeFormat } from '../helpers/date-helper';
 import { MediaInfo, MediaType } from '../model/media-info';
-
-// TODO: Add thumbnail width and height to the media data model
-const largestSize = 224;
-const smallestSize = 168;
+import { blobToImage } from '../helpers/blob-image.helper';
 
 type Props = {
   media: MediaInfo;
@@ -25,9 +22,9 @@ export const MediaCard = ({ media, onClick }: Props) => {
         <CardMedia
           key={`card-media-${media.id}`}
           component="img"
-          width={media.width > media.height ? largestSize : smallestSize}
-          height={media.width < media.height ? largestSize : smallestSize}
-          image={media.thumbnailUrl}
+          width={media.thumbnailWidth}
+          height={media.thumbnailHeight}
+          image={blobToImage(media.thumbnail)}
         ></CardMedia>
         {media.mediaType === MediaType.VIDEO && (
           <Typography

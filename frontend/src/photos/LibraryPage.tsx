@@ -1,12 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { useAppDispatch, useAppSelector } from '../storeHooks';
+import React, { useState } from 'react';
+import { useAppSelector } from '../storeHooks';
 import {
-  getNextPhotosChunk,
-  getPhotos,
-  getPreviousPhotosChunk,
   selectDateOfFirstPhoto,
   selectDateOfLastPhoto,
-  selectPhotos,
   selectPhotosLoadingBottom,
   selectPhotosLoadingTop,
 } from './photosSlice';
@@ -25,18 +21,11 @@ function LibraryPage() {
   const loadingBottom = useAppSelector(selectPhotosLoadingBottom);
   const dateOfFirstPhoto = useAppSelector(selectDateOfFirstPhoto);
   const dateOfLastPhoto = useAppSelector(selectDateOfLastPhoto);
-  const photos = useAppSelector(selectPhotos);
-  const dispatch = useAppDispatch();
 
   const [selectedMediaId, setSelectedMediaId] = useState('');
 
-  const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend } =
+  const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos } =
     useMediaSignalRHub(dateOfLastPhoto);
-
-  // TODO: Obsolete
-  useEffect(() => {
-    dispatch(getPhotos(dateOfFirstPhoto));
-  }, [dispatch]);
 
   const handleScrollToTop = (): void => {
     if (dateOfFirstPhoto) {
@@ -46,8 +35,6 @@ function LibraryPage() {
           console.error(err),
         );
       }
-      // TODO: Obsolete
-      dispatch(getPreviousPhotosChunk(dateOfFirstPhoto));
     }
   };
 
@@ -59,8 +46,6 @@ function LibraryPage() {
           console.error(err),
         );
       }
-      // TODO: Obsolete
-      dispatch(getNextPhotosChunk(dateOfLastPhoto));
     }
   };
 

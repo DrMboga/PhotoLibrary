@@ -12,10 +12,7 @@ import { dateFromUnixTime } from '../helpers/date-helper';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import ShareIcon from '@mui/icons-material/Share';
 import { MediaInfo } from '../model/media-info';
-
-// TODO: Add thumbnail width and height to the media data model
-const largestSize = 224;
-const smallestSize = 168;
+import { blobToImage } from '../helpers/blob-image.helper';
 
 type Props = {
   media: MediaInfo;
@@ -33,9 +30,9 @@ export const MediaPreview = ({ media }: Props) => {
       <CardMedia
         key={`card-media-${media.id}`}
         component="img"
-        width={media.width > media.height ? largestSize * 3 : smallestSize * 3}
-        height={media.width < media.height ? largestSize * 3 : smallestSize * 3}
-        image={media.thumbnailUrl}
+        width={media.thumbnailWidth * 3}
+        height={media.thumbnailHeight * 3}
+        image={blobToImage(media.thumbnail)}
       ></CardMedia>
       <CardContent
         id={`card-content-1-${media.id}`}
