@@ -11,6 +11,9 @@ export interface PhotosStore {
   dateOfLastPhoto?: number;
   loadingTop: boolean;
   loadingBottom: boolean;
+  /**
+   * @deprecated Use a `useMediaSignalRHub` hook logic instead
+   */
   photos: MediaInfo[];
 }
 
@@ -27,6 +30,9 @@ function delay(ms: number): Promise<any> {
 }
 const sortByDateDesc = (a: MediaInfo, b: MediaInfo) => b.dateTimeOriginal - a.dateTimeOriginal;
 
+/**
+ * @deprecated Use a `useMediaSignalRHub` hook logic instead
+ */
 export const getPhotos = createAsyncThunk('getPhotos', async (dateFrom?: number) => {
   await delay(1000);
   const sortedMockPhotos = MEDIA_INFOS_MOCK.sort(sortByDateDesc);
@@ -37,6 +43,9 @@ export const getPhotos = createAsyncThunk('getPhotos', async (dateFrom?: number)
   }
 });
 
+/**
+ * @deprecated Use a `useMediaSignalRHub` hook logic instead
+ */
 export const getPreviousPhotosChunk = createAsyncThunk(
   'getPreviousPhotosChunk',
   async (dateTo: number) => {
@@ -61,6 +70,9 @@ export const getPreviousPhotosChunk = createAsyncThunk(
   },
 );
 
+/**
+ * @deprecated Use a `useMediaSignalRHub` hook logic instead
+ */
 export const getNextPhotosChunk = createAsyncThunk(
   'getNextPhotosChunk',
   async (dateFrom: number) => {
@@ -150,4 +162,7 @@ export const selectPhotosLoadingTop = (state: RootState) => state.photos.loading
 export const selectPhotosLoadingBottom = (state: RootState) => state.photos.loadingBottom;
 export const selectDateOfFirstPhoto = (state: RootState) => state.photos.dateOfFirstPhoto;
 export const selectDateOfLastPhoto = (state: RootState) => state.photos.dateOfLastPhoto;
+/**
+ * @deprecated Use a `useMediaSignalRHub` hook logic instead
+ */
 export const selectPhotos = (state: RootState) => state.photos.photos;

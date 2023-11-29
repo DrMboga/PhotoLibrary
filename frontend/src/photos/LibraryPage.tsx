@@ -30,8 +30,10 @@ function LibraryPage() {
 
   const [selectedMediaId, setSelectedMediaId] = useState('');
 
-  const { connection, getNextPhotosChunkFromBackend } = useMediaSignalRHub(dateOfLastPhoto);
+  const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend } =
+    useMediaSignalRHub(dateOfLastPhoto);
 
+  // TODO: Obsolete
   useEffect(() => {
     dispatch(getPhotos(dateOfFirstPhoto));
   }, [dispatch]);
@@ -39,6 +41,12 @@ function LibraryPage() {
   const handleScrollToTop = (): void => {
     if (dateOfFirstPhoto) {
       setSelectedMediaId('');
+      if (connection) {
+        getPreviousPhotosChunkFromBackend(dateOfFirstPhoto, connection).catch((err) =>
+          console.error(err),
+        );
+      }
+      // TODO: Obsolete
       dispatch(getPreviousPhotosChunk(dateOfFirstPhoto));
     }
   };
@@ -46,12 +54,12 @@ function LibraryPage() {
   const handleScrollToBottom = (): void => {
     if (dateOfLastPhoto) {
       setSelectedMediaId('');
-      console.log('hubConnection.state', connection?.state);
       if (connection) {
         getNextPhotosChunkFromBackend(dateOfLastPhoto, connection).catch((err) =>
           console.error(err),
         );
       }
+      // TODO: Obsolete
       dispatch(getNextPhotosChunk(dateOfLastPhoto));
     }
   };
