@@ -5,6 +5,7 @@ import { MediaInfo } from '../model/media-info';
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
 const defaultDateFrom = 9999999999; //Sat Nov 20 2286 17:46:39
+const maxSizeOfPhotosOnAPage = 30;
 
 export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const connectCalledOnce = useRef(false);
@@ -28,12 +29,24 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
 
   const handleNextPhotoPushed = (media: MediaInfo) => {
     console.log('GetNextPhotosChunk -> media received', media.fileName, media.dateTimeOriginal);
-    // TODO: Add media to end of local array and pull the first element if needed
+
+    let updatedPhotos = [...photos, media];
+    if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
+      // Remove first ChunkSize elements
+      updatedPhotos = updatedPhotos.slice(maxSizeOfPhotosOnAPage);
+    }
+    if (updatedPhotos.length > 0) {
+      // TODO: Dispatch
+      // state.dateOfFirstPhoto = photosArray[0].dateTimeOriginal;
+      // state.dateOfLastPhoto = photosArray[photosArray.length - 1].dateTimeOriginal;
+    }
+    setPhotos(updatedPhotos);
   };
 
   const handlePreviousPhotoPushed = (media: MediaInfo) => {
     console.log('GetPreviousPhotosChunk -> media received', media.fileName, media.dateTimeOriginal);
     // TODO: Find the place of the media in the photos array and insert it, then pull the last element if needed
+    let updatedPhotos = [...photos];
   };
 
   useEffect(() => {
