@@ -23,7 +23,7 @@ export const MediaPreview = ({ media }: Props) => {
   const city = media.locality ?? media.region ?? '';
   const venue = media.venue ?? '';
 
-  const address = city && country ? `${city}, ${country}${venue ? `, ${venue}` : ''}` : '';
+  const address = city && country ? `${city}, ${country}${venue}` : '';
   return (
     <Card key={`media-preview-card${media.id}`}>
       <CardHeader subheader={media.fullPath} />
