@@ -15,6 +15,8 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   // https://react.dev/learn/updating-arrays-in-state
   const [photos, setPhotos] = useState<MediaInfo[]>([]);
 
+  const [newBottomMedias, setNewBottomMedias] = useState<MediaInfo[]>();
+
   const dispatch = useAppDispatch();
 
   const getNextPhotosChunkFromBackend = async (dateFrom: number, connection: HubConnection) => {
@@ -31,29 +33,15 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     }
   };
 
-  const handleNextPhotoPushed = (media: MediaInfo) => {
-    console.log(
-      'GetNextPhotosChunk -> media received',
-      media.fileName,
-      media.dateTimeOriginal,
-      photos.length,
-    );
-
-    // TODO: Not working yet, because photos is always empty
-    let updatedPhotos = [...photos, media];
-    if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
-      // Remove first ChunkSize elements
-      updatedPhotos = updatedPhotos.slice(maxSizeOfPhotosOnAPage);
+  const handleNextPhotoPushed = (medias: MediaInfo[]) => {
+    console.log('GetNextPhotosChunk -> media received', medias.length);
+    if (medias) {
+      setNewBottomMedias(medias);
     }
-    if (updatedPhotos.length > 0) {
-      dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
-      dispatch(changeDateOfLastPhoto(updatedPhotos[updatedPhotos.length - 1].dateTimeOriginal));
-    }
-    setPhotos(updatedPhotos);
   };
 
-  const handlePreviousPhotoPushed = (media: MediaInfo) => {
-    console.log('GetPreviousPhotosChunk -> media received', media.fileName, media.dateTimeOriginal);
+  const handlePreviousPhotoPushed = (medias: MediaInfo[]) => {
+    console.log('GetPreviousPhotosChunk -> media received', medias.length);
     // TODO: Find the place of the media in the photos array and insert it, then pull the last element if needed
     let updatedPhotos = [...photos];
   };
@@ -92,6 +80,23 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (!newBottomMedias) {
+      return;
+    }
+
+    let updatedPhotos = [...photos, ...newBottomMedias];
+    if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
+      // Remove first ChunkSize elements
+      updatedPhotos = updatedPhotos.slice(maxSizeOfPhotosOnAPage);
+    }
+    if (updatedPhotos.length > 0) {
+      dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
+      dispatch(changeDateOfLastPhoto(updatedPhotos[updatedPhotos.length - 1].dateTimeOriginal));
+    }
+    setPhotos(updatedPhotos);
+  }, [newBottomMedias]);
 
   return { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos };
 };

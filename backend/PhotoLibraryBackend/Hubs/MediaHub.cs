@@ -17,20 +17,14 @@ public class MediaHub: Hub
     {
         _logger.DebugHubMessage("GetNextPhotosChunk", dateFrom);
         var photosChunk = await _mediaReader.GetNextPhotosChunk(dateFrom);
-        foreach (var media in photosChunk)
-        {
-            await Clients.All.SendAsync("GetNextPhotosChunk", media);
-        }
+        await Clients.All.SendAsync("GetNextPhotosChunk", photosChunk);
     }
 
     public async Task GetPreviousPhotosChunk(double dateTo)
     {
         _logger.DebugHubMessage("GetPreviousPhotosChunk", dateTo);
         var photosChunk = await _mediaReader.GetPreviousPhotosChunk(dateTo);
-        foreach (var media in photosChunk)
-        {
-            await Clients.All.SendAsync("GetPreviousPhotosChunk", media);
-        }    
+        await Clients.All.SendAsync("GetPreviousPhotosChunk", photosChunk);
     }
 
     public override Task OnConnectedAsync()
