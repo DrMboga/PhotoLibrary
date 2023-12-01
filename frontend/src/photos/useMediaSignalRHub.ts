@@ -51,19 +51,26 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const mergeTwoPhotosArrays = (
     first: MediaInfo[],
     second: MediaInfo[],
-    removeFromTop: boolean,
+    middleDate: number,
   ): MediaInfo[] => {
     let updatedPhotos = [
       ...first.filter((m) => !second.some((sm) => sm.fileName === m.fileName)),
       ...second,
     ];
     if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
-      updatedPhotos = updatedPhotos.slice(
-        removeFromTop ? 0 : maxSizeOfPhotosOnAPage,
-        removeFromTop
-          ? updatedPhotos.length - maxSizeOfPhotosOnAPage - 1
-          : updatedPhotos.length - 1,
-      );
+      const mediaWithMiddleDate = updatedPhotos.find((m) => m.dateTimeOriginal === middleDate);
+      const middleDateIndex = updatedPhotos.indexOf(mediaWithMiddleDate!);
+      // Cut top of the medias (on scroll to bottom)
+      if (middleDateIndex - maxSizeOfPhotosOnAPage > 0) {
+        updatedPhotos = updatedPhotos.slice(
+          middleDateIndex - maxSizeOfPhotosOnAPage,
+          updatedPhotos.length - 1,
+        );
+      }
+      // Cut bottom of the medias (on scroll to top)
+      if (middleDateIndex + maxSizeOfPhotosOnAPage > updatedPhotos.length) {
+        updatedPhotos = updatedPhotos.slice(0, middleDateIndex + maxSizeOfPhotosOnAPage);
+      }
     }
     if (updatedPhotos.length > 0) {
       dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
@@ -109,19 +116,25 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
 
   // Media files added on scroll to bottom event
   useEffect(() => {
-    if (!newBottomMedias) {
+    if (!newBottomMedias || newBottomMedias.length === 0) {
       return;
     }
 
-    setPhotos(mergeTwoPhotosArrays(photos, newBottomMedias, false));
+    setPhotos(mergeTwoPhotosArrays(photos, newBottomMedias, newBottomMedias[0].dateTimeOriginal));
   }, [newBottomMedias]);
 
   // Media files added on scroll to top event
   useEffect(() => {
-    if (!newUpperMedias) {
+    if (!newUpperMedias || newUpperMedias.length === 0) {
       return;
     }
-    setPhotos(mergeTwoPhotosArrays(newUpperMedias, photos, true));
+    setPhotos(
+      mergeTwoPhotosArrays(
+        newUpperMedias,
+        photos,
+        newUpperMedias[newUpperMedias.length - 1].dateTimeOriginal,
+      ),
+    );
   }, [newUpperMedias]);
 
   return { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos };

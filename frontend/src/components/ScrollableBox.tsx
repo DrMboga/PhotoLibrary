@@ -22,12 +22,17 @@ export const ScrollableBox = ({ children, indent, scrollToTop, scrollToBottom }:
     }
     if (
       targetDiv?.scrollTop + targetDiv.offsetHeight >= targetDiv?.scrollHeight &&
+      targetDiv?.scrollTop !== 0 &&
       scrollToBottom
     ) {
       scrollToBottom();
     }
 
-    if (targetDiv?.scrollTop === 0 && scrollToTop) {
+    if (
+      targetDiv?.scrollTop === 0 &&
+      targetDiv.offsetHeight !== targetDiv?.scrollHeight &&
+      scrollToTop
+    ) {
       scrollToTop();
     }
   };
