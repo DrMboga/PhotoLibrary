@@ -16,6 +16,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const [photos, setPhotos] = useState<MediaInfo[]>([]);
 
   const [newBottomMedias, setNewBottomMedias] = useState<MediaInfo[]>();
+  const [newUpperMedias, setNewUpperMedias] = useState<MediaInfo[]>();
 
   const dispatch = useAppDispatch();
 
@@ -42,8 +43,33 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
 
   const handlePreviousPhotoPushed = (medias: MediaInfo[]) => {
     console.log('GetPreviousPhotosChunk -> media received', medias.length);
-    // TODO: Find the place of the media in the photos array and insert it, then pull the last element if needed
-    let updatedPhotos = [...photos];
+    if (medias) {
+      setNewUpperMedias(medias);
+    }
+  };
+
+  const mergeTwoPhotosArrays = (
+    first: MediaInfo[],
+    second: MediaInfo[],
+    removeFromTop: boolean,
+  ): MediaInfo[] => {
+    let updatedPhotos = [
+      ...first.filter((m) => !second.some((sm) => sm.fileName === m.fileName)),
+      ...second,
+    ];
+    if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
+      updatedPhotos = updatedPhotos.slice(
+        removeFromTop ? 0 : maxSizeOfPhotosOnAPage,
+        removeFromTop
+          ? updatedPhotos.length - maxSizeOfPhotosOnAPage - 1
+          : updatedPhotos.length - 1,
+      );
+    }
+    if (updatedPhotos.length > 0) {
+      dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
+      dispatch(changeDateOfLastPhoto(updatedPhotos[updatedPhotos.length - 1].dateTimeOriginal));
+    }
+    return updatedPhotos;
   };
 
   useEffect(() => {
@@ -81,22 +107,22 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     };
   }, []);
 
+  // Media files added on scroll to bottom event
   useEffect(() => {
     if (!newBottomMedias) {
       return;
     }
 
-    let updatedPhotos = [...photos, ...newBottomMedias];
-    if (updatedPhotos.length > maxSizeOfPhotosOnAPage) {
-      // Remove first ChunkSize elements
-      updatedPhotos = updatedPhotos.slice(maxSizeOfPhotosOnAPage);
-    }
-    if (updatedPhotos.length > 0) {
-      dispatch(changeDateOfFirstPhoto(updatedPhotos[0].dateTimeOriginal));
-      dispatch(changeDateOfLastPhoto(updatedPhotos[updatedPhotos.length - 1].dateTimeOriginal));
-    }
-    setPhotos(updatedPhotos);
+    setPhotos(mergeTwoPhotosArrays(photos, newBottomMedias, false));
   }, [newBottomMedias]);
+
+  // Media files added on scroll to top event
+  useEffect(() => {
+    if (!newUpperMedias) {
+      return;
+    }
+    setPhotos(mergeTwoPhotosArrays(newUpperMedias, photos, true));
+  }, [newUpperMedias]);
 
   return { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos };
 };

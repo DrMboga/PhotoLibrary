@@ -25,7 +25,7 @@ function LibraryPage() {
   const [selectedMediaId, setSelectedMediaId] = useState('');
 
   const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos } =
-    useMediaSignalRHub(dateOfLastPhoto);
+    useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
     if (dateOfFirstPhoto) {
