@@ -91,7 +91,8 @@ High level architecture
 
 ## 8. Crosscutting Concepts
 
-Backend sends media files one by one via SignalR. The message structure should be single for both Backend and Client app. For this purpose the `Protobuf` structure used.
+Backend sends media files by small chunks via SignalR.
+The message structure should be single for both Backend and Client app. For this purpose the `Protobuf` structure used.
 
 To generate a c# class from protobuf message use following:
 
@@ -104,6 +105,15 @@ To generate typescript file from protobuf message use following:
 ```bash
 protoc --proto_path=protobuf --ts_out=frontend/src/model media-info.proto
 ```
+
+### 8.1. MediaInfo infinite scroll
+
+[Proto file](../protobuf/media-info.proto)
+
+SignalR hub has 2 methods: `GetNextPhotosChunk` and `GetPreviousPhotosChunk`. They return an array of media's from database sorted by dae from bottom to top and filtered by input date
+
+Client application has hooks `scrollToTop` or `scrollToBottom`. Both of them are calling appropriate SignalR methods and receives a new photos chunk.
+Thus achieving the infinite scroll.
 
 ## 9. Architecture Decisions
 
