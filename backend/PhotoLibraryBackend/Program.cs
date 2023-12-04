@@ -1,5 +1,6 @@
 using System.Net;
 using System.Text;
+using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using PhotoLibraryBackend;
 using Serilog;
@@ -30,6 +31,15 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Configure keycloak
+var authenticationOptions = builder.Configuration
+    .GetSection(KeycloakAuthenticationOptions.Section)
+    .Get<KeycloakAuthenticationOptions>();
+if (authenticationOptions != null)
+{
+    builder.Services.AddKeycloakAuthentication(authenticationOptions);
+}
+
 // Configure Serilog
 builder.Logging.ClearProviders();
 var logger = new LoggerConfiguration()
@@ -51,16 +61,19 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.UseStaticFiles();
 app.UseCors(AllowCors);
+
+// app.UseHttpsRedirection();
 // Configure the HTTP request pipeline.
 // if (app.Environment.IsDevelopment())
 // {
     app.UseSwagger();
     app.UseSwaggerUI();
 // }
-
-// app.UseHttpsRedirection();
 
 
 app.UseForwardedHeaders(new ForwardedHeadersOptions
@@ -83,6 +96,7 @@ app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionS
     }
     return Results.Text(results.ToString());
 })
+.RequireAuthorization()
 .WithName("PredictPhotoLabelsTest")
 .WithOpenApi();
 
