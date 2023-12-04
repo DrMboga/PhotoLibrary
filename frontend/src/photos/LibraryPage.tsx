@@ -3,10 +3,11 @@ import { useAppSelector } from '../storeHooks';
 import {
   selectDateOfFirstPhoto,
   selectDateOfLastPhoto,
+  selectPhotosLibraryError,
   selectPhotosLoadingBottom,
   selectPhotosLoadingTop,
 } from './photosSlice';
-import { Box } from '@mui/material';
+import { Alert, Box } from '@mui/material';
 import { MediaCard } from './MediaCard';
 import { ScrollableBox } from '../components/ScrollableBox';
 import { dateFromUnixTime } from '../helpers/date-helper';
@@ -21,6 +22,7 @@ function LibraryPage() {
   const loadingBottom = useAppSelector(selectPhotosLoadingBottom);
   const dateOfFirstPhoto = useAppSelector(selectDateOfFirstPhoto);
   const dateOfLastPhoto = useAppSelector(selectDateOfLastPhoto);
+  const error = useAppSelector(selectPhotosLibraryError);
 
   const [selectedMediaId, setSelectedMediaId] = useState('');
 
@@ -55,6 +57,7 @@ function LibraryPage() {
 
   return (
     <>
+      {error && <Alert severity="error">{error}</Alert>}
       <Box>
         <p>
           {dateOfFirstPhoto && dateOfLastPhoto

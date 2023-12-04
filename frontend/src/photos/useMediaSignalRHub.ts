@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { MediaInfo } from '../model/media-info';
-import { useAppDispatch } from '../storeHooks';
-import { changeDateOfFirstPhoto, changeDateOfLastPhoto } from './photosSlice';
+import { useAppDispatch, useAppSelector } from '../storeHooks';
+import { changeDateOfFirstPhoto, changeDateOfLastPhoto, errorOccurred } from './photosSlice';
+import { selectToken } from '../keycloak-auth/authSlice';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
@@ -18,7 +19,14 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const [newBottomMedias, setNewBottomMedias] = useState<MediaInfo[]>();
   const [newUpperMedias, setNewUpperMedias] = useState<MediaInfo[]>();
 
+  const authToken = useAppSelector(selectToken);
+
   const dispatch = useAppDispatch();
+
+  const setError = (err: Error) => {
+    console.error(err);
+    dispatch(errorOccurred(err.message));
+  };
 
   const getNextPhotosChunkFromBackend = async (dateFrom: number, connection: HubConnection) => {
     if (connection.state === HubConnectionState.Connected) {
@@ -83,7 +91,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(mediaHubPath)
+        .withUrl(mediaHubPath, { accessTokenFactory: () => authToken ?? '' })
         .withAutomaticReconnect()
         .build();
       hubConnection
@@ -97,10 +105,10 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
 
           // Initial call to SignalR to get first chunk of photos
           getNextPhotosChunkFromBackend(dateOfLastPhoto ?? defaultDateFrom, hubConnection).catch(
-            (err) => console.error(err),
+            (err) => setError(err),
           );
         })
-        .catch((err) => console.error(err));
+        .catch((err) => setError(err));
     }
 
     // clean up:
@@ -109,7 +117,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
         connection
           .stop()
           .then(() => console.log('Disconnected from the hub'))
-          .catch((err) => console.error(err));
+          .catch((err) => setError(err));
       }
     };
   }, []);

@@ -31,7 +31,7 @@ const persistPhotosConfig = {
   key: 'photo-lib-photos',
   version: 1,
   storage,
-  blacklist: ['photos', 'loadingTop', 'loadingBottom'],
+  blacklist: ['photos', 'loadingTop', 'loadingBottom', 'error'],
 };
 
 const persistedAppReducer = persistReducer(persistAppConfig, appReducer);

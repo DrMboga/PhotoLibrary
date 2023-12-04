@@ -6,6 +6,7 @@ export interface PhotosStore {
   dateOfLastPhoto?: number;
   loadingTop: boolean;
   loadingBottom: boolean;
+  error?: string;
 }
 
 export const initialState: PhotosStore = {
@@ -27,17 +28,27 @@ const photoSlice = createSlice({
       state.loadingTop = false;
       state.loadingBottom = false;
       state.dateOfFirstPhoto = action.payload;
+      state.error = undefined;
     },
     changeDateOfLastPhoto: (state, action: PayloadAction<number>) => {
       state.loadingTop = false;
       state.loadingBottom = false;
       state.dateOfLastPhoto = action.payload;
+      state.error = undefined;
+    },
+    errorOccurred: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
     },
   },
 });
 
-export const { scrollToTop, scrollToBottom, changeDateOfFirstPhoto, changeDateOfLastPhoto } =
-  photoSlice.actions;
+export const {
+  scrollToTop,
+  scrollToBottom,
+  changeDateOfFirstPhoto,
+  changeDateOfLastPhoto,
+  errorOccurred,
+} = photoSlice.actions;
 
 export default photoSlice.reducer;
 
@@ -45,3 +56,4 @@ export const selectPhotosLoadingTop = (state: RootState) => state.photos.loading
 export const selectPhotosLoadingBottom = (state: RootState) => state.photos.loadingBottom;
 export const selectDateOfFirstPhoto = (state: RootState) => state.photos.dateOfFirstPhoto;
 export const selectDateOfLastPhoto = (state: RootState) => state.photos.dateOfLastPhoto;
+export const selectPhotosLibraryError = (state: RootState) => state.photos.error;
