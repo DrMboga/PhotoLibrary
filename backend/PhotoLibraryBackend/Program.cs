@@ -81,7 +81,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-app.MapHub<MediaHub>("/Media");
+app.MapHub<MediaHub>("/Media").RequireAuthorization();
 
 // TODO: Test end point to test ML Net predictions
 app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionService) =>
