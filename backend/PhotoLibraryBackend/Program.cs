@@ -19,18 +19,6 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
     options.KnownProxies.Add(IPAddress.Parse(HostServer));
 });
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(AllowCors,
-        policy =>
-        {
-            policy.AllowAnyHeader()
-                .AllowAnyMethod()
-                .SetIsOriginAllowed((host) => true)
-                .AllowCredentials();
-        });
-});
-
 // Configure keycloak
 var authenticationOptions = builder.Configuration
     .GetSection(KeycloakAuthenticationOptions.Section)
@@ -39,6 +27,19 @@ if (authenticationOptions != null)
 {
     builder.Services.AddKeycloakAuthentication(authenticationOptions);
 }
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(AllowCors,
+        policy =>
+        {
+            policy
+                .WithOrigins("http://localhost:3000", "http://localhost:3000/")
+                .AllowAnyHeader()
+                .AllowCredentials()
+                ;
+        });
+});
 
 // Configure Serilog
 builder.Logging.ClearProviders();
@@ -61,11 +62,11 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 
+app.UseCors(AllowCors);
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles();
-app.UseCors(AllowCors);
 
 // app.UseHttpsRedirection();
 // Configure the HTTP request pipeline.
@@ -81,7 +82,8 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
-app.MapHub<MediaHub>("/Media").RequireAuthorization();
+app.MapHub<MediaHub>("/Media")
+    .RequireAuthorization();
 
 // TODO: Test end point to test ML Net predictions
 app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionService) =>
