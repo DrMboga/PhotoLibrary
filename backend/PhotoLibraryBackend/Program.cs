@@ -50,9 +50,17 @@ var logger = new LoggerConfiguration()
 builder.Logging.AddSerilog(logger);
 
 // Setup PhotoLibrary services
+var settings = builder.Configuration
+                .GetSection("PhotoLibrary")
+                .Get<PhotoLibrarySettings>();
+builder.Services.AddSingleton<PhotoLibrarySettings>(settings!);
 builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
 builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
+builder.Services.AddScoped<IImporterService, ImporterService>();
+
+builder.Services.AddSingleton<WorkerDispatcher>();
+builder.Services.AddHostedService<WorkerService>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -85,21 +93,27 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.MapHub<MediaHub>("/Media")
     .RequireAuthorization();
 
-// TODO: Test end point to test ML Net predictions
-app.MapGet("/predictPhotoLabelsTest", (ILabelsPredictionService labelPredictionService) =>
+app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {
-    string folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
-    var results = new StringBuilder();
-    
-    foreach (var photoFile in Directory.GetFiles(folderPath))
+    var result = dispatcher.StatNewProcess();
+    if (result.WorkflowSuccessfullyStarted)
     {
-        var predictedLabel = labelPredictionService.PredictLabel(photoFile);
-        results.AppendLine($"'{Path.GetFileName(photoFile)}': {predictedLabel.Label}; Others score: {predictedLabel.OtherLabelScore:0.000}; People score: {predictedLabel.PeopleLabelScore:0.000}; Document score: {predictedLabel.DocumentLabelScore:0.000}");
+        return Results.Ok();
     }
-    return Results.Text(results.ToString());
+    return Results.BadRequest(result);
 })
-.RequireAuthorization()
-.WithName("PredictPhotoLabelsTest")
+// .RequireAuthorization()
+.WithName("TriggerMediaImport")
+.WithDescription("Triggers a new media import process")
+.WithOpenApi();
+
+app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) => 
+{
+    return dispatcher.IsInProgress ? Results.Ok<string>("InProgress") : Results.Ok<string>("Idle");
+})
+// .RequireAuthorization()
+.WithName("MediaImportStatus")
+.WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
 .WithOpenApi();
 
 app.Run();
