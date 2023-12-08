@@ -1,4 +1,6 @@
 ﻿
+using Tensorflow;
+
 namespace PhotoLibraryBackend.MediaReader;
 
 public class ImporterService : IImporterService
@@ -12,22 +14,45 @@ public class ImporterService : IImporterService
 
     public async Task StartImport(string photoLibraryPath)
     {
-        var files = Directory.GetFiles(photoLibraryPath);
-        var directories = Directory.GetDirectories(photoLibraryPath);
-        _logger.ImporterStartMessage(photoLibraryPath, files.Length, directories.Length);
-
-        int importedSuccessfully = 0;
-        foreach (var mediaFile in files)
+        var flatDirectoryList = GetAllFoldersAsFlatList(photoLibraryPath);
+        foreach (var dir in flatDirectoryList)
         {
-            var success = await ImportMediaFile(mediaFile);
-            if (success)
+            var files = Directory.GetFiles(dir);
+            _logger.ImporterStartImportDirectoryMessage(dir, files.Length);
+
+            int importedSuccessfully = 0;
+            foreach (var mediaFile in files)
             {
-                importedSuccessfully++;
+                var success = await ImportMediaFile(mediaFile);
+                if (success)
+                {
+                    importedSuccessfully++;
+                }
+            }
+            
+            _logger.ImporterFinishedImportDirectoryMessage(dir, importedSuccessfully, files.Length);
+        }
+    }
+
+    private string[] GetAllFoldersAsFlatList(string folderPath)
+    {
+        var directories = Directory.GetDirectories(folderPath);
+        if(directories == null || directories.Length == 0)
+        {
+            return [];
+        }
+        var result = new List<string>();
+        foreach (var dir in directories)
+        {
+            result.add(dir);
+            // Recursion
+            var subDirs = GetAllFoldersAsFlatList(dir);
+            if (subDirs.Length > 0)
+            {
+                result.AddRange(subDirs);
             }
         }
-        // TODO: Log the folder name and importedSuccessfully count
-
-        // TODO: Find a way to read directories without recursion
+        return [.. result];
     }
 
     private Task<bool> ImportMediaFile(string mediaFilePath)

@@ -20,7 +20,10 @@ static partial class LoggerHelper
     #endregion
 
     #region Importer
-    [LoggerMessage(LogLevel.Debug, Message = "Importer started to work. Root dir '{rootDirectory}' has {filesCount} files and {dirsCount} subfolders")]
-    public static partial void ImporterStartMessage(this ILogger logger, string rootDirectory, int filesCount, int dirsCount);
+    [LoggerMessage(LogLevel.Debug, Message = "Start to import directory '{DirectoryName}' has {FilesCount} files")]
+    public static partial void ImporterStartImportDirectoryMessage(this ILogger logger, string directoryName, int filesCount);
+
+    [LoggerMessage(LogLevel.Debug, Message = "Finish to import directory '{DirectoryName}'. {SuccessfullyImported}/{TotalFilesCount} files imported successfully")]
+    public static partial void ImporterFinishedImportDirectoryMessage(this ILogger logger, string directoryName, int successfullyImported, int totalFilesCount);
     #endregion
 }
