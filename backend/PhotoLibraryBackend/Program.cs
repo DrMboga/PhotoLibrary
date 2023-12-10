@@ -1,7 +1,7 @@
 using System.Net;
-using System.Text;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.SignalR;
 using PhotoLibraryBackend;
 using Serilog;
 
@@ -43,11 +43,9 @@ builder.Services.AddCors(options =>
 
 // Configure Serilog
 builder.Logging.ClearProviders();
-var logger = new LoggerConfiguration()
-                .ReadFrom.Configuration(builder.Configuration)
-                .WriteTo.Console()
-                .CreateLogger();
-builder.Logging.AddSerilog(logger);
+builder.Host.UseSerilog((context, services, configuration) => configuration
+    .ReadFrom.Configuration(builder.Configuration)
+);
 
 // Setup PhotoLibrary services
 var settings = builder.Configuration
@@ -57,7 +55,14 @@ builder.Services.AddSingleton<PhotoLibrarySettings>(settings!);
 builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
 builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
-builder.Services.AddScoped<IImporterService, ImporterService>();
+builder.Services.AddScoped<IImporterService, ImporterService>(sp => new ImporterService(
+    sp.GetRequiredService<ILogger<ImporterService>>(),
+    // TODO: Add MediatR and listen the appropriate event
+    async (string message) => { 
+        var hubContext = sp.GetRequiredService<IHubContext<ImporterLoggerHub>>();
+        await hubContext.Clients.All.SendAsync("LogMessage", message);
+    }
+));
 
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
@@ -92,6 +97,9 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 app.MapHub<MediaHub>("/Media")
     .RequireAuthorization();
+
+app.MapHub<ImporterLoggerHub>("/ImporterLogger");
+    // .RequireAuthorization();
 
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {

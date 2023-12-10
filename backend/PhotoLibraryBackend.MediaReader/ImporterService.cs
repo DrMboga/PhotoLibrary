@@ -6,10 +6,14 @@ namespace PhotoLibraryBackend.MediaReader;
 public class ImporterService : IImporterService
 {
     private readonly ILogger<ImporterService> _logger;
+    private readonly Func<string, Task> _sendMessageToSignalRl;
 
-    public ImporterService(ILogger<ImporterService> logger)
+    public ImporterService(ILogger<ImporterService> logger,
+        Func<string, Task> sendMessageToSignalR // TODO: Use a mediatR instead of func
+    )
     {
         _logger = logger;
+        _sendMessageToSignalRl = sendMessageToSignalR;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -30,7 +34,9 @@ public class ImporterService : IImporterService
                 }
             }
             
+            // TODO: Change it to common SendReport function which logs in fo and sends the MedatR notifications
             _logger.ImporterFinishedImportDirectoryMessage(dir, importedSuccessfully, files.Length);
+            await _sendMessageToSignalRl($"Finish to import directory '{dir}'. {importedSuccessfully}/{files.Length} files imported successfully");
         }
     }
 
