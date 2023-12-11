@@ -1,4 +1,6 @@
-﻿namespace PhotoLibraryBackend;
+﻿using PhotoLibraryBackend.Common.Messages;
+
+namespace PhotoLibraryBackend;
 
 public class ImportReporterSignalRNotificationHandler : INotificationHandler<ReportImportStepToSignalRNotification>
 {
@@ -9,8 +11,17 @@ public class ImportReporterSignalRNotificationHandler : INotificationHandler<Rep
         _importerLoggerHub = importerLoggerHub;
     }
 
-    public Task Handle(ReportImportStepToSignalRNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(ReportImportStepToSignalRNotification notification, CancellationToken cancellationToken)
     {
-        return Task.CompletedTask;
+        var stepSeverity = notification.ReportMessage.Severity == ImporterReportSeverity.Information 
+            ? ImportStepReportSeverity.Information 
+            : (notification.ReportMessage.Severity == ImporterReportSeverity.Warning ? ImportStepReportSeverity.Warning : ImportStepReportSeverity.Error);
+        var stepReport = new ImportStepReport {
+            Id = Guid.NewGuid().ToString(),
+            Timestamp = notification.ReportMessage.Timestamp,
+            Severity = stepSeverity,
+            Message = notification.ReportMessage.Message,
+        };
+        await _importerLoggerHub.Clients.All.SendAsync("ImportStep", stepReport);
     }
 }

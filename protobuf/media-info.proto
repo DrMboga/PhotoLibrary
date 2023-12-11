@@ -7,6 +7,12 @@ enum MediaType {
     VIDEO = 1;
 }
 
+enum ImportStepReportSeverity {
+    INFORMATION = 0;
+    WARNING = 1;
+    ERROR = 2;
+}
+
 message MediaInfo {
     string id = 1;
     string thumbnailUrl = 2;
@@ -36,4 +42,11 @@ message MediaInfo {
     bytes thumbnail = 26;
     optional bool isFavorite = 27;
     optional string albumName = 28;
-}  
+}
+
+message ImportStepReport {
+    string id = 1;
+    int32 Timestamp = 2;
+    ImportStepReportSeverity Severity = 3;
+    string Message = 4;
+}
