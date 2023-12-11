@@ -23,7 +23,11 @@ static partial class LoggerHelper
     [LoggerMessage(LogLevel.Debug, Message = "Start to import directory '{DirectoryName}' has {FilesCount} files")]
     public static partial void ImporterStartImportDirectoryMessage(this ILogger logger, string directoryName, int filesCount);
 
-    [LoggerMessage(LogLevel.Debug, Message = "Finish to import directory '{DirectoryName}'. {SuccessfullyImported}/{TotalFilesCount} files imported successfully")]
-    public static partial void ImporterFinishedImportDirectoryMessage(this ILogger logger, string directoryName, int successfullyImported, int totalFilesCount);
+    [LoggerMessage(Message = "{Message}")]
+    public static partial void ReportImporterStep(this ILogger logger, LogLevel logLevel, string message);
+
+    [LoggerMessage(LogLevel.Error, Message = "{Message}")]
+    public static partial void ReportImporterStepError(this ILogger logger, string message, Exception error);
+
     #endregion
 }

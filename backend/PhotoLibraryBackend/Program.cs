@@ -55,14 +55,7 @@ builder.Services.AddSingleton<PhotoLibrarySettings>(settings!);
 builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
 builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
-builder.Services.AddScoped<IImporterService, ImporterService>(sp => new ImporterService(
-    sp.GetRequiredService<ILogger<ImporterService>>(),
-    // TODO: Add MediatR and listen the appropriate event
-    async (string message) => { 
-        var hubContext = sp.GetRequiredService<IHubContext<ImporterLoggerHub>>();
-        await hubContext.Clients.All.SendAsync("LogMessage", message);
-    }
-));
+builder.Services.AddScoped<IImporterService, ImporterService>();
 
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();

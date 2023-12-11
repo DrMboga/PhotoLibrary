@@ -6,14 +6,11 @@ namespace PhotoLibraryBackend.MediaReader;
 public class ImporterService : IImporterService
 {
     private readonly ILogger<ImporterService> _logger;
-    private readonly Func<string, Task> _sendMessageToSignalRl;
 
-    public ImporterService(ILogger<ImporterService> logger,
-        Func<string, Task> sendMessageToSignalR // TODO: Use a mediatR instead of func
+    public ImporterService(ILogger<ImporterService> logger
     )
     {
         _logger = logger;
-        _sendMessageToSignalRl = sendMessageToSignalR;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -34,9 +31,7 @@ public class ImporterService : IImporterService
                 }
             }
             
-            // TODO: Change it to common SendReport function which logs in fo and sends the MedatR notifications
-            _logger.ImporterFinishedImportDirectoryMessage(dir, importedSuccessfully, files.Length);
-            await _sendMessageToSignalRl($"Finish to import directory '{dir}'. {importedSuccessfully}/{files.Length} files imported successfully");
+            await ReportStep(ImporterReportSeverity.Information, $"Finish to import directory '{dir}'. {importedSuccessfully}/{files.Length} files imported successfully");
         }
     }
 
@@ -61,7 +56,7 @@ public class ImporterService : IImporterService
         return [.. result];
     }
 
-    private Task<bool> ImportMediaFile(string mediaFilePath)
+    private async Task<bool> ImportMediaFile(string mediaFilePath)
     {
         try
         {
@@ -69,12 +64,29 @@ public class ImporterService : IImporterService
             // 2. Fill the media metadata according to media type
             // 3. Create media thumbnail
             // 4. Save media to DB
-            return Task.FromResult(true);
+            return true;
         }
         catch (Exception e)
         {
-            // Write log message
+            await ReportStep(ImporterReportSeverity.Error, $"Unable to import '{mediaFilePath}': {e.Message}", e);
         }
-        return Task.FromResult(false);
+        return false;
+    }
+
+    private Task ReportStep(ImporterReportSeverity severity, string message, Exception? ex = null)
+    {
+        if (severity != ImporterReportSeverity.Error) {
+            _logger.ReportImporterStep(severity == ImporterReportSeverity.Warning ? LogLevel.Warning : LogLevel.Information, message);
+        }
+        if (severity == ImporterReportSeverity.Error && ex != null)
+        {
+            _logger.ReportImporterStepError(message, ex);
+        }
+
+        var timestamp = DateTime.Now.ToUnixTimestamp();
+        // TODO: Send MediatR notification to SignalR
+        // TODO: Send MediatR notification to DB
+
+        return Task.CompletedTask;
     }
 }
