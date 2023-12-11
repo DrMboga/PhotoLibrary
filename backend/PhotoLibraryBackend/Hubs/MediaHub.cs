@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.SignalR;
-
-namespace PhotoLibraryBackend;
+﻿namespace PhotoLibraryBackend;
 
 public class MediaHub: Hub
 {

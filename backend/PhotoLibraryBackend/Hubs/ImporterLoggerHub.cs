@@ -1,5 +1,3 @@
-﻿using Microsoft.AspNetCore.SignalR;
-
-namespace PhotoLibraryBackend;
+﻿namespace PhotoLibraryBackend;
 
 public class ImporterLoggerHub: Hub { }

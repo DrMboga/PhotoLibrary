@@ -6,11 +6,12 @@ namespace PhotoLibraryBackend.MediaReader;
 public class ImporterService : IImporterService
 {
     private readonly ILogger<ImporterService> _logger;
+    private readonly IMediator _mediator;
 
-    public ImporterService(ILogger<ImporterService> logger
-    )
+    public ImporterService(ILogger<ImporterService> logger, IMediator mediator)
     {
         _logger = logger;
+        _mediator = mediator;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -73,7 +74,7 @@ public class ImporterService : IImporterService
         return false;
     }
 
-    private Task ReportStep(ImporterReportSeverity severity, string message, Exception? ex = null)
+    private async Task ReportStep(ImporterReportSeverity severity, string message, Exception? ex = null)
     {
         if (severity != ImporterReportSeverity.Error) {
             _logger.ReportImporterStep(severity == ImporterReportSeverity.Warning ? LogLevel.Warning : LogLevel.Information, message);
@@ -84,9 +85,7 @@ public class ImporterService : IImporterService
         }
 
         var timestamp = DateTime.Now.ToUnixTimestamp();
-        // TODO: Send MediatR notification to SignalR
+        await _mediator.Publish(new ReportImportStepToSignalRNotification(new ImporterReport(timestamp, severity, message)));
         // TODO: Send MediatR notification to DB
-
-        return Task.CompletedTask;
     }
 }

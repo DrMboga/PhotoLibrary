@@ -1,7 +1,7 @@
 using System.Net;
+using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
-using Microsoft.AspNetCore.SignalR;
 using PhotoLibraryBackend;
 using Serilog;
 
@@ -60,6 +60,8 @@ builder.Services.AddScoped<IImporterService, ImporterService>();
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
 
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -92,7 +94,7 @@ app.MapHub<MediaHub>("/Media")
     .RequireAuthorization();
 
 app.MapHub<ImporterLoggerHub>("/ImporterLogger");
-    // .RequireAuthorization();
+    // TODO:  .RequireAuthorization();
 
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {
@@ -103,7 +105,7 @@ app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
     }
     return Results.BadRequest(result);
 })
-// .RequireAuthorization()
+// TODO: .RequireAuthorization()
 .WithName("TriggerMediaImport")
 .WithDescription("Triggers a new media import process")
 .WithOpenApi();
@@ -112,7 +114,7 @@ app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) =>
 {
     return dispatcher.IsInProgress ? Results.Ok<string>("InProgress") : Results.Ok<string>("Idle");
 })
-// .RequireAuthorization()
+// TODO: .RequireAuthorization()
 .WithName("MediaImportStatus")
 .WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
 .WithOpenApi();
