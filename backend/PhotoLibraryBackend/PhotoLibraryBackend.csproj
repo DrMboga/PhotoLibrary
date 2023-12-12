@@ -19,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\PhotoLibraryBackend.Common\PhotoLibraryBackend.Common.csproj" />
     <ProjectReference Include="..\PhotoLibraryBackend.MediaReader\PhotoLibraryBackend.MediaReader.csproj" />
+    <ProjectReference Include="..\PhotoLibraryBackend.Data\PhotoLibraryBackend.Data.csproj" />
   </ItemGroup>
 
 </Project>
