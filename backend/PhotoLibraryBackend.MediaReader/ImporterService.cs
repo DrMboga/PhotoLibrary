@@ -85,7 +85,8 @@ public class ImporterService : IImporterService
         }
 
         var timestamp = DateTime.Now.ToUnixTimestamp();
-        await _mediator.Publish(new ReportImportStepToSignalRNotification(new ImporterReport(timestamp, severity, message)));
-        // TODO: Send MediatR notification to DB
+        var reportMessage = new ImporterReport(timestamp, severity, message);
+        await _mediator.Publish(new SaveImporterStepToDbNotification(reportMessage));
+        await _mediator.Publish(new ReportImportStepToSignalRNotification(reportMessage));
     }
 }

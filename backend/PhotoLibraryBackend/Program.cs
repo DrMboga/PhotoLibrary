@@ -3,6 +3,7 @@ using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using PhotoLibraryBackend;
+using PhotoLibraryBackend.Data;
 using Serilog;
 
 
@@ -60,7 +61,9 @@ builder.Services.AddScoped<IImporterService, ImporterService>();
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
 
-builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+builder.Services.RegisterPhotoLibraryDbContext(builder.Configuration.GetConnectionString("photo-db") ?? "undefined");
+
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
