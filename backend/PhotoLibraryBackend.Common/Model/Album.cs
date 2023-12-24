@@ -8,5 +8,5 @@ public class Album
     public bool MarkedAsImportant { get; set; }
     public bool MarkedAsPrint { get; set; }
 
-    public MediaFileInfo? MediaFileInfo { get; set; }
+    public ICollection<MediaFileInfo> MediaFiles {get; set; } = new List<MediaFileInfo>();
 }

@@ -10,7 +10,7 @@ public class PhotoLibraryBackendDbContext: DbContext
     // {
     // optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
     // }
-    //
+    
 
     public PhotoLibraryBackendDbContext(DbContextOptions options): base(options)
     {
@@ -56,19 +56,29 @@ public class PhotoLibraryBackendDbContext: DbContext
         modelBuilder.Entity<MediaAddress>()
             .Property(i => i.AddressDistance).HasColumnType("NUMERIC(5,3)");
 
+        // Media -> Address One Address can have many photos
+        modelBuilder.Entity<MediaAddress>()
+            .HasMany(e => e.MediaFiles)
+            .WithOne(e => e.MediaAddress)
+            .HasForeignKey(e => e.MediaAddressId);
+
         modelBuilder.Entity<Album>()
             .Property(a => a.AlbumId)
             .ValueGeneratedOnAdd();
         modelBuilder.Entity<Album>()
             .HasKey(a => a.AlbumId);
 
-        modelBuilder.Entity<MediaFileInfo>()
-            .HasOne<Album>(m => m.Album)
-            .WithOne(a => a.MediaFileInfo)
-            .HasForeignKey<Album>(a => a.MediaId);
+        // One to many. One album can have many photos
+        modelBuilder.Entity<Album>()
+            .HasMany(a => a.MediaFiles)
+            .WithOne(m => m.Album)
+            .HasForeignKey(m => m.AlbumId);
 
         modelBuilder.Entity<ImporterReport>()
-            .HasKey(r => r.Timestamp);
+            .Property(r => r.Id)
+            .ValueGeneratedOnAdd();
+        modelBuilder.Entity<ImporterReport>()
+            .HasKey(r => r.Id);
     
     }
 }

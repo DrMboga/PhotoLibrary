@@ -2,7 +2,9 @@
 
 public class MediaAddress
 {
-    public int AddressId { get; set; }
+    public long AddressId { get; set; }
+
+    public ICollection<MediaFileInfo> MediaFiles {get; set; } = new List<MediaFileInfo>();
 
     /// <summary>
     /// Positive latitude is above the equator (N), and negative latitude is below the equator (S).

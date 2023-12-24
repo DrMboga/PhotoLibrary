@@ -12,7 +12,7 @@ using PhotoLibraryBackend.Data;
 namespace PhotoLibraryBackend.Data.Migrations
 {
     [DbContext(typeof(PhotoLibraryBackendDbContext))]
-    [Migration("20231224134709_InitialCreate")]
+    [Migration("20231224205904_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,19 +47,16 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasKey("AlbumId");
 
-                    b.HasIndex("MediaId")
-                        .IsUnique();
-
                     b.ToTable("Album");
                 });
 
             modelBuilder.Entity("PhotoLibraryBackend.Common.ImporterReport", b =>
                 {
-                    b.Property<int>("Timestamp")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Timestamp"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
                     b.Property<string>("Message")
                         .IsRequired()
@@ -68,18 +65,21 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<int>("Severity")
                         .HasColumnType("integer");
 
-                    b.HasKey("Timestamp");
+                    b.Property<int>("Timestamp")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
 
                     b.ToTable("ImporterReport");
                 });
 
             modelBuilder.Entity("PhotoLibraryBackend.Common.MediaAddress", b =>
                 {
-                    b.Property<int>("AddressId")
+                    b.Property<long>("AddressId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("bigint");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("AddressId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("AddressId"));
 
                     b.Property<decimal?>("AddressDistance")
                         .HasColumnType("NUMERIC(5,3)");
@@ -130,6 +130,9 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
 
+                    b.Property<int?>("AlbumId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("DateTimeOriginal")
                         .HasColumnType("timestamp with time zone");
 
@@ -158,8 +161,8 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<int?>("Height")
                         .HasColumnType("integer");
 
-                    b.Property<int>("MediaAddressId")
-                        .HasColumnType("integer");
+                    b.Property<long>("MediaAddressId")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("PictureMaker")
                         .HasColumnType("text");
@@ -184,29 +187,44 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AlbumId");
+
                     b.HasIndex("DateTimeOriginal")
                         .IsUnique();
 
                     b.HasIndex("FullPath")
                         .IsUnique();
 
+                    b.HasIndex("MediaAddressId");
+
                     b.ToTable("Media");
-                });
-
-            modelBuilder.Entity("PhotoLibraryBackend.Common.Album", b =>
-                {
-                    b.HasOne("PhotoLibraryBackend.Common.MediaFileInfo", "MediaFileInfo")
-                        .WithOne("Album")
-                        .HasForeignKey("PhotoLibraryBackend.Common.Album", "MediaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MediaFileInfo");
                 });
 
             modelBuilder.Entity("PhotoLibraryBackend.Common.MediaFileInfo", b =>
                 {
+                    b.HasOne("PhotoLibraryBackend.Common.Album", "Album")
+                        .WithMany("MediaFiles")
+                        .HasForeignKey("AlbumId");
+
+                    b.HasOne("PhotoLibraryBackend.Common.MediaAddress", "MediaAddress")
+                        .WithMany("MediaFiles")
+                        .HasForeignKey("MediaAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Album");
+
+                    b.Navigation("MediaAddress");
+                });
+
+            modelBuilder.Entity("PhotoLibraryBackend.Common.Album", b =>
+                {
+                    b.Navigation("MediaFiles");
+                });
+
+            modelBuilder.Entity("PhotoLibraryBackend.Common.MediaAddress", b =>
+                {
+                    b.Navigation("MediaFiles");
                 });
 #pragma warning restore 612, 618
         }

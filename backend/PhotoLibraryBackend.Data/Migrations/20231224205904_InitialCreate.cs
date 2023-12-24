@@ -16,7 +16,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                 name: "Address",
                 columns: table => new
                 {
-                    AddressId = table.Column<int>(type: "integer", nullable: false)
+                    AddressId = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Latitude = table.Column<decimal>(type: "numeric(7,4)", nullable: false),
                     Longitude = table.Column<decimal>(type: "numeric(7,4)", nullable: false),
@@ -37,17 +37,34 @@ namespace PhotoLibraryBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Album",
+                columns: table => new
+                {
+                    AlbumId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    MediaId = table.Column<long>(type: "bigint", nullable: false),
+                    MarkedAsFavorite = table.Column<bool>(type: "boolean", nullable: false),
+                    MarkedAsImportant = table.Column<bool>(type: "boolean", nullable: false),
+                    MarkedAsPrint = table.Column<bool>(type: "boolean", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Album", x => x.AlbumId);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImporterReport",
                 columns: table => new
                 {
-                    Timestamp = table.Column<int>(type: "integer", nullable: false)
+                    Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Timestamp = table.Column<int>(type: "integer", nullable: false),
                     Severity = table.Column<int>(type: "integer", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ImporterReport", x => x.Timestamp);
+                    table.PrimaryKey("PK_ImporterReport", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -71,40 +88,29 @@ namespace PhotoLibraryBackend.Data.Migrations
                     VideoDurationSec = table.Column<int>(type: "integer", nullable: true),
                     Deleted = table.Column<bool>(type: "boolean", nullable: false),
                     TagLabel = table.Column<string>(type: "text", nullable: true),
-                    MediaAddressId = table.Column<int>(type: "integer", nullable: false)
+                    MediaAddressId = table.Column<long>(type: "bigint", nullable: false),
+                    AlbumId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Media", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Album",
-                columns: table => new
-                {
-                    AlbumId = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    MediaId = table.Column<long>(type: "bigint", nullable: false),
-                    MarkedAsFavorite = table.Column<bool>(type: "boolean", nullable: false),
-                    MarkedAsImportant = table.Column<bool>(type: "boolean", nullable: false),
-                    MarkedAsPrint = table.Column<bool>(type: "boolean", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Album", x => x.AlbumId);
                     table.ForeignKey(
-                        name: "FK_Album_Media_MediaId",
-                        column: x => x.MediaId,
-                        principalTable: "Media",
-                        principalColumn: "Id",
+                        name: "FK_Media_Address_MediaAddressId",
+                        column: x => x.MediaAddressId,
+                        principalTable: "Address",
+                        principalColumn: "AddressId",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Media_Album_AlbumId",
+                        column: x => x.AlbumId,
+                        principalTable: "Album",
+                        principalColumn: "AlbumId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Album_MediaId",
-                table: "Album",
-                column: "MediaId",
-                unique: true);
+                name: "IX_Media_AlbumId",
+                table: "Media",
+                column: "AlbumId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Media_DateTimeOriginal",
@@ -117,22 +123,27 @@ namespace PhotoLibraryBackend.Data.Migrations
                 table: "Media",
                 column: "FullPath",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Media_MediaAddressId",
+                table: "Media",
+                column: "MediaAddressId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Address");
-
-            migrationBuilder.DropTable(
-                name: "Album");
-
-            migrationBuilder.DropTable(
                 name: "ImporterReport");
 
             migrationBuilder.DropTable(
                 name: "Media");
+
+            migrationBuilder.DropTable(
+                name: "Address");
+
+            migrationBuilder.DropTable(
+                name: "Album");
         }
     }
 }

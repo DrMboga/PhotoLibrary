@@ -40,8 +40,9 @@ public class MediaFileInfo
 
     public string? TagLabel { get; set; }
 
-    public int MediaAddressId { get; set; }
+    public long MediaAddressId { get; set; }
     public MediaAddress? MediaAddress { get; set; }
 
+    public int? AlbumId { get; set; }
     public Album? Album { get; set; }
 }
