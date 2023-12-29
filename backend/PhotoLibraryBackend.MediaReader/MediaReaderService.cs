@@ -5,7 +5,7 @@ namespace PhotoLibraryBackend.MediaReader;
 
 public class MediaReaderService : IMediaReaderService
 {
-    private const int PhotosSizeChunk = 30;
+    private const int PhotosSizeChunk = 50;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
 
     private readonly ILogger<MediaReaderService> _logger;

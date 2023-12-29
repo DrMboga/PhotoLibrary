@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Mocks\" />
     <Folder Include="Model\" />
   </ItemGroup>
 
