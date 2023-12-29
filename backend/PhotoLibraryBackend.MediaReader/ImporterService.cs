@@ -25,6 +25,7 @@ public class ImporterService : IImporterService
 
     public async Task StartImport(string photoLibraryPath)
     {
+        await ReportStep(ImporterReportSeverity.Information, $"Start importing library: '{photoLibraryPath}'");
         var flatDirectoryList = GetAllFoldersAsFlatList(photoLibraryPath);
         foreach (var dir in flatDirectoryList)
         {
@@ -43,6 +44,7 @@ public class ImporterService : IImporterService
             
             await ReportStep(ImporterReportSeverity.Information, $"Finish to import directory '{dir}'. {importedSuccessfully}/{files.Length} files imported successfully");
         }
+        await ReportStep(ImporterReportSeverity.Information, $"Importing library: '{photoLibraryPath}' finished");
     }
 
     private string[] GetAllFoldersAsFlatList(string folderPath)
@@ -70,8 +72,25 @@ public class ImporterService : IImporterService
     {
         try
         {
-            // 1. figure out the media type by extension
+            // Check if this file already imported
             var fileInfo = new FileInfo(mediaFilePath);
+
+            var existingMediaHash = await _mediator.Send(new GetMediaFileHashRequest(fileInfo.FullName));
+            if (existingMediaHash != null && existingMediaHash.Length > 0)
+            {
+                var currentFileHash = mediaFilePath.GenerateHash();
+                if (currentFileHash == existingMediaHash)
+                {
+                    return false;
+                }
+                else 
+                {
+                    // TODO: Do something with changed files
+                    throw new ApplicationException($"File '{mediaFilePath}' is already in library but original file has changed");
+                }
+            }
+
+            // 1. figure out the media type by extension
             MediaType? mediaType = null;
             try
             {
@@ -118,7 +137,7 @@ public class ImporterService : IImporterService
         }
         catch (Exception e)
         {
-            await ReportStep(ImporterReportSeverity.Error, $"Unable to import '{mediaFilePath}': {e.Message}", e);
+            await ReportStep(ImporterReportSeverity.Error, $"Unable to import '{mediaFilePath}': {(e.InnerException == null ? e.Message : e.InnerException.Message)}", e);
         }
         return false;
     }

@@ -5,7 +5,8 @@ namespace PhotoLibraryBackend.Data;
 
 public class DataAccessMessageHandler :
     INotificationHandler<SaveImporterStepToDbNotification>,
-    INotificationHandler<SaveMediaFileInfoToDbNotification>
+    INotificationHandler<SaveMediaFileInfoToDbNotification>,
+    IRequestHandler<GetMediaFileHashRequest, string?>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -44,6 +45,18 @@ public class DataAccessMessageHandler :
 
             await context.Media.AddAsync(notification.MediaFileInfoPayload);
             await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<string?> Handle(GetMediaFileHashRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            return await context.Media
+                .AsNoTracking()
+                .Where(m => m.FullPath == request.FullPath)
+                .Select(m => m.FileHash)
+                .FirstOrDefaultAsync();
         }
     }
 }
