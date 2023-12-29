@@ -108,6 +108,16 @@ namespace PhotoLibraryBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Address_Latitude_Longitude",
+                table: "Address",
+                columns: new[] { "Latitude", "Longitude" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ImporterReport_Timestamp",
+                table: "ImporterReport",
+                column: "Timestamp");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Media_AlbumId",
                 table: "Media",
                 column: "AlbumId");
@@ -115,8 +125,7 @@ namespace PhotoLibraryBackend.Data.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Media_DateTimeOriginal",
                 table: "Media",
-                column: "DateTimeOriginal",
-                unique: true);
+                column: "DateTimeOriginal");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Media_FullPath",

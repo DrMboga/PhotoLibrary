@@ -67,6 +67,8 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Timestamp");
+
                     b.ToTable("ImporterReport");
                 });
 
@@ -115,6 +117,8 @@ namespace PhotoLibraryBackend.Data.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("AddressId");
+
+                    b.HasIndex("Latitude", "Longitude");
 
                     b.ToTable("Address");
                 });
@@ -186,8 +190,7 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasIndex("AlbumId");
 
-                    b.HasIndex("DateTimeOriginal")
-                        .IsUnique();
+                    b.HasIndex("DateTimeOriginal");
 
                     b.HasIndex("FullPath")
                         .IsUnique();

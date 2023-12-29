@@ -5,7 +5,9 @@ namespace PhotoLibraryBackend.Data;
 
 public class PhotoLibraryBackendDbContext: DbContext
 {
-    // TODO: For migrations
+    // TODO: For migrations uncomment this constructor and comment out another one. Then run:
+    // dotnet ef migrations add InitialCreate
+    // dotnet ef database update
     // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     // {
     // optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
@@ -39,8 +41,7 @@ public class PhotoLibraryBackendDbContext: DbContext
             .HasIndex(m => m.FullPath)
             .IsUnique();
         modelBuilder.Entity<MediaFileInfo>()
-            .HasIndex(m => m.DateTimeOriginal)
-            .IsUnique();
+            .HasIndex(m => m.DateTimeOriginal);
         
         modelBuilder.Entity<MediaAddress>()
             .Property(a => a.AddressId)
@@ -55,6 +56,8 @@ public class PhotoLibraryBackendDbContext: DbContext
             .Property(i => i.VenueDistance).HasColumnType("NUMERIC(5,3)");
         modelBuilder.Entity<MediaAddress>()
             .Property(i => i.AddressDistance).HasColumnType("NUMERIC(5,3)");
+        modelBuilder.Entity<MediaAddress>()
+            .HasIndex(a => new {a.Latitude, a.Longitude});
 
         // Media -> Address One Address can have many photos
         modelBuilder.Entity<MediaAddress>()
@@ -79,6 +82,8 @@ public class PhotoLibraryBackendDbContext: DbContext
             .ValueGeneratedOnAdd();
         modelBuilder.Entity<ImporterReport>()
             .HasKey(r => r.Id);
+        modelBuilder.Entity<ImporterReport>()
+            .HasIndex(r => r.Timestamp);
     
     }
 }

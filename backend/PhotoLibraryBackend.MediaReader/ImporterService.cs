@@ -64,7 +64,8 @@ public class ImporterService : IImporterService
             // 1. figure out the media type by extension
             // 2. Fill the media metadata according to media type
             // 3. Create media thumbnail
-            // 4. Save media to DB
+            // 4. Save media to DB: await _mediator.Publish(new SaveMediaFileInfoToDbNotification(...));
+
             return true;
         }
         catch (Exception e)
