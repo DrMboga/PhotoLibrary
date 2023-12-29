@@ -6,7 +6,9 @@ namespace PhotoLibraryBackend.Data;
 public class DataAccessMessageHandler :
     INotificationHandler<SaveImporterStepToDbNotification>,
     INotificationHandler<SaveMediaFileInfoToDbNotification>,
-    IRequestHandler<GetMediaFileHashRequest, string?>
+    IRequestHandler<GetMediaFileHashRequest, string?>,
+    IRequestHandler<GetNextPhotosChunkRequest, MediaFileInfo[]>,
+    IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -59,17 +61,44 @@ public class DataAccessMessageHandler :
                 .FirstOrDefaultAsync();
         }
     }
+
+    public async Task<MediaFileInfo[]> Handle(GetNextPhotosChunkRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            return await context.Media
+                .AsNoTracking()
+                .Where(m => m.DateTimeOriginalUtc <= request.DateFrom)
+                .OrderByDescending(m => m.DateTimeOriginalUtc)
+                .Take(request.ChunkSize)
+                .ToArrayAsync();
+        }
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetPreviousPhotosChunkRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            return await context.Media
+                .AsNoTracking()
+                .Where(m => m.DateTimeOriginalUtc > request.DateTo)
+                .OrderBy(m => m.DateTimeOriginalUtc)
+                .Take(request.ChunkSize)
+                .ToArrayAsync();
+        }
+    }
 }
 
         /*
--- select * from "ImporterReport" r
+select * from "ImporterReport" r
+order by r."Timestamp" desc
 
--- select * 
+-- select m.*
 -- from "Media" m
 -- where 
 
--- m."MediaAddressId" is null
--- order by m."DateTimeOriginalUtc"
+-- m."MediaAddressId" = 966 --is not null
+-- order by m."FullPath"
 
 -- select * from "Address" a
 

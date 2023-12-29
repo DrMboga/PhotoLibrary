@@ -9,60 +9,53 @@ public class MediaReaderService : IMediaReaderService
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
 
     private readonly ILogger<MediaReaderService> _logger;
+    private readonly IMediator _mediator;
 
-    public MediaReaderService(ILogger<MediaReaderService> logger)
+    public MediaReaderService(ILogger<MediaReaderService> logger, IMediator mediator)
     {
         _logger = logger;
+        _mediator = mediator;
     }
 
     /// <inheritdoc />
     public async Task<MediaInfo[]> GetNextPhotosChunk(double dateFrom)
     {
-        // TODO: Mock implementation
-        var allMedias = MediaInfos.MediaInfosList
-            .OrderByDescending(m => m.DateTimeOriginal)
-            .Where(m => m.DateTimeOriginal <= dateFrom)
-            .Take(PhotosSizeChunk);
-        if (allMedias == null)
+        // TODO: Change MediaInfo.DateTimeOriginal to long
+        if (dateFrom > int.MaxValue)
         {
-            return [];
+            dateFrom = int.MaxValue;
+        }
+        var dateFromAsDate = Convert.ToInt32(dateFrom).ToDateTime().ToUniversalTime();
+        var medias = await _mediator.Send(new GetNextPhotosChunkRequest(dateFromAsDate, PhotosSizeChunk));
+        var resultMedias = new List<MediaInfo>();
+        foreach (var media in medias)
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
         }
 
-        var dateStart = allMedias.FirstOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
-        var dateEnd = allMedias.LastOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
-        _logger.MediaReadChunk(allMedias.Count(), dateStart, dateEnd);
+        var dateStart = medias.FirstOrDefault()?.DateTimeOriginalUtc  ?? DateTime.MinValue;
+        var dateEnd = medias.LastOrDefault()?.DateTimeOriginalUtc  ?? DateTime.MinValue;
+        _logger.MediaReadChunk(resultMedias.Count(), dateStart, dateEnd);
 
-        foreach (var media in allMedias)
-        {
-            var thumbnail = await File.ReadAllBytesAsync(Path.Combine(_folderPath, media.FileName));
-            media.Thumbnail = ByteString.CopyFrom(thumbnail);
-        }
-        return allMedias.ToArray();
+        return [.. resultMedias];
     }
 
     /// <inheritdoc />
     public async Task<MediaInfo[]> GetPreviousPhotosChunk(double dateTo)
     {
-        // TODO: Mock implementation
-        var allMedias = MediaInfos.MediaInfosList
-            .OrderBy(m => m.DateTimeOriginal)
-            .Where(m => m.DateTimeOriginal > dateTo)
-            .Take(PhotosSizeChunk)
-            .Reverse();
-        if (allMedias == null)
+        var dateToAsDate = Convert.ToInt32(dateTo).ToDateTime().ToUniversalTime();
+        var medias = await _mediator.Send(new GetPreviousPhotosChunkRequest(dateToAsDate, PhotosSizeChunk));
+        var resultMedias = new List<MediaInfo>();
+
+        foreach (var media in medias.Reverse())
         {
-            return [];
+            resultMedias.Add(media.ToMediaInfoMessage());
         }
 
-        var dateStart = allMedias.FirstOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
-        var dateEnd = allMedias.LastOrDefault()?.DateTimeOriginal.ToDateTime() ?? DateTime.MinValue;
-        _logger.MediaReadChunk(allMedias.Count(), dateStart, dateEnd);
+        var dateStart = medias.FirstOrDefault()?.DateTimeOriginalUtc  ?? DateTime.MinValue;
+        var dateEnd = medias.LastOrDefault()?.DateTimeOriginalUtc  ?? DateTime.MinValue;
+        _logger.MediaReadChunk(resultMedias.Count(), dateStart, dateEnd);
 
-        foreach (var media in allMedias)
-        {
-            var thumbnail = await File.ReadAllBytesAsync(Path.Combine(_folderPath, media.FileName));
-            media.Thumbnail = ByteString.CopyFrom(thumbnail);
-        }
-        return allMedias.ToArray();
+        return [.. resultMedias];
     }
 }
