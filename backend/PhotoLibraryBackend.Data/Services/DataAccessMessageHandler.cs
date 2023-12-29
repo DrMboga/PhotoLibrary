@@ -27,6 +27,11 @@ public class DataAccessMessageHandler :
 
     public Task Handle(SaveMediaFileInfoToDbNotification notification, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        /*
+select * from "ImporterReport" r
+
+-- select * from "Media" m
+        */
+        return Task.CompletedTask;
     }
 }

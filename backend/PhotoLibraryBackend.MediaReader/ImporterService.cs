@@ -1,4 +1,5 @@
 ﻿
+using PhotoLibraryBackend.Common.Messages;
 using Tensorflow;
 
 namespace PhotoLibraryBackend.MediaReader;
@@ -7,11 +8,13 @@ public class ImporterService : IImporterService
 {
     private readonly ILogger<ImporterService> _logger;
     private readonly IMediator _mediator;
+    private readonly IMediaMetadataService _mediaMetadataService;
 
-    public ImporterService(ILogger<ImporterService> logger, IMediator mediator)
+    public ImporterService(ILogger<ImporterService> logger, IMediator mediator, IMediaMetadataService mediaMetadataService)
     {
         _logger = logger;
         _mediator = mediator;
+        _mediaMetadataService = mediaMetadataService;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -62,9 +65,44 @@ public class ImporterService : IImporterService
         try
         {
             // 1. figure out the media type by extension
+            var fileInfo = new FileInfo(mediaFilePath);
+            MediaType? mediaType = null;
+            try
+            {
+                mediaType = fileInfo.Extension.GetMediaType();
+            }
+            catch (UnknownFileFormatException e)
+            {
+                await ReportStep(ImporterReportSeverity.Error, e.Message, e);
+                return false;
+            }
+            if (mediaType == null)
+            {
+                return false;
+            }
+
             // 2. Fill the media metadata according to media type
+            var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value);
             // 3. Create media thumbnail
-            // 4. Save media to DB: await _mediator.Publish(new SaveMediaFileInfoToDbNotification(...));
+            try
+            {
+                if (mediaType == MediaType.Video)
+                {
+                    mediaFileInfo.Thumbnail = await _mediaMetadataService.MakeVideoThumbnail(mediaFilePath);
+                }
+                else
+                {
+                    mediaFileInfo.Thumbnail = _mediaMetadataService.MakePhotoThumbnail(mediaFilePath);
+                }
+            }
+            catch (Exception e)
+            {
+                await ReportStep(ImporterReportSeverity.Error, $"Unable to make thumbnail for '{mediaFilePath}'", e);
+            }
+            // 4. Predict label
+            
+            // 5. Save media to DB 
+            await _mediator.Publish(new SaveMediaFileInfoToDbNotification(mediaFileInfo));
 
             return true;
         }
