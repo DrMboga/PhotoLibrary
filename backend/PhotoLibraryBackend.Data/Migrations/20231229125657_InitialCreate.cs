@@ -78,7 +78,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                     FileExt = table.Column<string>(type: "text", nullable: false),
                     FileSize = table.Column<long>(type: "bigint", nullable: false),
                     FileHash = table.Column<string>(type: "text", nullable: false),
-                    DateTimeOriginal = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DateTimeOriginalUtc = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     PictureMaker = table.Column<string>(type: "text", nullable: true),
                     Width = table.Column<int>(type: "integer", nullable: true),
                     Height = table.Column<int>(type: "integer", nullable: true),
@@ -88,7 +88,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                     VideoDurationSec = table.Column<int>(type: "integer", nullable: true),
                     Deleted = table.Column<bool>(type: "boolean", nullable: false),
                     TagLabel = table.Column<string>(type: "text", nullable: true),
-                    MediaAddressId = table.Column<long>(type: "bigint", nullable: false),
+                    MediaAddressId = table.Column<long>(type: "bigint", nullable: true),
                     AlbumId = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>
@@ -98,8 +98,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                         name: "FK_Media_Address_MediaAddressId",
                         column: x => x.MediaAddressId,
                         principalTable: "Address",
-                        principalColumn: "AddressId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "AddressId");
                     table.ForeignKey(
                         name: "FK_Media_Album_AlbumId",
                         column: x => x.AlbumId,
@@ -123,9 +122,9 @@ namespace PhotoLibraryBackend.Data.Migrations
                 column: "AlbumId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Media_DateTimeOriginal",
+                name: "IX_Media_DateTimeOriginalUtc",
                 table: "Media",
-                column: "DateTimeOriginal");
+                column: "DateTimeOriginalUtc");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Media_FullPath",

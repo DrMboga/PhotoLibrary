@@ -12,7 +12,7 @@ using PhotoLibraryBackend.Data;
 namespace PhotoLibraryBackend.Data.Migrations
 {
     [DbContext(typeof(PhotoLibraryBackendDbContext))]
-    [Migration("20231229095114_InitialCreate")]
+    [Migration("20231229125657_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -137,7 +137,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<int?>("AlbumId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime>("DateTimeOriginal")
+                    b.Property<DateTime>("DateTimeOriginalUtc")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("Deleted")
@@ -165,7 +165,7 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<int?>("Height")
                         .HasColumnType("integer");
 
-                    b.Property<long>("MediaAddressId")
+                    b.Property<long?>("MediaAddressId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("PictureMaker")
@@ -193,7 +193,7 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasIndex("AlbumId");
 
-                    b.HasIndex("DateTimeOriginal");
+                    b.HasIndex("DateTimeOriginalUtc");
 
                     b.HasIndex("FullPath")
                         .IsUnique();
@@ -211,9 +211,7 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasOne("PhotoLibraryBackend.Common.MediaAddress", "MediaAddress")
                         .WithMany("MediaFiles")
-                        .HasForeignKey("MediaAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MediaAddressId");
 
                     b.Navigation("Album");
 

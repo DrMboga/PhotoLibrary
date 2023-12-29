@@ -41,7 +41,7 @@ public class PhotoLibraryBackendDbContext: DbContext
             .HasIndex(m => m.FullPath)
             .IsUnique();
         modelBuilder.Entity<MediaFileInfo>()
-            .HasIndex(m => m.DateTimeOriginal);
+            .HasIndex(m => m.DateTimeOriginalUtc);
         
         modelBuilder.Entity<MediaAddress>()
             .Property(a => a.AddressId)

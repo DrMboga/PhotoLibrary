@@ -56,11 +56,11 @@ public static class MediaHelper
         if (mediaType == MediaType.Video)
         {
             // TODO: Read ffmpeg metadata DateTime, Width, Height, Duration 
-            mediaFileInfo.DateTimeOriginal = file.CreationTimeUtc;
+            mediaFileInfo.DateTimeOriginalUtc = file.CreationTimeUtc.ToUniversalTime();
         }
         if (mediaType == MediaType.Image)
         {
-            ReadExifMetadata(file.FullName, mediaFileInfo, file.CreationTimeUtc);
+            ReadExifMetadata(file.FullName, mediaFileInfo, file.CreationTimeUtc.ToUniversalTime());
         }
 
         return mediaFileInfo;
@@ -110,7 +110,7 @@ public static class MediaHelper
     {
         using Image image = Image.Load(filePath);
         var metadata = image?.Metadata?.ExifProfile;
-        mediaFileInfo.DateTimeOriginal = creationTimeUtc;
+        mediaFileInfo.DateTimeOriginalUtc = creationTimeUtc;
         if (image == null) 
         {
             return;
@@ -131,7 +131,7 @@ public static class MediaHelper
         var dateTimeOriginalString = GetExifMetadata<string>(metadata, ExifTag.DateTimeOriginal);
         if (!string.IsNullOrEmpty(dateTimeOriginalString))
         {
-            mediaFileInfo.DateTimeOriginal = dateTimeOriginalString.ConvertExifDateStringDateToDate();
+            mediaFileInfo.DateTimeOriginalUtc = dateTimeOriginalString.ConvertExifDateStringDateToDate();
         }
 
         // PictureMaker
@@ -151,6 +151,8 @@ public static class MediaHelper
         if (latitude != 0 && longitude != 0)
         {
             var mediaAddress = new MediaAddress();
+            latitude = Math.Round(latitude, 4);
+            longitude = Math.Round(longitude, 4);
             if (latitudePole?.ToLower() == "s")
             {
                 mediaAddress.Latitude = -latitude;

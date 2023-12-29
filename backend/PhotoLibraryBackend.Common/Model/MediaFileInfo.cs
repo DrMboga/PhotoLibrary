@@ -20,7 +20,7 @@ public class MediaFileInfo
     /// <summary>
     /// For storing date in the Postgres, the `.ToUniversalTime()` should be added
     /// </summary>
-    public DateTime DateTimeOriginal { get; set; }
+    public DateTime DateTimeOriginalUtc { get; set; }
 
     public string? PictureMaker { get; set; }
 
@@ -40,7 +40,7 @@ public class MediaFileInfo
 
     public string? TagLabel { get; set; }
 
-    public long MediaAddressId { get; set; }
+    public long? MediaAddressId { get; set; }
     public MediaAddress? MediaAddress { get; set; }
 
     public int? AlbumId { get; set; }

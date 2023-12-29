@@ -20,7 +20,7 @@ public static class DateTimeHelper
 
     public static DateTime ConvertExifDateStringDateToDate(this string stringDate)
     {
-        var dateTime = DateTimeOffset.ParseExact(stringDate, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
-        return dateTime.DateTime;
+        var dateTime = DateTime.ParseExact(stringDate, "yyyy:MM:dd HH:mm:ss", CultureInfo.InvariantCulture);
+        return dateTime.ToUniversalTime();
     }
 }

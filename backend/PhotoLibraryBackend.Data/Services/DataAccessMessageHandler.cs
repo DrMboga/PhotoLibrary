@@ -25,13 +25,40 @@ public class DataAccessMessageHandler :
         }
     }
 
-    public Task Handle(SaveMediaFileInfoToDbNotification notification, CancellationToken cancellationToken)
+    public async Task Handle(SaveMediaFileInfoToDbNotification notification, CancellationToken cancellationToken)
     {
-        /*
-select * from "ImporterReport" r
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var mediaAddress = notification.MediaFileInfoPayload.MediaAddress;
+            if (mediaAddress != null)
+            {
+                var existingCoordinates = await context
+                    .Address
+                    .Where(a => a.Latitude == mediaAddress.Latitude && a.Longitude == mediaAddress.Longitude)
+                    .FirstOrDefaultAsync();
+                if (existingCoordinates != null)
+                {
+                    notification.MediaFileInfoPayload.MediaAddress = existingCoordinates;
+                }
+            }
 
--- select * from "Media" m
-        */
-        return Task.CompletedTask;
+            await context.Media.AddAsync(notification.MediaFileInfoPayload);
+            await context.SaveChangesAsync();
+        }
     }
 }
+
+        /*
+-- select * from "ImporterReport" r
+
+-- select * 
+-- from "Media" m
+-- where 
+
+-- m."MediaAddressId" is null
+-- order by m."DateTimeOriginalUtc"
+
+-- select * from "Address" a
+
+-- truncate table "Media"
+        */

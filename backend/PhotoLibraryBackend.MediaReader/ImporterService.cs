@@ -130,6 +130,10 @@ public class ImporterService : IImporterService
         }
         if (severity == ImporterReportSeverity.Error && ex != null)
         {
+            if (ex.InnerException != null)
+            {
+                ex = ex.InnerException;
+            }
             _logger.ReportImporterStepError(message, ex);
         }
 
