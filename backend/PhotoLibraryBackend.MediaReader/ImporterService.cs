@@ -26,40 +26,42 @@ public class ImporterService : IImporterService
     public async Task StartImport(string photoLibraryPath)
     {
         await ReportStep(ImporterReportSeverity.Information, $"Start importing library: '{photoLibraryPath}'");
-        var flatDirectoryList = GetAllFoldersAsFlatList(photoLibraryPath);
+        var flatDirectoryList = await GetAllFoldersAsFlatList(photoLibraryPath, null);
         foreach (var dir in flatDirectoryList)
         {
-            var files = Directory.GetFiles(dir);
-            _logger.ImporterStartImportDirectoryMessage(dir, files.Length);
+            var files = Directory.GetFiles(dir.FullName);
+            _logger.ImporterStartImportDirectoryMessage(dir.FullName, files.Length);
 
             int importedSuccessfully = 0;
             foreach (var mediaFile in files)
             {
-                var success = await ImportMediaFile(mediaFile);
+                var success = await ImportMediaFile(mediaFile, dir.Id);
                 if (success)
                 {
                     importedSuccessfully++;
                 }
             }
             
-            await ReportStep(ImporterReportSeverity.Information, $"Finish to import directory '{dir}'. {importedSuccessfully}/{files.Length} files imported successfully");
+            await ReportStep(ImporterReportSeverity.Information, $"Finish to import directory '{dir.FullName}'. {importedSuccessfully}/{files.Length} files imported successfully");
         }
         await ReportStep(ImporterReportSeverity.Information, $"Importing library: '{photoLibraryPath}' finished");
     }
 
-    private string[] GetAllFoldersAsFlatList(string folderPath)
+    private async Task<FolderInfo[]> GetAllFoldersAsFlatList(string folderPath, long? parentFolderId)
     {
         var directories = Directory.GetDirectories(folderPath);
         if(directories == null || directories.Length == 0)
         {
             return [];
         }
-        var result = new List<string>();
+        var result = new List<FolderInfo>();
         foreach (var dir in directories)
         {
-            result.add(dir);
+            var dirInfo = new DirectoryInfo(dir);
+            var folderInfo = await _mediator.Send(new SaveNewFolderInfoRequest(dirInfo.FullName, dirInfo.Name, parentFolderId));
+            result.add(folderInfo);
             // Recursion
-            var subDirs = GetAllFoldersAsFlatList(dir);
+            var subDirs = await GetAllFoldersAsFlatList(dir, folderInfo.Id);
             if (subDirs.Length > 0)
             {
                 result.AddRange(subDirs);
@@ -68,7 +70,7 @@ public class ImporterService : IImporterService
         return [.. result];
     }
 
-    private async Task<bool> ImportMediaFile(string mediaFilePath)
+    private async Task<bool> ImportMediaFile(string mediaFilePath, long folderId)
     {
         try
         {
@@ -108,6 +110,7 @@ public class ImporterService : IImporterService
 
             // 2. Fill the media metadata according to media type
             var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value);
+            mediaFileInfo.FolderId = folderId;
             // 3. Create media thumbnail
             try
             {

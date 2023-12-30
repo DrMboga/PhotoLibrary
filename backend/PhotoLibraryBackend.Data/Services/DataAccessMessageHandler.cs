@@ -8,7 +8,8 @@ public class DataAccessMessageHandler :
     INotificationHandler<SaveMediaFileInfoToDbNotification>,
     IRequestHandler<GetMediaFileHashRequest, string?>,
     IRequestHandler<GetNextPhotosChunkRequest, MediaFileInfo[]>,
-    IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>
+    IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>,
+    IRequestHandler<SaveNewFolderInfoRequest, FolderInfo>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -85,6 +86,24 @@ public class DataAccessMessageHandler :
                 .OrderBy(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
                 .ToArrayAsync();
+        }
+    }
+
+    public async Task<FolderInfo> Handle(SaveNewFolderInfoRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var newFolder = new FolderInfo
+            {
+                ParentFolderId = request.ParentId,
+                FolderName = request.Name,
+                FullName = request.FullPath,
+            };
+
+            await context.Folder.AddAsync(newFolder);
+            await context.SaveChangesAsync();
+
+            return newFolder;
         }
     }
 }
