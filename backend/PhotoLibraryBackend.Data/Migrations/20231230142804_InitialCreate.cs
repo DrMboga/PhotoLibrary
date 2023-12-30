@@ -53,12 +53,27 @@ namespace PhotoLibraryBackend.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Folder",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ParentFolderId = table.Column<long>(type: "bigint", nullable: true),
+                    FolderName = table.Column<string>(type: "text", nullable: false),
+                    FullName = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Folder", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ImporterReport",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Timestamp = table.Column<int>(type: "integer", nullable: false),
+                    Timestamp = table.Column<long>(type: "bigint", nullable: false),
                     Severity = table.Column<int>(type: "integer", nullable: false),
                     Message = table.Column<string>(type: "text", nullable: false)
                 },
@@ -89,7 +104,8 @@ namespace PhotoLibraryBackend.Data.Migrations
                     Deleted = table.Column<bool>(type: "boolean", nullable: false),
                     TagLabel = table.Column<string>(type: "text", nullable: true),
                     MediaAddressId = table.Column<long>(type: "bigint", nullable: true),
-                    AlbumId = table.Column<int>(type: "integer", nullable: true)
+                    AlbumId = table.Column<int>(type: "integer", nullable: true),
+                    FolderId = table.Column<long>(type: "bigint", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -104,12 +120,23 @@ namespace PhotoLibraryBackend.Data.Migrations
                         column: x => x.AlbumId,
                         principalTable: "Album",
                         principalColumn: "AlbumId");
+                    table.ForeignKey(
+                        name: "FK_Media_Folder_FolderId",
+                        column: x => x.FolderId,
+                        principalTable: "Folder",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Address_Latitude_Longitude",
                 table: "Address",
                 columns: new[] { "Latitude", "Longitude" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Folder_ParentFolderId",
+                table: "Folder",
+                column: "ParentFolderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ImporterReport_Timestamp",
@@ -125,6 +152,11 @@ namespace PhotoLibraryBackend.Data.Migrations
                 name: "IX_Media_DateTimeOriginalUtc",
                 table: "Media",
                 column: "DateTimeOriginalUtc");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Media_FolderId",
+                table: "Media",
+                column: "FolderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Media_FullPath",
@@ -152,6 +184,9 @@ namespace PhotoLibraryBackend.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Album");
+
+            migrationBuilder.DropTable(
+                name: "Folder");
         }
     }
 }

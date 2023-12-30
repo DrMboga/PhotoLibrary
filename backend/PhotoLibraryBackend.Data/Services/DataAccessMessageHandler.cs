@@ -90,15 +90,15 @@ public class DataAccessMessageHandler :
 }
 
         /*
-select * from "ImporterReport" r
-order by r."Timestamp" desc
+-- select * from "ImporterReport" r
+-- order by r."Timestamp" desc
 
--- select m.*
--- from "Media" m
+select m.*
+from "Media" m
 -- where 
-
+-- m."FileName" = 'IMG_5843.JPG'
 -- m."MediaAddressId" = 966 --is not null
--- order by m."FullPath"
+order by m."DateTimeOriginalUtc" desc
 
 -- select * from "Address" a
 

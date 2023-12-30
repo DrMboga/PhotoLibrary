@@ -8,15 +8,15 @@ public class PhotoLibraryBackendDbContext: DbContext
     // TODO: For migrations uncomment this constructor and comment out another one. Then run:
     // dotnet ef migrations add InitialCreate
     // dotnet ef database update
-    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    // {
-    // optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
-    // }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+    optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
+    }
     
 
-    public PhotoLibraryBackendDbContext(DbContextOptions options): base(options)
-    {
-    }
+    // public PhotoLibraryBackendDbContext(DbContextOptions options): base(options)
+    // {
+    // }
     public virtual DbSet<MediaFileInfo> Media { get; set; }
 
     public virtual DbSet<MediaAddress> Address { get; set; }
@@ -24,6 +24,8 @@ public class PhotoLibraryBackendDbContext: DbContext
     public virtual DbSet<Album> Album { get; set; }
 
     public virtual DbSet<ImporterReport> ImporterReport { get; set; }
+
+    public virtual DbSet<FolderInfo> Folder {get; set;}
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -84,6 +86,19 @@ public class PhotoLibraryBackendDbContext: DbContext
             .HasKey(r => r.Id);
         modelBuilder.Entity<ImporterReport>()
             .HasIndex(r => r.Timestamp);
+
+        modelBuilder.Entity<FolderInfo>()
+            .Property(f => f.Id)
+            .ValueGeneratedOnAdd();
+        modelBuilder.Entity<FolderInfo>()
+            .HasKey(f => f.Id);
+        modelBuilder.Entity<FolderInfo>()
+            .HasIndex(f => f.ParentFolderId);
+
+        modelBuilder.Entity<FolderInfo>()
+            .HasMany(f => f.MediaFiles)
+            .WithOne(m => m.Folder)
+            .HasForeignKey(m => m.FolderId);
     
     }
 }

@@ -28,7 +28,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             "FAoMdGh1bWJuYWlsVXJsGAIgASgJEhAKCG1lZGlhVXJsGAMgASgJEhAKCGZ1",
             "bGxQYXRoGAQgASgJEhAKCGZpbGVOYW1lGAUgASgJEhUKDWZpbGVFeHRlbnNp",
             "b24YBiABKAkSHQoJbWVkaWFUeXBlGAcgASgOMgouTWVkaWFUeXBlEhIKCmZp",
-            "bGVTaXplS2IYCCABKAMSGAoQZGF0ZVRpbWVPcmlnaW5hbBgJIAEoBRINCgV3",
+            "bGVTaXplS2IYCCABKAMSGAoQZGF0ZVRpbWVPcmlnaW5hbBgJIAEoAxINCgV3",
             "aWR0aBgKIAEoBRIOCgZoZWlnaHQYCyABKAUSFgoOdGh1bWJuYWlsV2lkdGgY",
             "DCABKAUSFwoPdGh1bWJuYWlsSGVpZ2h0GA0gASgFEh0KEHZpZGVvRHVyYXRp",
             "b25TZWMYDiABKAVIAIgBARIZCgxwaWN0dXJlTWFrZXIYDyABKAlIAYgBARIQ",
@@ -43,7 +43,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             "dGl0dWRlUG9sZUIMCgpfbG9uZ2l0dWRlQhAKDl9sb25naXR1ZGVTaWRlQgoK",
             "CF9jb3VudHJ5QgkKB19yZWdpb25CCwoJX2xvY2FsaXR5QgoKCF9hZGRyZXNz",
             "QggKBl92ZW51ZUINCgtfaXNGYXZvcml0ZUIMCgpfYWxidW1OYW1lIm8KEElt",
-            "cG9ydFN0ZXBSZXBvcnQSCgoCaWQYASABKAkSEQoJVGltZXN0YW1wGAIgASgF",
+            "cG9ydFN0ZXBSZXBvcnQSCgoCaWQYASABKAkSEQoJVGltZXN0YW1wGAIgASgD",
             "EisKCFNldmVyaXR5GAMgASgOMhkuSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5",
             "Eg8KB01lc3NhZ2UYBCABKAkqIQoJTWVkaWFUeXBlEgkKBUlNQUdFEAASCQoF",
             "VklERU8QASpDChhJbXBvcnRTdGVwUmVwb3J0U2V2ZXJpdHkSDwoLSU5GT1JN",
@@ -245,10 +245,10 @@ namespace PhotoLibraryBackend.Common.Messages {
 
     /// <summary>Field number for the "dateTimeOriginal" field.</summary>
     public const int DateTimeOriginalFieldNumber = 9;
-    private int dateTimeOriginal_;
+    private long dateTimeOriginal_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int DateTimeOriginal {
+    public long DateTimeOriginal {
       get { return dateTimeOriginal_; }
       set {
         dateTimeOriginal_ = value;
@@ -713,7 +713,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (FileExtension.Length != 0) hash ^= FileExtension.GetHashCode();
       if (MediaType != global::PhotoLibraryBackend.Common.Messages.MediaType.Image) hash ^= MediaType.GetHashCode();
       if (FileSizeKb != 0L) hash ^= FileSizeKb.GetHashCode();
-      if (DateTimeOriginal != 0) hash ^= DateTimeOriginal.GetHashCode();
+      if (DateTimeOriginal != 0L) hash ^= DateTimeOriginal.GetHashCode();
       if (Width != 0) hash ^= Width.GetHashCode();
       if (Height != 0) hash ^= Height.GetHashCode();
       if (ThumbnailWidth != 0) hash ^= ThumbnailWidth.GetHashCode();
@@ -783,9 +783,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(64);
         output.WriteInt64(FileSizeKb);
       }
-      if (DateTimeOriginal != 0) {
+      if (DateTimeOriginal != 0L) {
         output.WriteRawTag(72);
-        output.WriteInt32(DateTimeOriginal);
+        output.WriteInt64(DateTimeOriginal);
       }
       if (Width != 0) {
         output.WriteRawTag(80);
@@ -905,9 +905,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(64);
         output.WriteInt64(FileSizeKb);
       }
-      if (DateTimeOriginal != 0) {
+      if (DateTimeOriginal != 0L) {
         output.WriteRawTag(72);
-        output.WriteInt32(DateTimeOriginal);
+        output.WriteInt64(DateTimeOriginal);
       }
       if (Width != 0) {
         output.WriteRawTag(80);
@@ -1019,8 +1019,8 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (FileSizeKb != 0L) {
         size += 1 + pb::CodedOutputStream.ComputeInt64Size(FileSizeKb);
       }
-      if (DateTimeOriginal != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(DateTimeOriginal);
+      if (DateTimeOriginal != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(DateTimeOriginal);
       }
       if (Width != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Width);
@@ -1115,7 +1115,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (other.FileSizeKb != 0L) {
         FileSizeKb = other.FileSizeKb;
       }
-      if (other.DateTimeOriginal != 0) {
+      if (other.DateTimeOriginal != 0L) {
         DateTimeOriginal = other.DateTimeOriginal;
       }
       if (other.Width != 0) {
@@ -1223,7 +1223,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 72: {
-            DateTimeOriginal = input.ReadInt32();
+            DateTimeOriginal = input.ReadInt64();
             break;
           }
           case 80: {
@@ -1350,7 +1350,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 72: {
-            DateTimeOriginal = input.ReadInt32();
+            DateTimeOriginal = input.ReadInt64();
             break;
           }
           case 80: {
@@ -1497,10 +1497,10 @@ namespace PhotoLibraryBackend.Common.Messages {
 
     /// <summary>Field number for the "Timestamp" field.</summary>
     public const int TimestampFieldNumber = 2;
-    private int timestamp_;
+    private long timestamp_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public int Timestamp {
+    public long Timestamp {
       get { return timestamp_; }
       set {
         timestamp_ = value;
@@ -1558,7 +1558,7 @@ namespace PhotoLibraryBackend.Common.Messages {
     public override int GetHashCode() {
       int hash = 1;
       if (Id.Length != 0) hash ^= Id.GetHashCode();
-      if (Timestamp != 0) hash ^= Timestamp.GetHashCode();
+      if (Timestamp != 0L) hash ^= Timestamp.GetHashCode();
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) hash ^= Severity.GetHashCode();
       if (Message.Length != 0) hash ^= Message.GetHashCode();
       if (_unknownFields != null) {
@@ -1583,9 +1583,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(10);
         output.WriteString(Id);
       }
-      if (Timestamp != 0) {
+      if (Timestamp != 0L) {
         output.WriteRawTag(16);
-        output.WriteInt32(Timestamp);
+        output.WriteInt64(Timestamp);
       }
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
         output.WriteRawTag(24);
@@ -1609,9 +1609,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(10);
         output.WriteString(Id);
       }
-      if (Timestamp != 0) {
+      if (Timestamp != 0L) {
         output.WriteRawTag(16);
-        output.WriteInt32(Timestamp);
+        output.WriteInt64(Timestamp);
       }
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
         output.WriteRawTag(24);
@@ -1634,8 +1634,8 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Id.Length != 0) {
         size += 1 + pb::CodedOutputStream.ComputeStringSize(Id);
       }
-      if (Timestamp != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Timestamp);
+      if (Timestamp != 0L) {
+        size += 1 + pb::CodedOutputStream.ComputeInt64Size(Timestamp);
       }
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Severity);
@@ -1658,7 +1658,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (other.Id.Length != 0) {
         Id = other.Id;
       }
-      if (other.Timestamp != 0) {
+      if (other.Timestamp != 0L) {
         Timestamp = other.Timestamp;
       }
       if (other.Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
@@ -1687,7 +1687,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 16: {
-            Timestamp = input.ReadInt32();
+            Timestamp = input.ReadInt64();
             break;
           }
           case 24: {
@@ -1718,7 +1718,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 16: {
-            Timestamp = input.ReadInt32();
+            Timestamp = input.ReadInt64();
             break;
           }
           case 24: {

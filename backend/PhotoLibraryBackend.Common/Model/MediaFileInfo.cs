@@ -45,4 +45,7 @@ public class MediaFileInfo
 
     public int? AlbumId { get; set; }
     public Album? Album { get; set; }
+
+    public long FolderId { get; set; }
+    public FolderInfo? Folder { get; set; }
 }

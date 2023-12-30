@@ -4,7 +4,7 @@ namespace PhotoLibraryBackend.MediaReader;
 
 public static class DateTimeHelper
 {
-    public static DateTime ToDateTime(this int unixTimeStamp)
+    public static DateTime ToDateTime(this long unixTimeStamp)
     {
         // Unix timestamp is seconds past epoch
         var dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
@@ -12,10 +12,10 @@ public static class DateTimeHelper
         return dtDateTime;
     }
 
-    public static int ToUnixTimestamp(this DateTime date)
+    public static long ToUnixTimestamp(this DateTime date)
     {
         var diff = date - new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-        return Convert.ToInt32(diff.TotalSeconds);
+        return Convert.ToInt64(diff.TotalSeconds);
     }
 
     public static DateTime ConvertExifDateStringDateToDate(this string stringDate)

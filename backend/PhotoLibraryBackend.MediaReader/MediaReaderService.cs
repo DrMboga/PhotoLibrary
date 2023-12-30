@@ -20,12 +20,7 @@ public class MediaReaderService : IMediaReaderService
     /// <inheritdoc />
     public async Task<MediaInfo[]> GetNextPhotosChunk(double dateFrom)
     {
-        // TODO: Change MediaInfo.DateTimeOriginal to long
-        if (dateFrom > int.MaxValue)
-        {
-            dateFrom = int.MaxValue;
-        }
-        var dateFromAsDate = Convert.ToInt32(dateFrom).ToDateTime().ToUniversalTime();
+        var dateFromAsDate = Convert.ToInt64(dateFrom).ToDateTime().ToUniversalTime();
         var medias = await _mediator.Send(new GetNextPhotosChunkRequest(dateFromAsDate, PhotosSizeChunk));
         var resultMedias = new List<MediaInfo>();
         foreach (var media in medias)
@@ -43,7 +38,7 @@ public class MediaReaderService : IMediaReaderService
     /// <inheritdoc />
     public async Task<MediaInfo[]> GetPreviousPhotosChunk(double dateTo)
     {
-        var dateToAsDate = Convert.ToInt32(dateTo).ToDateTime().ToUniversalTime();
+        var dateToAsDate = Convert.ToInt64(dateTo).ToDateTime().ToUniversalTime();
         var medias = await _mediator.Send(new GetPreviousPhotosChunkRequest(dateToAsDate, PhotosSizeChunk));
         var resultMedias = new List<MediaInfo>();
 

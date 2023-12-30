@@ -47,6 +47,32 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.ToTable("Album");
                 });
 
+            modelBuilder.Entity("PhotoLibraryBackend.Common.FolderInfo", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("FolderName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long?>("ParentFolderId")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ParentFolderId");
+
+                    b.ToTable("Folder");
+                });
+
             modelBuilder.Entity("PhotoLibraryBackend.Common.ImporterReport", b =>
                 {
                     b.Property<long>("Id")
@@ -62,8 +88,8 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<int>("Severity")
                         .HasColumnType("integer");
 
-                    b.Property<int>("Timestamp")
-                        .HasColumnType("integer");
+                    b.Property<long>("Timestamp")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -155,6 +181,9 @@ namespace PhotoLibraryBackend.Data.Migrations
                     b.Property<long>("FileSize")
                         .HasColumnType("bigint");
 
+                    b.Property<long>("FolderId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("FullPath")
                         .IsRequired()
                         .HasColumnType("text");
@@ -192,6 +221,8 @@ namespace PhotoLibraryBackend.Data.Migrations
 
                     b.HasIndex("DateTimeOriginalUtc");
 
+                    b.HasIndex("FolderId");
+
                     b.HasIndex("FullPath")
                         .IsUnique();
 
@@ -206,16 +237,29 @@ namespace PhotoLibraryBackend.Data.Migrations
                         .WithMany("MediaFiles")
                         .HasForeignKey("AlbumId");
 
+                    b.HasOne("PhotoLibraryBackend.Common.FolderInfo", "Folder")
+                        .WithMany("MediaFiles")
+                        .HasForeignKey("FolderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("PhotoLibraryBackend.Common.MediaAddress", "MediaAddress")
                         .WithMany("MediaFiles")
                         .HasForeignKey("MediaAddressId");
 
                     b.Navigation("Album");
 
+                    b.Navigation("Folder");
+
                     b.Navigation("MediaAddress");
                 });
 
             modelBuilder.Entity("PhotoLibraryBackend.Common.Album", b =>
+                {
+                    b.Navigation("MediaFiles");
+                });
+
+            modelBuilder.Entity("PhotoLibraryBackend.Common.FolderInfo", b =>
                 {
                     b.Navigation("MediaFiles");
                 });

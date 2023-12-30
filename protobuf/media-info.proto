@@ -22,7 +22,7 @@ message MediaInfo {
     string fileExtension = 6;
     MediaType mediaType = 7;
     int64 fileSizeKb = 8;
-    int32 dateTimeOriginal = 9;
+    int64 dateTimeOriginal = 9;
     int32 width = 10;
     int32 height = 11;
     int32 thumbnailWidth = 12;
@@ -46,7 +46,7 @@ message MediaInfo {
 
 message ImportStepReport {
     string id = 1;
-    int32 Timestamp = 2;
+    int64 Timestamp = 2;
     ImportStepReportSeverity Severity = 3;
     string Message = 4;
 }
