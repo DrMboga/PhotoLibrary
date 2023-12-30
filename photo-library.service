@@ -2,7 +2,7 @@
 Description=Photo library ASP.NET service
 [Service]
 Type=simple
-ExecStart=/home/pi/projects/photo-library/publish
+ExecStart=/home/pi/projects/photo-library/publish/PhotoLibraryBackend
 WorkingDirectory=/home/pi/projects/photo-library/publish
 Restart=on-failure
 RestartSec=10

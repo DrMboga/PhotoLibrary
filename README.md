@@ -134,6 +134,8 @@ scp -r ./photo-library.service pi@192.168.0.65:/home/pi/projects/photo-library
 ssh:
 
 ```bash
+#Copy service file to the system dir:
+sudo cp photo-library.service /etc/systemd/system/photo-library.service
 # Restart daemon
 sudo systemctl daemon-reload
 # Start services
@@ -179,6 +181,14 @@ sudo journalctl -u photo-library.service
 sudo systemctl list-units --type=service --all
 (q for exit)
 ```
+
+# Access backend:
+
+Internally:
+http://127.0.0.1:5000
+
+From outside:
+http://192.168.0.65:8850/swagger/index.html
 
 # How to teach ML model to classify images using ML Net CLI
 

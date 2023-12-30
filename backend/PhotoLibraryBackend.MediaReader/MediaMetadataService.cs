@@ -1,4 +1,5 @@
 ﻿
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace PhotoLibraryBackend.MediaReader;
@@ -119,7 +120,7 @@ TAG:com.apple.quicktime.creationdate=2020-08-14T09:57:43+0200
             }
             if (paramKeyValue[0].ToLower().Contains("duration"))
             {
-                if (decimal.TryParse(paramKeyValue[1].Replace(".", ","), out decimal duration))
+                if (decimal.TryParse(paramKeyValue[1], CultureInfo.InvariantCulture, out decimal duration))
                 {
                     videoMetadata.DurationSec = Convert.ToInt32(duration);
                 }
@@ -138,11 +139,11 @@ TAG:com.apple.quicktime.creationdate=2020-08-14T09:57:43+0200
                 if(matches.Count >= 2)
                 {
                     // First Latitude, second Longitude
-                    if (matches[0].Success && decimal.TryParse(matches[0].Value.Replace(".", ","), out decimal latitude))
+                    if (matches[0].Success && decimal.TryParse(matches[0].Value, CultureInfo.InvariantCulture, out decimal latitude))
                     {
                         videoMetadata.Latitude = latitude;
                     }
-                    if (matches[1].Success && decimal.TryParse(matches[1].Value.Replace(".", ","), out decimal longitude))
+                    if (matches[1].Success && decimal.TryParse(matches[1].Value, CultureInfo.InvariantCulture, out decimal longitude))
                     {
                         videoMetadata.Longitude = longitude;
                     }

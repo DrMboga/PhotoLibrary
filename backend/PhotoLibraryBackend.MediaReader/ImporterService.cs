@@ -113,6 +113,23 @@ public class ImporterService : IImporterService
             {
                 if (mediaType == MediaType.Video)
                 {
+                    var videoMetadata = await _mediaMetadataService.ReadVideoMetadata(mediaFilePath);
+                    if (videoMetadata != null)
+                    {
+                        mediaFileInfo.DateTimeOriginalUtc = videoMetadata.CreationTime ?? mediaFileInfo.DateTimeOriginalUtc;
+                        mediaFileInfo.Width = videoMetadata.Width ?? mediaFileInfo.Width;
+                        mediaFileInfo.Height = videoMetadata.Height ?? mediaFileInfo.Height;
+                        mediaFileInfo.VideoDurationSec = videoMetadata.DurationSec;
+                        mediaFileInfo.PictureMaker = videoMetadata.PictureMaker;
+                        if (videoMetadata.Latitude != null && videoMetadata.Longitude != null)
+                        {
+                            mediaFileInfo.MediaAddress = new MediaAddress
+                            {
+                                Latitude = videoMetadata.Latitude.Value,
+                                Longitude = videoMetadata.Longitude.Value
+                            };
+                        }
+                    }
                     mediaFileInfo.Thumbnail = await _mediaMetadataService.MakeVideoThumbnail(mediaFilePath);
                 }
                 else
