@@ -1,10 +1,10 @@
 using System.Net;
-using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using PhotoLibraryBackend;
 using PhotoLibraryBackend.Data;
 using Serilog;
+using Tensorflow;
 
 
 // For deploy on Raspberry PI home server
@@ -98,6 +98,31 @@ app.MapHub<MediaHub>("/Media")
 
 app.MapHub<ImporterLoggerHub>("/ImporterLogger");
     // TODO:  .RequireAuthorization();
+
+// TODO: Test end point to read video metadata
+// /swagger/index.html
+app.MapGet("/testVideoMetadata", async (IMediaMetadataService mediaMetadataService) =>
+{
+    string[] filePaths = [
+        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_6976.MOV"),
+        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "VID_20201024_120542.mp4"),
+        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "MVI_0676.avi"),
+        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMGA0022.MP4"),
+        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_7589.MOV"),
+    ];
+    var metadatas = new List<VideoMetadata>();
+    foreach (var videoFile in filePaths)
+    {
+        var videoMetadata = await mediaMetadataService.ReadVideoMetadata(videoFile);
+        if (videoMetadata != null)
+        {
+            metadatas.add(videoMetadata);
+        }
+    }
+    return Results.Ok<VideoMetadata[]>([..metadatas]);
+})
+.WithName("GetTestVideoMetadata")
+.WithOpenApi();
 
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {

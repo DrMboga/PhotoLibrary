@@ -18,4 +18,11 @@ public interface IMediaMetadataService
     /// <param name="filePath"></param>
     /// <returns></returns>
     Task<byte[]?> MakeVideoThumbnail(string filePath);
+
+    /// <summary>
+    /// Reads video metadata using ffprobe tool
+    /// </summary>
+    /// <param name="filePath"></param>
+    /// <returns></returns>
+    Task<VideoMetadata?> ReadVideoMetadata(string filePath);
 }
