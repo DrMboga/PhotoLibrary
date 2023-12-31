@@ -9,7 +9,8 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetMediaFileHashRequest, string?>,
     IRequestHandler<GetNextPhotosChunkRequest, MediaFileInfo[]>,
     IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>,
-    IRequestHandler<SaveNewFolderInfoRequest, FolderInfo>
+    IRequestHandler<SaveNewFolderInfoRequest, FolderInfo>,
+    IRequestHandler<GetLibraryInfoRequest, LibraryInfo?>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -105,6 +106,30 @@ public class DataAccessMessageHandler :
 
             return newFolder;
         }
+    }
+
+    public async Task<LibraryInfo?> Handle(GetLibraryInfoRequest request, CancellationToken cancellationToken)
+    {
+        string query = "select Count(m.*), Min(m.\"DateTimeOriginalUtc\"), Max(m.\"DateTimeOriginalUtc\") from \"Media\" m";
+        using (var context = _dbContextFactory.CreateDbContext())
+        using(var connection = context.Database.GetDbConnection())
+        using (var command = connection.CreateCommand())
+        {
+            // seems that this is a first db query, so it should run migrations
+            await context.Database.MigrateAsync();
+            command.CommandText = query;
+            await connection.OpenAsync();
+            var reader = await command.ExecuteReaderAsync();
+            if (reader.Read())
+            {
+                var mediaCount = reader.GetInt64(0);
+                var minDate = reader.IsDBNull(1) ? null : (DateTime?) reader.GetDateTime(1);
+                var maxDate = reader.IsDBNull(2) ? null : (DateTime?) reader.GetDateTime(2);
+                return new LibraryInfo(mediaCount, minDate, maxDate);
+            }
+            return null;
+        }
+        
     }
 }
 

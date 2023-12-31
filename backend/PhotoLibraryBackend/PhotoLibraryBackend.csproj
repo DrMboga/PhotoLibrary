@@ -4,7 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <InvariantGlobalization>true</InvariantGlobalization>
+    <InvariantGlobalization>false</InvariantGlobalization>
     <UserSecretsId>aa653dac-f11a-46dd-b7a5-8400f7ca68cf</UserSecretsId>
     <Version>1.0.0.1</Version>
   </PropertyGroup>

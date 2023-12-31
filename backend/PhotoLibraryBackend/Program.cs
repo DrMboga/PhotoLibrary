@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Reflection;
 using Keycloak.AuthServices.Authentication;
@@ -103,7 +104,24 @@ app.MapHub<ImporterLoggerHub>("/ImporterLogger");
 app.MapGet("/", async (IMediator mediator) => 
 {
     var version = Assembly.GetEntryAssembly()?.GetName().Version;
-    return $"Photo library backend version {version}";
+    string secondLine = string.Empty;
+    try {
+        var libraryInfo = await mediator.Send(new GetLibraryInfoRequest());
+        var ruCulture = CultureInfo.GetCultureInfo("ru-RU", false);
+        string totalMedias = (libraryInfo?.MediaFilesCount ?? 0).ToString("N0", ruCulture);
+        secondLine = $"There are {totalMedias} media files in the library";
+        if (libraryInfo?.DateOfEarliestPhoto != null && libraryInfo?.DateOfNewestPhoto != null)
+        {
+            string firstDate = libraryInfo.DateOfEarliestPhoto.Value.ToString("g", ruCulture);
+            string lastDate = libraryInfo.DateOfNewestPhoto.Value.ToString("g", ruCulture);
+            secondLine = $"{secondLine}{Environment.NewLine}Date of last photo: {lastDate}; date of first photo: {firstDate}";
+        }
+    }
+    catch(Exception e)
+    {
+        secondLine = $"There is a problem to access library: '{e.Message}'";
+    }
+    return $"Photo library backend version {version}{Environment.NewLine}{secondLine}";
 });
 
 // TODO: Test end point to read video metadata
