@@ -1,4 +1,5 @@
 using System.Net;
+using System.Reflection;
 using Keycloak.AuthServices.Authentication;
 using Microsoft.AspNetCore.HttpOverrides;
 using PhotoLibraryBackend;
@@ -98,6 +99,12 @@ app.MapHub<MediaHub>("/Media")
 
 app.MapHub<ImporterLoggerHub>("/ImporterLogger");
     // TODO:  .RequireAuthorization();
+
+app.MapGet("/", async (IMediator mediator) => 
+{
+    var version = Assembly.GetEntryAssembly()?.GetName().Version;
+    return $"Photo library backend version {version}";
+});
 
 // TODO: Test end point to read video metadata
 // /swagger/index.html
