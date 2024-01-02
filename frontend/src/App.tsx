@@ -12,6 +12,8 @@ import { useAppSelector } from './storeHooks';
 import { selectTheme } from './appSlice';
 import { useAuth } from './keycloak-auth/useAuth';
 import { RequireAuth } from './keycloak-auth/RequireAuth';
+import { AboutPage } from './about/AboutPage';
+import InfoIcon from '@mui/icons-material/Info';
 
 const pages: PageRouteInfo[] = [
   {
@@ -35,6 +37,13 @@ const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <SettingsIcon fontSize="small" />,
+  },
+  {
+    key: 'about',
+    route: '/about',
+    displayName: 'About',
+    element: <AboutPage />,
+    iconElement: <InfoIcon fontSize="small" />,
   },
 ];
 function App() {
