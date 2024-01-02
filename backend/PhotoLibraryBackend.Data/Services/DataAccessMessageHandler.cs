@@ -10,7 +10,8 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetNextPhotosChunkRequest, MediaFileInfo[]>,
     IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>,
     IRequestHandler<SaveNewFolderInfoRequest, FolderInfo>,
-    IRequestHandler<GetLibraryInfoRequest, LibraryInfo?>
+    IRequestHandler<GetLibraryInfoRequest, LibraryInfo?>,
+    IRequestHandler<GetImporterLogsRequest, ImporterReport[]?>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -130,6 +131,18 @@ public class DataAccessMessageHandler :
             return null;
         }
         
+    }
+
+    public async Task<ImporterReport[]?> Handle(GetImporterLogsRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            return await context.ImporterReport
+                .AsNoTracking()
+                .OrderByDescending(r => r.Timestamp)
+                .Take(request.PageSize)
+                .ToArrayAsync();
+        }
     }
 }
 

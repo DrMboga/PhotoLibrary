@@ -98,9 +98,10 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.MapHub<MediaHub>("/Media")
     .RequireAuthorization();
 
-app.MapHub<ImporterLoggerHub>("/ImporterLogger");
-    // TODO:  .RequireAuthorization();
+app.MapHub<ImporterLoggerHub>("/ImporterLogger")
+    .RequireAuthorization();
 
+// Root endpoint returns text info about backend version and DB info
 app.MapGet("/", async (IMediator mediator) => 
 {
     var version = Assembly.GetEntryAssembly()?.GetName().Version;
@@ -124,31 +125,7 @@ app.MapGet("/", async (IMediator mediator) =>
     return $"Photo library backend version {version}{Environment.NewLine}{secondLine}";
 });
 
-// TODO: Test end point to read video metadata
 // /swagger/index.html
-app.MapGet("/testVideoMetadata", async (IMediaMetadataService mediaMetadataService) =>
-{
-    string[] filePaths = [
-        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_6976.MOV"),
-        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "VID_20201024_120542.mp4"),
-        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "MVI_0676.avi"),
-        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMGA0022.MP4"),
-        Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets", "IMG_7589.MOV"),
-    ];
-    var metadatas = new List<VideoMetadata>();
-    foreach (var videoFile in filePaths)
-    {
-        var videoMetadata = await mediaMetadataService.ReadVideoMetadata(videoFile);
-        if (videoMetadata != null)
-        {
-            metadatas.add(videoMetadata);
-        }
-    }
-    return Results.Ok<VideoMetadata[]>([..metadatas]);
-})
-.WithName("GetTestVideoMetadata")
-.WithOpenApi();
-
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {
     var result = dispatcher.StatNewProcess();
@@ -158,7 +135,7 @@ app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
     }
     return Results.BadRequest(result);
 })
-// TODO: .RequireAuthorization()
+.RequireAuthorization()
 .WithName("TriggerMediaImport")
 .WithDescription("Triggers a new media import process")
 .WithOpenApi();
@@ -167,9 +144,19 @@ app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) =>
 {
     return dispatcher.IsInProgress ? Results.Ok<string>("InProgress") : Results.Ok<string>("Idle");
 })
-// TODO: .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaImportStatus")
 .WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
+.WithOpenApi();
+
+// // GET /importerLogs?pageSize==15
+app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
+    var logs = await mediator.Send(new GetImporterLogsRequest(pageSize ?? 100));
+    return Results.Ok(logs.ToStepReports());
+})
+.RequireAuthorization()
+.WithName("ImporterLogs")
+.WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
 
 app.Run();
