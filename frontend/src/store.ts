@@ -13,6 +13,7 @@ import {
   REGISTER,
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
+import aboutReducer from './about/aboutSlice';
 
 // Persist appReducer to the local storage via redux-persist
 const persistAppConfig = {
@@ -43,6 +44,7 @@ export const store = configureStore({
     app: persistedAppReducer,
     auth: persistedAuthReducer,
     photos: persistedPhotoReducer,
+    about: aboutReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
