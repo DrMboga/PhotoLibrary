@@ -20,7 +20,7 @@ public class ImportReporterSignalRNotificationHandler : INotificationHandler<Rep
             Id = Guid.NewGuid().ToString(),
             Timestamp = notification.ReportMessage.Timestamp,
             Severity = stepSeverity,
-            Message = notification.ReportMessage.Message,
+            StepMessage = notification.ReportMessage.Message,
         };
         await _importerLoggerHub.Clients.All.SendAsync("ImportStep", stepReport);
     }

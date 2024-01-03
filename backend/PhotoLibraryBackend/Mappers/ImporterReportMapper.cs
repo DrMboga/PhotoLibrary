@@ -21,7 +21,7 @@ public static class ImporterReportMapper
                 Id = sourceReportMessage.Id.ToString(),
                 Severity = sourceReportMessage.Severity.ToReportSeverity(),
                 Timestamp = sourceReportMessage.Timestamp,
-                Message = sourceReportMessage.Message
+                StepMessage= sourceReportMessage.Message
             });
         }
         return [.. resultReportMessages];

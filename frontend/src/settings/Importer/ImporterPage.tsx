@@ -1,5 +1,6 @@
 // @flow
 import * as React from 'react';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../../storeHooks';
 import {
   getImporterLogs,
@@ -10,17 +11,20 @@ import {
   selectIsImporterInProgress,
 } from './importerSlice';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Alert, Box, Button } from '@mui/material';
-import { useEffect } from 'react';
+import { Alert, Box, Button, Divider, Typography } from '@mui/material';
 import { selectToken } from '../../keycloak-auth/authSlice';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
+import { dateFromUnixTime } from '../../helpers/date-helper';
+import InfoIcon from '@mui/icons-material/Info';
+import WarningIcon from '@mui/icons-material/Warning';
+import ReportIcon from '@mui/icons-material/Report';
+import { ImportStepReportSeverity } from '../../model/media-info';
 
 export function ImporterPage() {
   const dispatch = useAppDispatch();
   const authToken = useAppSelector(selectToken);
   const loading = useAppSelector(selectImporterLoading);
   const error = useAppSelector(selectImporterError);
-  // TODO: if true, disable "Report" button
   const isImportInProgress = useAppSelector(selectIsImporterInProgress);
   const importerSteps = useAppSelector(selectImporterSteps);
 
@@ -39,6 +43,17 @@ export function ImporterPage() {
     // TODO: Call '/triggerMediaImport' post method, then getImporterStatus
   };
 
+  const getIcon = (status: ImportStepReportSeverity) => {
+    switch (status) {
+      case ImportStepReportSeverity.ERROR:
+        return <ReportIcon fontSize="small" sx={{ color: 'red' }} />;
+      case ImportStepReportSeverity.WARNING:
+        return <WarningIcon fontSize="small" sx={{ color: 'yellow' }} />;
+      case ImportStepReportSeverity.INFORMATION:
+        return <InfoIcon fontSize="small" sx={{ color: 'green' }} />;
+    }
+  };
+
   return (
     <Box>
       {loading && <CircularProgress />}
@@ -51,11 +66,40 @@ export function ImporterPage() {
               variant="outlined"
               startIcon={<AddPhotoAlternateIcon />}
               disabled={isImportInProgress}
+              onClick={startImport}
             >
               Start import
             </Button>
           </Box>
-          <p>{JSON.stringify(importerSteps)}</p>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '15px' }}>
+            {importerSteps?.map((step) => (
+              <>
+                <Box
+                  id={`log-row-${step.id}`}
+                  sx={{
+                    display: 'flex',
+                    gap: '10px',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Typography id={`typography-1-${step.id}`} variant="body2">
+                    [ {dateFromUnixTime(step.timestamp).toLocaleString('ru-RU')} ]
+                  </Typography>
+                  {getIcon(step.severity)}
+                  <Typography
+                    id={`typography-2-${step.id}`}
+                    variant="body1"
+                    align="left"
+                    sx={{ width: '80%' }}
+                  >
+                    {step.stepMessage}
+                  </Typography>
+                </Box>
+                <Divider flexItem variant="middle" />
+              </>
+            ))}
+          </Box>
         </Box>
       )}
     </Box>

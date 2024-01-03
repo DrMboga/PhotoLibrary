@@ -887,9 +887,9 @@ export class ImportStepReport extends pb_1.Message {
     #one_of_decls: number[][] = [];
     constructor(data?: any[] | {
         id?: string;
-        Timestamp?: number;
-        Severity?: ImportStepReportSeverity;
-        Message?: string;
+        timestamp?: number;
+        severity?: ImportStepReportSeverity;
+        stepMessage?: string;
     }) {
         super();
         pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
@@ -897,14 +897,14 @@ export class ImportStepReport extends pb_1.Message {
             if ("id" in data && data.id != undefined) {
                 this.id = data.id;
             }
-            if ("Timestamp" in data && data.Timestamp != undefined) {
-                this.Timestamp = data.Timestamp;
+            if ("timestamp" in data && data.timestamp != undefined) {
+                this.timestamp = data.timestamp;
             }
-            if ("Severity" in data && data.Severity != undefined) {
-                this.Severity = data.Severity;
+            if ("severity" in data && data.severity != undefined) {
+                this.severity = data.severity;
             }
-            if ("Message" in data && data.Message != undefined) {
-                this.Message = data.Message;
+            if ("stepMessage" in data && data.stepMessage != undefined) {
+                this.stepMessage = data.stepMessage;
             }
         }
     }
@@ -914,63 +914,63 @@ export class ImportStepReport extends pb_1.Message {
     set id(value: string) {
         pb_1.Message.setField(this, 1, value);
     }
-    get Timestamp() {
+    get timestamp() {
         return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
     }
-    set Timestamp(value: number) {
+    set timestamp(value: number) {
         pb_1.Message.setField(this, 2, value);
     }
-    get Severity() {
+    get severity() {
         return pb_1.Message.getFieldWithDefault(this, 3, ImportStepReportSeverity.INFORMATION) as ImportStepReportSeverity;
     }
-    set Severity(value: ImportStepReportSeverity) {
+    set severity(value: ImportStepReportSeverity) {
         pb_1.Message.setField(this, 3, value);
     }
-    get Message() {
+    get stepMessage() {
         return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
     }
-    set Message(value: string) {
+    set stepMessage(value: string) {
         pb_1.Message.setField(this, 4, value);
     }
     static fromObject(data: {
         id?: string;
-        Timestamp?: number;
-        Severity?: ImportStepReportSeverity;
-        Message?: string;
+        timestamp?: number;
+        severity?: ImportStepReportSeverity;
+        stepMessage?: string;
     }): ImportStepReport {
         const message = new ImportStepReport({});
         if (data.id != null) {
             message.id = data.id;
         }
-        if (data.Timestamp != null) {
-            message.Timestamp = data.Timestamp;
+        if (data.timestamp != null) {
+            message.timestamp = data.timestamp;
         }
-        if (data.Severity != null) {
-            message.Severity = data.Severity;
+        if (data.severity != null) {
+            message.severity = data.severity;
         }
-        if (data.Message != null) {
-            message.Message = data.Message;
+        if (data.stepMessage != null) {
+            message.stepMessage = data.stepMessage;
         }
         return message;
     }
     toObject() {
         const data: {
             id?: string;
-            Timestamp?: number;
-            Severity?: ImportStepReportSeverity;
-            Message?: string;
+            timestamp?: number;
+            severity?: ImportStepReportSeverity;
+            stepMessage?: string;
         } = {};
         if (this.id != null) {
             data.id = this.id;
         }
-        if (this.Timestamp != null) {
-            data.Timestamp = this.Timestamp;
+        if (this.timestamp != null) {
+            data.timestamp = this.timestamp;
         }
-        if (this.Severity != null) {
-            data.Severity = this.Severity;
+        if (this.severity != null) {
+            data.severity = this.severity;
         }
-        if (this.Message != null) {
-            data.Message = this.Message;
+        if (this.stepMessage != null) {
+            data.stepMessage = this.stepMessage;
         }
         return data;
     }
@@ -980,12 +980,12 @@ export class ImportStepReport extends pb_1.Message {
         const writer = w || new pb_1.BinaryWriter();
         if (this.id.length)
             writer.writeString(1, this.id);
-        if (this.Timestamp != 0)
-            writer.writeInt64(2, this.Timestamp);
-        if (this.Severity != ImportStepReportSeverity.INFORMATION)
-            writer.writeEnum(3, this.Severity);
-        if (this.Message.length)
-            writer.writeString(4, this.Message);
+        if (this.timestamp != 0)
+            writer.writeInt64(2, this.timestamp);
+        if (this.severity != ImportStepReportSeverity.INFORMATION)
+            writer.writeEnum(3, this.severity);
+        if (this.stepMessage.length)
+            writer.writeString(4, this.stepMessage);
         if (!w)
             return writer.getResultBuffer();
     }
@@ -999,13 +999,13 @@ export class ImportStepReport extends pb_1.Message {
                     message.id = reader.readString();
                     break;
                 case 2:
-                    message.Timestamp = reader.readInt64();
+                    message.timestamp = reader.readInt64();
                     break;
                 case 3:
-                    message.Severity = reader.readEnum();
+                    message.severity = reader.readEnum();
                     break;
                 case 4:
-                    message.Message = reader.readString();
+                    message.stepMessage = reader.readString();
                     break;
                 default: reader.skipField();
             }

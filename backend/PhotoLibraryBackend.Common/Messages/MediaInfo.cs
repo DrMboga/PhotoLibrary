@@ -42,18 +42,18 @@ namespace PhotoLibraryBackend.Common.Messages {
             "Qg8KDV9waWN0dXJlTWFrZXJCBgoEX3RhZ0ILCglfbGF0aXR1ZGVCDwoNX2xh",
             "dGl0dWRlUG9sZUIMCgpfbG9uZ2l0dWRlQhAKDl9sb25naXR1ZGVTaWRlQgoK",
             "CF9jb3VudHJ5QgkKB19yZWdpb25CCwoJX2xvY2FsaXR5QgoKCF9hZGRyZXNz",
-            "QggKBl92ZW51ZUINCgtfaXNGYXZvcml0ZUIMCgpfYWxidW1OYW1lIm8KEElt",
-            "cG9ydFN0ZXBSZXBvcnQSCgoCaWQYASABKAkSEQoJVGltZXN0YW1wGAIgASgD",
-            "EisKCFNldmVyaXR5GAMgASgOMhkuSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5",
-            "Eg8KB01lc3NhZ2UYBCABKAkqIQoJTWVkaWFUeXBlEgkKBUlNQUdFEAASCQoF",
-            "VklERU8QASpDChhJbXBvcnRTdGVwUmVwb3J0U2V2ZXJpdHkSDwoLSU5GT1JN",
-            "QVRJT04QABILCgdXQVJOSU5HEAESCQoFRVJST1IQAkImqgIjUGhvdG9MaWJy",
-            "YXJ5QmFja2VuZC5Db21tb24uTWVzc2FnZXNiBnByb3RvMw=="));
+            "QggKBl92ZW51ZUINCgtfaXNGYXZvcml0ZUIMCgpfYWxidW1OYW1lInMKEElt",
+            "cG9ydFN0ZXBSZXBvcnQSCgoCaWQYASABKAkSEQoJdGltZXN0YW1wGAIgASgD",
+            "EisKCHNldmVyaXR5GAMgASgOMhkuSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5",
+            "EhMKC3N0ZXBNZXNzYWdlGAQgASgJKiEKCU1lZGlhVHlwZRIJCgVJTUFHRRAA",
+            "EgkKBVZJREVPEAEqQwoYSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5Eg8KC0lO",
+            "Rk9STUFUSU9OEAASCwoHV0FSTklORxABEgkKBUVSUk9SEAJCJqoCI1Bob3Rv",
+            "TGlicmFyeUJhY2tlbmQuQ29tbW9uLk1lc3NhZ2VzYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::PhotoLibraryBackend.Common.Messages.MediaType), typeof(global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::PhotoLibraryBackend.Common.Messages.MediaInfo), global::PhotoLibraryBackend.Common.Messages.MediaInfo.Parser, new[]{ "Id", "ThumbnailUrl", "MediaUrl", "FullPath", "FileName", "FileExtension", "MediaType", "FileSizeKb", "DateTimeOriginal", "Width", "Height", "ThumbnailWidth", "ThumbnailHeight", "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "Thumbnail", "IsFavorite", "AlbumName" }, new[]{ "VideoDurationSec", "PictureMaker", "Tag", "Latitude", "LatitudePole", "Longitude", "LongitudeSide", "Country", "Region", "Locality", "Address", "Venue", "IsFavorite", "AlbumName" }, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::PhotoLibraryBackend.Common.Messages.ImportStepReport), global::PhotoLibraryBackend.Common.Messages.ImportStepReport.Parser, new[]{ "Id", "Timestamp", "Severity", "Message" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::PhotoLibraryBackend.Common.Messages.ImportStepReport), global::PhotoLibraryBackend.Common.Messages.ImportStepReport.Parser, new[]{ "Id", "Timestamp", "Severity", "StepMessage" }, null, null, null, null)
           }));
     }
     #endregion
@@ -1473,7 +1473,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       id_ = other.id_;
       timestamp_ = other.timestamp_;
       severity_ = other.severity_;
-      message_ = other.message_;
+      stepMessage_ = other.stepMessage_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -1495,7 +1495,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "Timestamp" field.</summary>
+    /// <summary>Field number for the "timestamp" field.</summary>
     public const int TimestampFieldNumber = 2;
     private long timestamp_;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1507,7 +1507,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "Severity" field.</summary>
+    /// <summary>Field number for the "severity" field.</summary>
     public const int SeverityFieldNumber = 3;
     private global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity severity_ = global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information;
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -1519,15 +1519,15 @@ namespace PhotoLibraryBackend.Common.Messages {
       }
     }
 
-    /// <summary>Field number for the "Message" field.</summary>
-    public const int MessageFieldNumber = 4;
-    private string message_ = "";
+    /// <summary>Field number for the "stepMessage" field.</summary>
+    public const int StepMessageFieldNumber = 4;
+    private string stepMessage_ = "";
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
-    public string Message {
-      get { return message_; }
+    public string StepMessage {
+      get { return stepMessage_; }
       set {
-        message_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+        stepMessage_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -1549,7 +1549,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Id != other.Id) return false;
       if (Timestamp != other.Timestamp) return false;
       if (Severity != other.Severity) return false;
-      if (Message != other.Message) return false;
+      if (StepMessage != other.StepMessage) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -1560,7 +1560,7 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Id.Length != 0) hash ^= Id.GetHashCode();
       if (Timestamp != 0L) hash ^= Timestamp.GetHashCode();
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) hash ^= Severity.GetHashCode();
-      if (Message.Length != 0) hash ^= Message.GetHashCode();
+      if (StepMessage.Length != 0) hash ^= StepMessage.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -1591,9 +1591,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(24);
         output.WriteEnum((int) Severity);
       }
-      if (Message.Length != 0) {
+      if (StepMessage.Length != 0) {
         output.WriteRawTag(34);
-        output.WriteString(Message);
+        output.WriteString(StepMessage);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
@@ -1617,9 +1617,9 @@ namespace PhotoLibraryBackend.Common.Messages {
         output.WriteRawTag(24);
         output.WriteEnum((int) Severity);
       }
-      if (Message.Length != 0) {
+      if (StepMessage.Length != 0) {
         output.WriteRawTag(34);
-        output.WriteString(Message);
+        output.WriteString(StepMessage);
       }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
@@ -1640,8 +1640,8 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
         size += 1 + pb::CodedOutputStream.ComputeEnumSize((int) Severity);
       }
-      if (Message.Length != 0) {
-        size += 1 + pb::CodedOutputStream.ComputeStringSize(Message);
+      if (StepMessage.Length != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeStringSize(StepMessage);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -1664,8 +1664,8 @@ namespace PhotoLibraryBackend.Common.Messages {
       if (other.Severity != global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity.Information) {
         Severity = other.Severity;
       }
-      if (other.Message.Length != 0) {
-        Message = other.Message;
+      if (other.StepMessage.Length != 0) {
+        StepMessage = other.StepMessage;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -1695,7 +1695,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 34: {
-            Message = input.ReadString();
+            StepMessage = input.ReadString();
             break;
           }
         }
@@ -1726,7 +1726,7 @@ namespace PhotoLibraryBackend.Common.Messages {
             break;
           }
           case 34: {
-            Message = input.ReadString();
+            StepMessage = input.ReadString();
             break;
           }
         }
