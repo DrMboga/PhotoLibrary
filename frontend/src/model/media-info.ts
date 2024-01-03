@@ -8,6 +8,11 @@ export enum MediaType {
     IMAGE = 0,
     VIDEO = 1
 }
+export enum ImportStepReportSeverity {
+    INFORMATION = 0,
+    WARNING = 1,
+    ERROR = 2
+}
 export class MediaInfo extends pb_1.Message {
     #one_of_decls: number[][] = [[14], [15], [16], [17], [18], [19], [20], [21], [22], [23], [24], [25], [27], [28]];
     constructor(data?: any[] | ({
@@ -734,7 +739,7 @@ export class MediaInfo extends pb_1.Message {
         if (this.fileSizeKb != 0)
             writer.writeInt64(8, this.fileSizeKb);
         if (this.dateTimeOriginal != 0)
-            writer.writeInt32(9, this.dateTimeOriginal);
+            writer.writeInt64(9, this.dateTimeOriginal);
         if (this.width != 0)
             writer.writeInt32(10, this.width);
         if (this.height != 0)
@@ -807,7 +812,7 @@ export class MediaInfo extends pb_1.Message {
                     message.fileSizeKb = reader.readInt64();
                     break;
                 case 9:
-                    message.dateTimeOriginal = reader.readInt32();
+                    message.dateTimeOriginal = reader.readInt64();
                     break;
                 case 10:
                     message.width = reader.readInt32();
@@ -876,5 +881,141 @@ export class MediaInfo extends pb_1.Message {
     }
     static deserializeBinary(bytes: Uint8Array): MediaInfo {
         return MediaInfo.deserialize(bytes);
+    }
+}
+export class ImportStepReport extends pb_1.Message {
+    #one_of_decls: number[][] = [];
+    constructor(data?: any[] | {
+        id?: string;
+        Timestamp?: number;
+        Severity?: ImportStepReportSeverity;
+        Message?: string;
+    }) {
+        super();
+        pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+        if (!Array.isArray(data) && typeof data == "object") {
+            if ("id" in data && data.id != undefined) {
+                this.id = data.id;
+            }
+            if ("Timestamp" in data && data.Timestamp != undefined) {
+                this.Timestamp = data.Timestamp;
+            }
+            if ("Severity" in data && data.Severity != undefined) {
+                this.Severity = data.Severity;
+            }
+            if ("Message" in data && data.Message != undefined) {
+                this.Message = data.Message;
+            }
+        }
+    }
+    get id() {
+        return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+    }
+    set id(value: string) {
+        pb_1.Message.setField(this, 1, value);
+    }
+    get Timestamp() {
+        return pb_1.Message.getFieldWithDefault(this, 2, 0) as number;
+    }
+    set Timestamp(value: number) {
+        pb_1.Message.setField(this, 2, value);
+    }
+    get Severity() {
+        return pb_1.Message.getFieldWithDefault(this, 3, ImportStepReportSeverity.INFORMATION) as ImportStepReportSeverity;
+    }
+    set Severity(value: ImportStepReportSeverity) {
+        pb_1.Message.setField(this, 3, value);
+    }
+    get Message() {
+        return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+    }
+    set Message(value: string) {
+        pb_1.Message.setField(this, 4, value);
+    }
+    static fromObject(data: {
+        id?: string;
+        Timestamp?: number;
+        Severity?: ImportStepReportSeverity;
+        Message?: string;
+    }): ImportStepReport {
+        const message = new ImportStepReport({});
+        if (data.id != null) {
+            message.id = data.id;
+        }
+        if (data.Timestamp != null) {
+            message.Timestamp = data.Timestamp;
+        }
+        if (data.Severity != null) {
+            message.Severity = data.Severity;
+        }
+        if (data.Message != null) {
+            message.Message = data.Message;
+        }
+        return message;
+    }
+    toObject() {
+        const data: {
+            id?: string;
+            Timestamp?: number;
+            Severity?: ImportStepReportSeverity;
+            Message?: string;
+        } = {};
+        if (this.id != null) {
+            data.id = this.id;
+        }
+        if (this.Timestamp != null) {
+            data.Timestamp = this.Timestamp;
+        }
+        if (this.Severity != null) {
+            data.Severity = this.Severity;
+        }
+        if (this.Message != null) {
+            data.Message = this.Message;
+        }
+        return data;
+    }
+    serialize(): Uint8Array;
+    serialize(w: pb_1.BinaryWriter): void;
+    serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+        const writer = w || new pb_1.BinaryWriter();
+        if (this.id.length)
+            writer.writeString(1, this.id);
+        if (this.Timestamp != 0)
+            writer.writeInt64(2, this.Timestamp);
+        if (this.Severity != ImportStepReportSeverity.INFORMATION)
+            writer.writeEnum(3, this.Severity);
+        if (this.Message.length)
+            writer.writeString(4, this.Message);
+        if (!w)
+            return writer.getResultBuffer();
+    }
+    static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ImportStepReport {
+        const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ImportStepReport();
+        while (reader.nextField()) {
+            if (reader.isEndGroup())
+                break;
+            switch (reader.getFieldNumber()) {
+                case 1:
+                    message.id = reader.readString();
+                    break;
+                case 2:
+                    message.Timestamp = reader.readInt64();
+                    break;
+                case 3:
+                    message.Severity = reader.readEnum();
+                    break;
+                case 4:
+                    message.Message = reader.readString();
+                    break;
+                default: reader.skipField();
+            }
+        }
+        return message;
+    }
+    serializeBinary(): Uint8Array {
+        return this.serialize();
+    }
+    static deserializeBinary(bytes: Uint8Array): ImportStepReport {
+        return ImportStepReport.deserialize(bytes);
     }
 }

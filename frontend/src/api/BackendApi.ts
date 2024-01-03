@@ -1,3 +1,5 @@
+import { ImportStepReport } from '../model/media-info';
+
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function translateStatusToErrorMessage(status: number) {
@@ -25,6 +27,10 @@ function checkStatus(response: Response) {
     let errorMessage = translateStatusToErrorMessage(httpErrorInfo.status);
     throw new Error(errorMessage);
   }
+}
+
+function parseJSON(response: Response) {
+  return response.json();
 }
 
 const backendAPI = {
@@ -56,6 +62,22 @@ const backendAPI = {
       default:
         return false;
     }
+  },
+  async getImporterLogs(authToken?: string): Promise<ImportStepReport[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/importerLogs`, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    return parseJSON(responseWithStatus);
   },
 };
 
