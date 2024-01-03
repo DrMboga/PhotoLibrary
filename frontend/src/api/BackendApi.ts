@@ -36,6 +36,27 @@ const backendAPI = {
     const responseWithStatus = checkStatus(response);
     return responseWithStatus.text();
   },
+  async isImporterInProgress(authToken?: string): Promise<boolean> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/mediaImportStatus`, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    switch (await responseWithStatus.text()) {
+      case 'InProgress':
+        return true;
+      default:
+        return false;
+    }
+  },
 };
 
 export { backendAPI };

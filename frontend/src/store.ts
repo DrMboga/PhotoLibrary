@@ -14,6 +14,7 @@ import {
 } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import aboutReducer from './about/aboutSlice';
+import importerSlice from './settings/Importer/importerSlice';
 
 // Persist appReducer to the local storage via redux-persist
 const persistAppConfig = {
@@ -45,6 +46,7 @@ export const store = configureStore({
     auth: persistedAuthReducer,
     photos: persistedPhotoReducer,
     about: aboutReducer,
+    importer: importerSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
