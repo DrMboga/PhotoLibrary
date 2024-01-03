@@ -6,4 +6,5 @@ export interface PageRouteInfo {
   displayName: string;
   element: ReactElement;
   iconElement: ReactElement;
+  children?: PageRouteInfo[];
 }

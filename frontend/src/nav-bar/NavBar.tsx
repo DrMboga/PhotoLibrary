@@ -16,7 +16,7 @@ import {
 } from '@mui/material';
 import CameraIcon from '@mui/icons-material/Camera';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -39,6 +39,8 @@ export const NavBar = ({ routesInfo, keycloakRef }: Props) => {
   const dispatch = useAppDispatch();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+
+  const routeLocation = useLocation();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -153,6 +155,9 @@ export const NavBar = ({ routesInfo, keycloakRef }: Props) => {
                 onClick={handleCloseNavMenu}
                 sx={{ my: 2, color: 'white', display: 'block' }}
                 href={page.route}
+                variant={
+                  `/${routeLocation.pathname.split('/')[1]}` === page.route ? 'outlined' : 'text'
+                }
               >
                 <IconButton sx={{ color: 'white' }}>{page.iconElement}</IconButton>
                 {page.displayName}
