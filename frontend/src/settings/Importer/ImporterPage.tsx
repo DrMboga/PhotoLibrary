@@ -43,14 +43,14 @@ export function ImporterPage() {
     // TODO: Call '/triggerMediaImport' post method, then getImporterStatus
   };
 
-  const getIcon = (status: ImportStepReportSeverity) => {
+  const getIcon = (status: ImportStepReportSeverity, id: string) => {
     switch (status) {
       case ImportStepReportSeverity.ERROR:
-        return <ReportIcon fontSize="small" sx={{ color: 'red' }} />;
+        return <ReportIcon fontSize="small" sx={{ color: 'red' }} id={`icon-status-${id}`} />;
       case ImportStepReportSeverity.WARNING:
-        return <WarningIcon fontSize="small" sx={{ color: 'yellow' }} />;
+        return <WarningIcon fontSize="small" sx={{ color: 'yellow' }} id={`icon-status-${id}`} />;
       case ImportStepReportSeverity.INFORMATION:
-        return <InfoIcon fontSize="small" sx={{ color: 'green' }} />;
+        return <InfoIcon fontSize="small" sx={{ color: 'green' }} id={`icon-status-${id}`} />;
     }
   };
 
@@ -86,7 +86,7 @@ export function ImporterPage() {
                   <Typography id={`typography-1-${step.id}`} variant="body2">
                     [ {dateFromUnixTime(step.timestamp).toLocaleString('ru-RU')} ]
                   </Typography>
-                  {getIcon(step.severity)}
+                  {getIcon(step.severity, step.id)}
                   <Typography
                     id={`typography-2-${step.id}`}
                     variant="body1"
@@ -96,7 +96,7 @@ export function ImporterPage() {
                     {step.stepMessage}
                   </Typography>
                 </Box>
-                <Divider flexItem variant="middle" />
+                <Divider flexItem variant="middle" id={`divider-${step.id}`} />
               </>
             ))}
           </Box>

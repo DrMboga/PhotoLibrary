@@ -1,7 +1,12 @@
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import { initKeycloak, selectAuthenticated, selectTokenExpiration } from './authSlice';
+import {
+  initKeycloak,
+  prolongAuthToken,
+  selectAuthenticated,
+  selectTokenExpiration,
+} from './authSlice';
 import { useEffect, useRef } from 'react';
-import { currentDateLinuxTime } from '../helpers/date-helper';
+import { currentDateLinuxTime, dateFromUnixTime } from '../helpers/date-helper';
 import keycloak from './keycloak';
 
 export function useAuth() {
@@ -24,6 +29,12 @@ export function useAuth() {
     }
     initializedOnce.current = true;
   }, []);
+
+  useEffect(() => {
+    keycloakRef.current.onTokenExpired = () => {
+      dispatch(prolongAuthToken(keycloakRef.current));
+    };
+  }, [keycloakRef.current]);
 
   return keycloakRef.current;
 }
