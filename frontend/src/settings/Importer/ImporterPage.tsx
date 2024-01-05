@@ -73,7 +73,7 @@ export function ImporterPage() {
           </Box>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: '5px', marginTop: '15px' }}>
             {importerSteps?.map((step) => (
-              <>
+              <Box key={`section-${step.id}`}>
                 <Box
                   id={`log-row-${step.id}`}
                   sx={{
@@ -97,7 +97,7 @@ export function ImporterPage() {
                   </Typography>
                 </Box>
                 <Divider flexItem variant="middle" id={`divider-${step.id}`} />
-              </>
+              </Box>
             ))}
           </Box>
         </Box>
