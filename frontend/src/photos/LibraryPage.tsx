@@ -7,13 +7,15 @@ import {
   selectPhotosLoadingBottom,
   selectPhotosLoadingTop,
 } from './photosSlice';
-import { Alert, Box } from '@mui/material';
+import { Alert, Box, IconButton } from '@mui/material';
 import { MediaCard } from './MediaCard';
 import { ScrollableBox } from '../components/ScrollableBox';
 import { dateFromUnixTime } from '../helpers/date-helper';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MediaPreview } from './MediaPreview';
 import { useMediaSignalRHub } from './useMediaSignalRHub';
+import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
+import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 
 const topBarHeight = 56;
 
@@ -83,6 +85,9 @@ function LibraryPage() {
           }}
         >
           {loadingTop && <CircularProgress />}
+          <IconButton color="primary" aria-label="more..." onClick={handleScrollToTop}>
+            <ArrowCircleLeftIcon />
+          </IconButton>
           {photos.length > 0 &&
             photos.map((photo) =>
               photo.id === selectedMediaId ? (
@@ -95,6 +100,9 @@ function LibraryPage() {
                 />
               ),
             )}
+          <IconButton color="primary" aria-label="more..." onClick={handleScrollToBottom}>
+            <ArrowCircleRightIcon />
+          </IconButton>
           {loadingBottom && <CircularProgress />}
         </Box>
       </ScrollableBox>
