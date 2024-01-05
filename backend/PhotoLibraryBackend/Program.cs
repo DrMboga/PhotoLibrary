@@ -158,5 +158,17 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
 
+app.MapGet("/media", (string filePath) => {
+    var fileInfo = new FileInfo(filePath);
+    var fileStream = File.OpenRead(filePath);
+    // TODO: Use mediatR to send request and read MediaHelper.GetMediaType by fileInfo.Extension
+    // Then build a content type video/mp4 or image/jpeg
+    return Results.File(fileStream, contentType: "image/jpeg", fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
+})
+.RequireAuthorization()
+.WithName("Media")
+.WithDescription("Downloads a media by address.")
+.WithOpenApi();
+
 app.Run();
 

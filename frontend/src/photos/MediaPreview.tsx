@@ -16,7 +16,9 @@ import { blobToImage } from '../helpers/blob-image.helper';
 import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 type Props = {
   media: MediaInfo;
@@ -30,6 +32,10 @@ export const MediaPreview = ({ media }: Props) => {
   const address = city && country ? `${city}, ${country}${venue}` : '';
 
   const [isFavorite, setIsFavorite] = useState(media.isFavorite);
+
+  useEffect(() => {
+    // Download media from `${backendUrl}/media` endpoint
+  }, [media]);
 
   const handleFavoriteClick = () => {
     media.isFavorite = !media.isFavorite;
