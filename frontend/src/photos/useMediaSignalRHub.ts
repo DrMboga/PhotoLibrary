@@ -90,6 +90,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   useEffect(() => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
+      console.log('hub connection is about to connect');
       const hubConnection = new HubConnectionBuilder()
         .withUrl(mediaHubPath, { accessTokenFactory: () => authToken ?? '' })
         .withAutomaticReconnect()
@@ -114,13 +115,18 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     // clean up:
     return () => {
       if (connection?.state === HubConnectionState.Connected) {
+        connectCalledOnce.current = false;
+        console.log('hub connection is about to disconnect');
         connection
           .stop()
-          .then(() => console.log('Disconnected from the hub'))
+          .then(() => {
+            console.log('Disconnected from the hub');
+            setConnection(connection);
+          })
           .catch((err) => setError(err));
       }
     };
-  }, []);
+  }, [authToken]);
 
   // Media files added on scroll to bottom event
   useEffect(() => {

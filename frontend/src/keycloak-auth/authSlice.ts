@@ -111,7 +111,6 @@ export const authSlice = createSlice({
         state.tokenExpiration = undefined;
       })
       .addCase(prolongAuthToken.pending, (state) => {
-        state.authenticated = false;
         state.token = undefined;
         state.error = undefined;
       })
@@ -122,6 +121,7 @@ export const authSlice = createSlice({
         state.authenticated = action.payload.authenticated ?? false;
         state.token = action.payload.token;
         state.tokenExpiration = action.payload.tokenExpiration;
+        console.log('prolongAuthToken.fulfilled - new token');
       })
       .addCase(prolongAuthToken.rejected, (state, action) => {
         if (action?.error?.message) {
