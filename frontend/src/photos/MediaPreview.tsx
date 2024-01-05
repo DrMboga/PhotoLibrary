@@ -7,12 +7,16 @@ import {
   CardActions,
   Typography,
   IconButton,
+  Box,
 } from '@mui/material';
 import { dateFromUnixTime } from '../helpers/date-helper';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import ShareIcon from '@mui/icons-material/Share';
 import { MediaInfo } from '../model/media-info';
 import { blobToImage } from '../helpers/blob-image.helper';
+import DownloadIcon from '@mui/icons-material/Download';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
+import { useState } from 'react';
 
 type Props = {
   media: MediaInfo;
@@ -24,6 +28,15 @@ export const MediaPreview = ({ media }: Props) => {
   const venue = media.venue ?? '';
 
   const address = city && country ? `${city}, ${country}${venue}` : '';
+
+  const [isFavorite, setIsFavorite] = useState(media.isFavorite);
+
+  const handleFavoriteClick = () => {
+    media.isFavorite = !media.isFavorite;
+    setIsFavorite(media.isFavorite);
+    // TODO: Call API
+  };
+
   return (
     <Card key={`media-preview-card${media.id}`}>
       <CardHeader subheader={media.fullPath} />
@@ -56,13 +69,20 @@ export const MediaPreview = ({ media }: Props) => {
         )}
       </CardContent>
 
-      <CardActions disableSpacing sx={{ paddingTop: '1px', paddingBottom: '1px' }}>
-        <IconButton aria-label="add to favorites" size="small">
-          <FavoriteIcon />
-        </IconButton>
-        <IconButton aria-label="share" size="small">
-          <ShareIcon />
-        </IconButton>
+      <CardActions disableSpacing sx={{ paddingTop: '1px', paddingBottom: '1px', display: 'flex' }}>
+        <Box sx={{ flexGrow: 1 }}>
+          <IconButton aria-label="Add to favorites" size="small" onClick={handleFavoriteClick}>
+            {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          </IconButton>
+          <IconButton aria-label="Download" size="small">
+            <DownloadIcon />
+          </IconButton>
+        </Box>
+        <Box sx={{ flexGrow: 0 }}>
+          <IconButton aria-label="Delete" size="small">
+            <DeleteIcon />
+          </IconButton>
+        </Box>
       </CardActions>
     </Card>
   );
