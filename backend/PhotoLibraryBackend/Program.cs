@@ -98,8 +98,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.MapHub<MediaHub>("/Media")
     .RequireAuthorization();
 
-app.MapHub<ImporterLoggerHub>("/ImporterLogger")
-    .RequireAuthorization();
+app.MapHub<ImporterLoggerHub>("/ImporterLogger");
 
 // Root endpoint returns text info about backend version and DB info
 app.MapGet("/", async (IMediator mediator) => 

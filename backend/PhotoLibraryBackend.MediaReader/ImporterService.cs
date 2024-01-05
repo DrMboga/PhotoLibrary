@@ -45,6 +45,7 @@ public class ImporterService : IImporterService
             await ReportStep(ImporterReportSeverity.Information, $"Finish to import directory '{dir.FullName}'. {importedSuccessfully}/{files.Length} files imported successfully");
         }
         await ReportStep(ImporterReportSeverity.Information, $"Importing library: '{photoLibraryPath}' finished");
+        await _mediator.Publish(new MediaImportFinished());
     }
 
     private async Task<FolderInfo[]> GetAllFoldersAsFlatList(string folderPath, long? parentFolderId)

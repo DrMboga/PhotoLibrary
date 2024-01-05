@@ -2,7 +2,9 @@
 
 namespace PhotoLibraryBackend;
 
-public class ImportReporterSignalRNotificationHandler : INotificationHandler<ReportImportStepToSignalRNotification>
+public class ImportReporterSignalRNotificationHandler : 
+    INotificationHandler<ReportImportStepToSignalRNotification>,
+    INotificationHandler<MediaImportFinished>
 {
     private IHubContext<ImporterLoggerHub> _importerLoggerHub;
 
@@ -23,5 +25,10 @@ public class ImportReporterSignalRNotificationHandler : INotificationHandler<Rep
             StepMessage = notification.ReportMessage.Message,
         };
         await _importerLoggerHub.Clients.All.SendAsync("ImportStep", stepReport);
+    }
+
+    public async Task Handle(MediaImportFinished notification, CancellationToken cancellationToken)
+    {
+        await _importerLoggerHub.Clients.All.SendAsync("MediaImportFinished");
     }
 }

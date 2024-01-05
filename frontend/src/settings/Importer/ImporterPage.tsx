@@ -5,10 +5,12 @@ import { useAppDispatch, useAppSelector } from '../../storeHooks';
 import {
   getImporterLogs,
   getImporterStatus,
+  importerStarted,
   selectImporterError,
   selectImporterLoading,
   selectImporterSteps,
   selectIsImporterInProgress,
+  triggerMediaImport,
 } from './importerSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Alert, Box, Button, Divider, Typography } from '@mui/material';
@@ -19,6 +21,7 @@ import InfoIcon from '@mui/icons-material/Info';
 import WarningIcon from '@mui/icons-material/Warning';
 import ReportIcon from '@mui/icons-material/Report';
 import { ImportStepReportSeverity } from '../../model/media-info';
+import { useReporterSignalRHub } from './useReporterSignalRHub';
 
 export function ImporterPage() {
   const dispatch = useAppDispatch();
@@ -28,19 +31,19 @@ export function ImporterPage() {
   const isImportInProgress = useAppSelector(selectIsImporterInProgress);
   const importerSteps = useAppSelector(selectImporterSteps);
 
+  useReporterSignalRHub();
+
   useEffect(() => {
     dispatch(getImporterStatus(authToken));
   }, [dispatch, authToken]);
 
   useEffect(() => {
     dispatch(getImporterLogs(authToken));
-    if (isImportInProgress) {
-      // TODO: Start to listen SignalR
-    }
   }, [isImportInProgress, authToken]);
 
   const startImport = () => {
-    // TODO: Call '/triggerMediaImport' post method, then getImporterStatus
+    dispatch(triggerMediaImport(authToken));
+    dispatch(importerStarted());
   };
 
   const getIcon = (status: ImportStepReportSeverity, id: string) => {

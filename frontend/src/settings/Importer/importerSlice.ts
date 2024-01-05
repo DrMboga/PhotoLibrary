@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { backendAPI } from '../../api/BackendApi';
 import { ensureError } from '../../helpers/error-helper';
 import { RootState } from '../../store';
@@ -27,28 +27,46 @@ export const getImporterLogs = createAsyncThunk('getImporterLogs', async (authTo
   return await backendAPI.getImporterLogs(authToken);
 });
 
+// triggerMediaImport thunk
+export const triggerMediaImport = createAsyncThunk(
+  'triggerMediaImport',
+  async (authToken?: string) => {
+    await backendAPI.triggerMediaImport(authToken);
+  },
+);
+
 export const importerSlice = createSlice({
   name: 'importerSlice',
   initialState: initialImporterState,
-  reducers: {},
+  reducers: {
+    importerSignalRErrorOccurred: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+    },
+    importerNewStepAdded: (state, action: PayloadAction<ImportStepReport>) => {
+      state.importSteps = [action.payload, ...(state.importSteps ?? [])];
+    },
+    importerStarted: (state) => {
+      state.isImporterInProgress = true;
+    },
+    importerFinished: (state) => {
+      state.isImporterInProgress = false;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getImporterStatus.pending, (state) => {
         state.loading = true;
         state.error = undefined;
         state.isImporterInProgress = false;
-        state.importSteps = undefined;
       })
       .addCase(getImporterStatus.fulfilled, (state, action) => {
         state.loading = false;
         state.error = undefined;
         state.isImporterInProgress = action.payload;
-        state.importSteps = undefined;
       })
       .addCase(getImporterStatus.rejected, (state, action) => {
         state.loading = false;
         state.isImporterInProgress = false;
-        state.importSteps = undefined;
         if (action.payload) {
           const error = ensureError(action.payload);
           state.error = error.message;
@@ -75,9 +93,24 @@ export const importerSlice = createSlice({
         } else {
           state.error = 'Unable to reach backend';
         }
+      })
+      .addCase(triggerMediaImport.rejected, (state, action) => {
+        if (action.payload) {
+          const error = ensureError(action.payload);
+          state.error = error.message;
+        } else {
+          state.error = 'Unable to reach backend';
+        }
       });
   },
 });
+
+export const {
+  importerSignalRErrorOccurred,
+  importerNewStepAdded,
+  importerStarted,
+  importerFinished,
+} = importerSlice.actions;
 
 export default importerSlice.reducer;
 

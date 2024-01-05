@@ -56,12 +56,8 @@ const backendAPI = {
       }),
     });
     const responseWithStatus = checkStatus(response);
-    switch (await responseWithStatus.text()) {
-      case 'InProgress':
-        return true;
-      default:
-        return false;
-    }
+    const status = await responseWithStatus.text();
+    return status.includes('InProgress');
   },
   async getImporterLogs(authToken?: string): Promise<ImportStepReport[]> {
     if (!backendUrl) {
@@ -78,6 +74,21 @@ const backendAPI = {
     });
     const responseWithStatus = checkStatus(response);
     return parseJSON(responseWithStatus);
+  },
+  async triggerMediaImport(authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/triggerMediaImport`, {
+      method: 'post',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    checkStatus(response);
   },
 };
 
