@@ -51,16 +51,13 @@ public static class MediaHelper
             FileExt = file.Extension,
             FileSize = file.Length,
             FileHash = file.FullName.GenerateHash(),
-            Deleted = false
+            Deleted = false,
+            DateTimeOriginalUtc = GetDateOriginFromFileInfo(file)
         };
-        if (mediaType == MediaType.Video)
-        {
-            // TODO: Read ffmpeg metadata DateTime, Width, Height, Duration 
-            mediaFileInfo.DateTimeOriginalUtc = file.CreationTimeUtc.ToUniversalTime();
-        }
+
         if (mediaType == MediaType.Image)
         {
-            ReadExifMetadata(file.FullName, mediaFileInfo, file.CreationTimeUtc.ToUniversalTime());
+            ReadExifMetadata(file.FullName, mediaFileInfo);
         }
 
         return mediaFileInfo;
@@ -106,11 +103,10 @@ public static class MediaHelper
         return (newWidth, newHeight);
     }
 
-    private static void ReadExifMetadata(string filePath, MediaFileInfo mediaFileInfo, DateTime creationTimeUtc)
+    private static void ReadExifMetadata(string filePath, MediaFileInfo mediaFileInfo)
     {
         using Image image = Image.Load(filePath);
         var metadata = image?.Metadata?.ExifProfile;
-        mediaFileInfo.DateTimeOriginalUtc = creationTimeUtc;
         if (image == null) 
         {
             return;
@@ -199,6 +195,15 @@ public static class MediaHelper
             }
             return (T)metadataValue;
         }
+    }
+
+    private static DateTime GetDateOriginFromFileInfo(FileInfo file)
+    {
+        DateTime[] times = [
+            file.CreationTimeUtc.ToUniversalTime(), 
+            file.LastWriteTimeUtc.ToUniversalTime(),
+            file.LastAccessTimeUtc.ToUniversalTime()];
+        return times.Min();
     }
 }
 
