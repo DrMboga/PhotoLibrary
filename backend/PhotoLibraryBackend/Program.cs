@@ -158,15 +158,18 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
 
-app.MapGet("/media", (string filePath) => {
+app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
+    if (filePath == null)
+    {
+        return Results.BadRequest();
+    }
     var fileInfo = new FileInfo(filePath);
     var fileStream = File.OpenRead(filePath);
-    // TODO: Use mediatR to send request and read MediaHelper.GetMediaType by fileInfo.Extension
-    // Then build a content type video/mp4 or image/jpeg
-    return Results.File(fileStream, contentType: "image/jpeg", fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
+    var mimeType = await mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
+    return Results.File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
 })
 .RequireAuthorization()
-.WithName("Media")
+.WithName("MediaDownload")
 .WithDescription("Downloads a media by address.")
 .WithOpenApi();
 
