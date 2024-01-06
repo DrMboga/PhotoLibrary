@@ -7,7 +7,6 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  CardMedia,
   IconButton,
   Typography,
 } from '@mui/material';
@@ -22,8 +21,6 @@ import { useAppSelector } from '../storeHooks';
 import { selectToken } from '../keycloak-auth/authSlice';
 import { backendAPI } from '../api/BackendApi';
 import CircularProgress from '@mui/material/CircularProgress';
-
-const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 type Props = {
   media: MediaInfo;
