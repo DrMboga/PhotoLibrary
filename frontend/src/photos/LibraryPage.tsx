@@ -17,6 +17,9 @@ import { useMediaSignalRHub } from './useMediaSignalRHub';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
 import { MediaInfo } from '../model/media-info';
+import Drawer from '@mui/material/Drawer';
+import EditCalendarIcon from '@mui/icons-material/EditCalendar';
+import { DatesFilterComponent } from './DatesFilterComponent';
 
 const topBarHeight = 56;
 
@@ -28,7 +31,8 @@ function LibraryPage() {
   const error = useAppSelector(selectPhotosLibraryError);
 
   const [selectedMedia, setSelectedMedia] = useState<MediaInfo>();
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos } =
     useMediaSignalRHub(dateOfFirstPhoto);
@@ -65,10 +69,32 @@ function LibraryPage() {
     setSelectedMedia(undefined);
   };
 
+  const toggleDrawer = (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    if (
+      event.type === 'keydown' &&
+      ((event as React.KeyboardEvent).key === 'Tab' ||
+        (event as React.KeyboardEvent).key === 'Shift')
+    ) {
+      return;
+    }
+
+    setDrawerOpen(open);
+  };
+
+  const newDateSelectedHandle = (newDate: number) => {
+    console.log('New date selected', newDate);
+  };
+
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
-      <Box>
+      <Drawer anchor="top" open={drawerOpen} onClose={toggleDrawer(false)}>
+        <DatesFilterComponent
+          currentDate={dateOfFirstPhoto}
+          newDateSelected={newDateSelectedHandle}
+        />
+      </Drawer>
+      <Box sx={{ display: 'flex', gap: '5px' }}>
         <p>
           {dateOfFirstPhoto && dateOfLastPhoto
             ? `${dateFromUnixTime(dateOfFirstPhoto).toLocaleString('ru-RU')} - ${dateFromUnixTime(
@@ -76,6 +102,9 @@ function LibraryPage() {
               ).toLocaleString('ru-RU')}`
             : ''}
         </p>
+        <IconButton color="secondary" aria-label="Select date" onClick={toggleDrawer(true)}>
+          <EditCalendarIcon fontSize="small" />
+        </IconButton>
       </Box>
       <ScrollableBox
         indent={topBarHeight}
