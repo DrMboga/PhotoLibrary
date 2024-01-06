@@ -90,6 +90,22 @@ const backendAPI = {
     });
     checkStatus(response);
   },
+  async downloadMedia(fullPath: string, authToken?: string): Promise<Blob> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/mediaDownload?filePath=${fullPath}`, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    return responseWithStatus.blob();
+  },
 };
 
 export { backendAPI };

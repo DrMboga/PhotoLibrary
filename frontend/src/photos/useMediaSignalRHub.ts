@@ -8,7 +8,7 @@ import { selectToken } from '../keycloak-auth/authSlice';
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
 const defaultDateFrom = 9999999999; //Sat Nov 20 2286 17:46:39
-const maxSizeOfPhotosOnAPage = 30;
+const maxSizeOfPhotosOnAPage = 50;
 
 export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const connectCalledOnce = useRef(false);
