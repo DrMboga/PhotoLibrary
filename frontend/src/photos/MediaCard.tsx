@@ -7,7 +7,7 @@ import { blobToImage } from '../helpers/blob-image.helper';
 
 type Props = {
   media: MediaInfo;
-  onClick: (mediaId: string) => void;
+  onClick: (media: MediaInfo) => void;
 };
 export const MediaCard = ({ media, onClick }: Props) => {
   const mediaDate = dateFromUnixTime(media.dateTimeOriginal);
@@ -17,7 +17,7 @@ export const MediaCard = ({ media, onClick }: Props) => {
   // #004d40
 
   return (
-    <Card key={`card-${media.id}`} onClick={() => onClick(media.id)}>
+    <Card key={`card-${media.id}`} onClick={() => onClick(media)}>
       <Box sx={{ position: 'relative' }}>
         <CardMedia
           key={`card-media-${media.id}`}

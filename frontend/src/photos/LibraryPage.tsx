@@ -16,6 +16,7 @@ import { MediaPreview } from './MediaPreview';
 import { useMediaSignalRHub } from './useMediaSignalRHub';
 import ArrowCircleLeftIcon from '@mui/icons-material/ArrowCircleLeft';
 import ArrowCircleRightIcon from '@mui/icons-material/ArrowCircleRight';
+import { MediaInfo } from '../model/media-info';
 
 const topBarHeight = 56;
 
@@ -26,14 +27,15 @@ function LibraryPage() {
   const dateOfLastPhoto = useAppSelector(selectDateOfLastPhoto);
   const error = useAppSelector(selectPhotosLibraryError);
 
-  const [selectedMediaId, setSelectedMediaId] = useState('');
+  const [selectedMedia, setSelectedMedia] = useState<MediaInfo>();
+  const [dialogOpen, setDialogOpen] = React.useState(false);
 
   const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos } =
     useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
+    setSelectedMedia(undefined);
     if (dateOfFirstPhoto) {
-      setSelectedMediaId('');
       if (connection) {
         getPreviousPhotosChunkFromBackend(dateOfFirstPhoto, connection).catch((err) =>
           console.error(err),
@@ -43,8 +45,8 @@ function LibraryPage() {
   };
 
   const handleScrollToBottom = (): void => {
+    setSelectedMedia(undefined);
     if (dateOfLastPhoto) {
-      setSelectedMediaId('');
       if (connection) {
         getNextPhotosChunkFromBackend(dateOfLastPhoto, connection).catch((err) =>
           console.error(err),
@@ -53,8 +55,14 @@ function LibraryPage() {
     }
   };
 
-  const handleCardClick = (mediaId: string) => {
-    setSelectedMediaId(mediaId);
+  const handleCardClick = (media: MediaInfo) => {
+    setSelectedMedia(media);
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedMedia(undefined);
   };
 
   return (
@@ -89,23 +97,20 @@ function LibraryPage() {
             <ArrowCircleLeftIcon />
           </IconButton>
           {photos.length > 0 &&
-            photos.map((photo) =>
-              photo.id === selectedMediaId ? (
-                <MediaPreview media={photo} key={`media-preview-card-id${photo.id}`}></MediaPreview>
-              ) : (
-                <MediaCard
-                  key={`media-card-id-${photo.id}`}
-                  media={photo}
-                  onClick={handleCardClick}
-                />
-              ),
-            )}
+            photos.map((photo) => (
+              <MediaCard
+                key={`media-card-id-${photo.id}`}
+                media={photo}
+                onClick={handleCardClick}
+              />
+            ))}
           <IconButton color="primary" aria-label="more..." onClick={handleScrollToBottom}>
             <ArrowCircleRightIcon />
           </IconButton>
           {loadingBottom && <CircularProgress />}
         </Box>
       </ScrollableBox>
+      <MediaPreview media={selectedMedia} open={dialogOpen} onClose={handleDialogClose} />
     </>
   );
 }

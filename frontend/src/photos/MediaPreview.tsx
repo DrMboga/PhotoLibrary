@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 import {
   Alert,
   Box,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   Typography,
 } from '@mui/material';
@@ -23,17 +23,19 @@ import { backendAPI } from '../api/BackendApi';
 import CircularProgress from '@mui/material/CircularProgress';
 
 type Props = {
-  media: MediaInfo;
+  media?: MediaInfo;
+  open: boolean;
+  onClose: () => void;
 };
-export const MediaPreview = ({ media }: Props) => {
-  const mediaDate = dateFromUnixTime(media.dateTimeOriginal);
-  const country = media.country ?? '';
-  const city = media.locality ?? media.region ?? '';
-  const venue = media.venue ?? '';
+export const MediaPreview = ({ media, open, onClose }: Props) => {
+  const mediaDate = dateFromUnixTime(media?.dateTimeOriginal ?? 0);
+  const country = media?.country ?? '';
+  const city = media?.locality ?? media?.region ?? '';
+  const venue = media?.venue ?? '';
 
   const address = city && country ? `${city}, ${country}${venue}` : '';
 
-  const [isFavorite, setIsFavorite] = useState(media.isFavorite);
+  const [isFavorite, setIsFavorite] = useState(media?.isFavorite ?? false);
 
   const authToken = useAppSelector(selectToken);
   const [mediaData, setMediaData] = useState<Blob | undefined>(undefined);
@@ -42,6 +44,9 @@ export const MediaPreview = ({ media }: Props) => {
   const [error, setError] = useState<string | undefined>(undefined);
 
   useEffect(() => {
+    if (!media || !open) {
+      return;
+    }
     setMediaLoading(true);
     backendAPI
       .downloadMedia(media.fullPath, authToken)
@@ -53,16 +58,19 @@ export const MediaPreview = ({ media }: Props) => {
         });
       })
       .catch((err) => setError(err));
-  }, [media, authToken]);
+  }, [media, open, authToken]);
 
   const handleFavoriteClick = () => {
+    if (!media) {
+      return;
+    }
     media.isFavorite = !media.isFavorite;
     setIsFavorite(media.isFavorite);
     // TODO: Call API
   };
 
   const handleDownload = () => {
-    if (mediaData) {
+    if (media && mediaData) {
       const mediaUrl = window.URL.createObjectURL(mediaData);
       const tempLink = document.createElement('a');
       tempLink.href = mediaUrl;
@@ -71,30 +79,34 @@ export const MediaPreview = ({ media }: Props) => {
     }
   };
 
-  return (
-    <Card key={`media-preview-card${media.id}`}>
-      <CardHeader subheader={media.fileName} />
+  const handleClose = () => {
+    setMediaData(undefined);
+    setMediaDataAsUint8(new Uint8Array());
+    onClose();
+  };
+
+  return media ? (
+    <Dialog onClose={handleClose} open={open}>
+      <DialogTitle>{media.fileName}</DialogTitle>
+
       {error && <Alert severity="error">{error}</Alert>}
       {mediaLoading && <CircularProgress />}
       {!mediaLoading && media.mediaType === MediaType.IMAGE && (
         <img
           src={blobToImage(mediaDataAsUint8)}
           alt={media.fileName}
-          style={{ height: media.thumbnailHeight * 2 }}
+          style={{ height: media.thumbnailHeight * 2.2 }}
         />
       )}
       {!mediaLoading && media.mediaType === MediaType.VIDEO && mediaData && (
         <video
           controls
-          style={{ height: media.thumbnailHeight === 0 ? 504 : media.thumbnailHeight * 2 }}
+          style={{ height: media.thumbnailHeight === 0 ? 504 : media.thumbnailHeight * 3 }}
         >
           <source src={URL.createObjectURL(mediaData)} />
         </video>
       )}
-      <CardContent
-        id={`card-content-1-${media.id}`}
-        sx={{ paddingTop: '1px', paddingBottom: '0px' }}
-      >
+      <DialogContent sx={{ paddingTop: '1px', paddingBottom: '0px' }}>
         <Typography id={`typography-1-${media.id}`} variant="body2">
           {mediaDate.toLocaleString('ru-RU')}
         </Typography>
@@ -111,9 +123,11 @@ export const MediaPreview = ({ media }: Props) => {
             {address}
           </Typography>
         )}
-      </CardContent>
-
-      <CardActions disableSpacing sx={{ paddingTop: '1px', paddingBottom: '1px', display: 'flex' }}>
+      </DialogContent>
+      <DialogActions
+        disableSpacing
+        sx={{ paddingTop: '1px', paddingBottom: '1px', display: 'flex' }}
+      >
         <Box sx={{ flexGrow: 1 }}>
           <IconButton aria-label="Add to favorites" size="small" onClick={handleFavoriteClick}>
             {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
@@ -127,7 +141,11 @@ export const MediaPreview = ({ media }: Props) => {
             <DeleteIcon />
           </IconButton>
         </Box>
-      </CardActions>
-    </Card>
+      </DialogActions>
+    </Dialog>
+  ) : (
+    <Dialog onClose={handleClose} open={open}>
+      <Alert severity="error">Media is empty</Alert>
+    </Dialog>
   );
 };
