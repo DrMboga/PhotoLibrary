@@ -87,6 +87,10 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     return updatedPhotos;
   };
 
+  const cleanPhotos = () => {
+    setPhotos([]);
+  };
+
   useEffect(() => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
@@ -151,5 +155,11 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     );
   }, [newUpperMedias]);
 
-  return { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos };
+  return {
+    connection,
+    getNextPhotosChunkFromBackend,
+    getPreviousPhotosChunkFromBackend,
+    photos,
+    cleanPhotos,
+  };
 };

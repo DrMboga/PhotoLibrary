@@ -34,8 +34,13 @@ function LibraryPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
-  const { connection, getNextPhotosChunkFromBackend, getPreviousPhotosChunkFromBackend, photos } =
-    useMediaSignalRHub(dateOfFirstPhoto);
+  const {
+    connection,
+    getNextPhotosChunkFromBackend,
+    getPreviousPhotosChunkFromBackend,
+    photos,
+    cleanPhotos,
+  } = useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
     setSelectedMedia(undefined);
@@ -82,7 +87,10 @@ function LibraryPage() {
   };
 
   const newDateSelectedHandle = (newDate: number) => {
-    console.log('New date selected', newDate);
+    if (connection) {
+      cleanPhotos();
+      getNextPhotosChunkFromBackend(newDate, connection).catch((err) => console.error(err));
+    }
   };
 
   return (

@@ -1,6 +1,12 @@
 // @flow
 import * as React from 'react';
-import { Chip, Stack } from '@mui/material';
+import { Box, Chip, Divider, Stack } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { dateFromUnixTime, dateToUnixTime } from '../helpers/date-helper';
+
+const minYear = 2002;
+
+const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 type Props = {
   currentDate?: number;
@@ -8,13 +14,85 @@ type Props = {
 };
 
 export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
-  const handleChipClick = (year: number) => {
-    console.log('Chip selected', year);
+  const [years, setYears] = useState<number[]>([]);
+  const [currentYear, setCurrentYear] = useState<number>(0);
+  const [currentMonth, setCurrentMonth] = useState<number>(0);
+
+  useEffect(() => {
+    const currentDate = new Date();
+    const nowYear = currentDate.getFullYear();
+    const nowMonth = currentDate.getMonth();
+    const yearsArray: number[] = [];
+    for (let i = nowYear; i >= minYear; i--) {
+      yearsArray.push(i);
+    }
+
+    setYears(yearsArray);
+    setCurrentYear(nowYear);
+    setCurrentMonth(nowMonth);
+  }, []);
+
+  useEffect(() => {
+    if (currentDate) {
+      const date = dateFromUnixTime(currentDate);
+      setCurrentYear(date.getFullYear());
+      setCurrentMonth(date.getMonth());
+    }
+  }, [currentDate]);
+
+  const handleYearChipClick = (year: number) => {
+    const newDate = new Date(year, 12, 0);
+    setCurrentYear(year);
+    setCurrentMonth(11);
+    newDateSelected(dateToUnixTime(newDate));
   };
+  const handleMonthChipClick = (month: number) => {
+    const newDate = new Date(currentYear, month + 1, 0);
+    setCurrentMonth(month);
+    newDateSelected(dateToUnixTime(newDate));
+  };
+
   return (
-    <Stack direction="row" spacing={1} sx={{ marginTop: '10px', marginBottom: '10px' }}>
-      <Chip label="2003" size="small" onClick={() => handleChipClick(2003)} />
-      <Chip label="2004" size="small" variant="outlined" onClick={() => handleChipClick(2004)} />
-    </Stack>
+    <Box>
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ marginTop: '10px', marginBottom: '10px' }}
+        useFlexGap
+        flexWrap="wrap"
+      >
+        {years.map((year) => {
+          return (
+            <Chip
+              key={`year-${year}`}
+              label={year.toString()}
+              size="small"
+              onClick={() => handleYearChipClick(year)}
+              variant={currentYear === year ? 'filled' : 'outlined'}
+            />
+          );
+        })}
+      </Stack>
+      <Divider />
+      <Stack
+        direction="row"
+        spacing={1}
+        sx={{ marginTop: '10px', marginBottom: '10px' }}
+        useFlexGap
+        flexWrap="wrap"
+      >
+        {months.map((m, index) => {
+          return (
+            <Chip
+              key={`month-${index}`}
+              label={m}
+              size="small"
+              onClick={() => handleMonthChipClick(index)}
+              variant={currentMonth === index ? 'filled' : 'outlined'}
+            />
+          );
+        })}
+      </Stack>
+    </Box>
   );
 }
