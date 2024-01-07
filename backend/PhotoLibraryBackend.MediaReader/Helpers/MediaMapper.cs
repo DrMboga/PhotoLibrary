@@ -30,7 +30,8 @@ public static class MediaMapper
                     Region = media.MediaAddress?.Region ?? string.Empty,
                     Locality = media.MediaAddress?.Locality ?? string.Empty,
                     Venue = media.MediaAddress?.VenueName ?? string.Empty,
-                    Thumbnail = media.Thumbnail == null ? ByteString.Empty : ByteString.CopyFrom(media.Thumbnail)
+                    Thumbnail = media.Thumbnail == null ? ByteString.Empty : ByteString.CopyFrom(media.Thumbnail),
+                    Tag = media.TagLabel
         };
     }
 }

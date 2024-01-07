@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
+  Tooltip,
   Typography,
 } from '@mui/material';
 import { dateFromUnixTime } from '../helpers/date-helper';
@@ -21,6 +22,9 @@ import { useAppSelector } from '../storeHooks';
 import { selectToken } from '../keycloak-auth/authSlice';
 import { backendAPI } from '../api/BackendApi';
 import CircularProgress from '@mui/material/CircularProgress';
+import ScheduleIcon from '@mui/icons-material/Schedule';
+import PlaceIcon from '@mui/icons-material/Place';
+import SellIcon from '@mui/icons-material/Sell';
 
 type Props = {
   media?: MediaInfo;
@@ -33,7 +37,12 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
   const city = media?.locality ?? media?.region ?? '';
   const venue = media?.venue ?? '';
 
-  const address = city && country ? `${city}, ${country}${venue}` : '';
+  const address =
+    city && country
+      ? `${city}, ${country}${venue}`
+      : media?.latitude && media?.longitude
+      ? `${media.latitude}, ${media.longitude}`
+      : '';
 
   const [isFavorite, setIsFavorite] = useState(media?.isFavorite ?? false);
 
@@ -87,7 +96,9 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
 
   return media ? (
     <Dialog onClose={handleClose} open={open}>
-      <DialogTitle>{media.fileName}</DialogTitle>
+      <Tooltip title={media.fullPath}>
+        <DialogTitle>{media.fileName}</DialogTitle>
+      </Tooltip>
 
       {error && <Alert severity="error">{error}</Alert>}
       {mediaLoading && <CircularProgress />}
@@ -107,21 +118,33 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
         </video>
       )}
       <DialogContent sx={{ paddingTop: '1px', paddingBottom: '0px' }}>
-        <Typography id={`typography-1-${media.id}`} variant="body2">
-          {mediaDate.toLocaleString('ru-RU')}
-        </Typography>
-        {address && (
-          <Typography
-            id={`typography-1-${media.id}`}
-            sx={{
-              fontSize: '12px',
-              display: 'flex',
-              alignItems: 'center',
-            }}
-            color="text.secondary"
-          >
-            {address}
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+          <ScheduleIcon fontSize="small" />
+          <Typography id={`typography-1-${media.id}`} variant="body2">
+            {mediaDate.toLocaleString('ru-RU')}
           </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
+          <SellIcon fontSize="small" />
+          <Typography id={`typography-2-${media.id}`} variant="body2">
+            {media.tag}
+          </Typography>
+        </Box>
+        {address && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
+            <PlaceIcon fontSize="small" />
+            <Typography
+              id={`typography-3-${media.id}`}
+              sx={{
+                fontSize: '12px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+              color="text.secondary"
+            >
+              {address}
+            </Typography>
+          </Box>
         )}
       </DialogContent>
       <DialogActions

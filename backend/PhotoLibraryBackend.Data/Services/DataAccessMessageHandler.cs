@@ -71,6 +71,8 @@ public class DataAccessMessageHandler :
         {
             return await context.Media
                 .AsNoTracking()
+                .Include(m => m.MediaAddress)
+                .AsNoTracking()
                 .Where(m => m.DateTimeOriginalUtc <= request.DateFrom)
                 .OrderByDescending(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
@@ -83,6 +85,8 @@ public class DataAccessMessageHandler :
         using (var context = _dbContextFactory.CreateDbContext())
         {
             return await context.Media
+                .AsNoTracking()
+                .Include(m => m.MediaAddress)
                 .AsNoTracking()
                 .Where(m => m.DateTimeOriginalUtc > request.DateTo)
                 .OrderBy(m => m.DateTimeOriginalUtc)
