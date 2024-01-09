@@ -17,6 +17,7 @@ export const useReporterSignalRHub = () => {
   const [connection, setConnection] = useState<HubConnection>();
 
   const dispatch = useAppDispatch();
+  const authToken = useAppSelector(selectToken);
 
   const setError = (err: Error) => {
     console.error(err);
@@ -35,7 +36,7 @@ export const useReporterSignalRHub = () => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
       const hubConnection = new HubConnectionBuilder()
-        .withUrl(reporterHubPath)
+        .withUrl(reporterHubPath, { accessTokenFactory: () => authToken ?? '' })
         .withAutomaticReconnect()
         .build();
       hubConnection
@@ -59,5 +60,5 @@ export const useReporterSignalRHub = () => {
           .catch((err) => setError(err));
       }
     };
-  }, []);
+  }, [authToken]);
 };

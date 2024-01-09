@@ -22,17 +22,21 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { selectTheme, toggleTheme } from '../appSlice';
-import { logoutKeycloak, selectAuthenticated, selectUserName } from '../keycloak-auth/authSlice';
-import Keycloak from 'keycloak-js';
+import {
+  initKeycloak,
+  logoutKeycloak,
+  selectAuthenticated,
+  selectUserName,
+} from '../keycloak-auth/authSlice';
+import keycloak from '../keycloak-auth/keycloak';
 
 type Props = {
   routesInfo: PageRouteInfo[];
-  keycloakRef: Keycloak;
 };
 
 const logo = 'Photos';
 
-export const NavBar = ({ routesInfo, keycloakRef }: Props) => {
+export const NavBar = ({ routesInfo }: Props) => {
   const theme = useAppSelector(selectTheme);
   const authenticated = useAppSelector(selectAuthenticated);
   const userName = useAppSelector(selectUserName);
@@ -58,7 +62,8 @@ export const NavBar = ({ routesInfo, keycloakRef }: Props) => {
   };
 
   const handleLogout = () => {
-    dispatch(logoutKeycloak(keycloakRef));
+    const keycloakInstance = keycloak();
+    dispatch(initKeycloak(keycloakInstance)).then(() => dispatch(logoutKeycloak(keycloakInstance)));
     handleCloseUserMenu();
   };
 

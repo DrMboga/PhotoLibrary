@@ -9,7 +9,7 @@ import { useAuth } from './keycloak-auth/useAuth';
 import { pages } from './Routes';
 
 function App() {
-  const keycloakRef = useAuth();
+  useAuth();
 
   const mode = useAppSelector(selectTheme);
   const theme = createTheme({
@@ -22,7 +22,7 @@ function App() {
     <Router>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <NavBar routesInfo={pages} keycloakRef={keycloakRef} />
+        <NavBar routesInfo={pages} />
         <Container maxWidth={false}>
           <Routes>
             {pages.map((page) => (

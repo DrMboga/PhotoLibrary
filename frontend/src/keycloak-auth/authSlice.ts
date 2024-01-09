@@ -91,7 +91,7 @@ export const authSlice = createSlice({
           state.error = error.message;
         }
       })
-      .addCase(logoutKeycloak.pending, (state) => {
+      .addCase(logoutKeycloak.fulfilled, (state) => {
         state.authenticated = false;
         state.token = undefined;
         state.userName = undefined;
