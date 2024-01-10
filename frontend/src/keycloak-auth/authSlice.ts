@@ -91,9 +91,8 @@ export const prolongAuthToken = createAsyncThunk(
           const expiresIn = serializedResponse['expires_in'];
           if (!isNaN(expiresIn)) {
             const currentTime = currentDateLinuxTime();
-            result.tokenExpiration = currentTime + +expiresIn * 1000;
+            result.tokenExpiration = currentTime + +expiresIn;
           }
-          console.log('serializedResponse', result);
         }
       } else if (prolongResponse.status === 400) {
         const serializedResponse = await prolongResponse.json();
