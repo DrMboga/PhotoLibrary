@@ -1,5 +1,11 @@
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import { initKeycloak, selectAuthenticated, selectTokenExpiration } from './authSlice';
+import {
+  initKeycloak,
+  prolongAuthToken,
+  selectAuthenticated,
+  selectRefreshToken,
+  selectTokenExpiration,
+} from './authSlice';
 import { useEffect, useRef, useState } from 'react';
 import { currentDateLinuxTime } from '../helpers/date-helper';
 import keycloak from './keycloak';
@@ -16,7 +22,7 @@ The first scenario, when user is not authenticated and no data stored in the sta
 2. As soon is `tokenExpiration` parameter is changed in the state, the second hook will be fired.
   This hook will start the timeout for period 2 seconds before token expiration. (Usually a token lifetime is 5 minutes)
   The timeout callback will set the local value `needToProlongToken` to true
-3. As soon as `needToProlongToken` is set to true, the third hook will start a new `initKeycloak` thunk
+3. As soon as `needToProlongToken` is set to true, the third hook will start a `prolongAuthToken` thunk
   and the new token and expiration time will be set in the store. And step 2 will be repeated.
 
 Second scenario, when navigation or page reload happens and user is authenticated.
@@ -25,14 +31,12 @@ Then there is a valid token is in the store. And second hook will start the time
 With this strategy, the actual token will be always in the store. And every page in the application can use this:
 const authToken = useAppSelector(selectToken);
 And set `useEffect` dependent on the authToken.
-
-Only one disadvantage of this strategy is that every 5 minutes when token need to be updated, the app will be redirected to the start page
-because of `redirectUri` in the keycloak init method.
  */
 
 export function useAuth() {
   const authenticated = useAppSelector(selectAuthenticated);
   const tokenExpiration = useAppSelector(selectTokenExpiration);
+  const refreshToken = useAppSelector(selectRefreshToken);
   const dispatch = useAppDispatch();
 
   const initializedOnce = useRef(false);
@@ -78,9 +82,9 @@ export function useAuth() {
 
   useEffect(() => {
     if (needToProlongToken) {
+      setNeedToProlongToken(false);
       console.log('Prolonging auth token');
-      const keycloakInstance = keycloak();
-      dispatch(initKeycloak(keycloakInstance));
+      dispatch(prolongAuthToken(refreshToken));
     }
-  }, [needToProlongToken]);
+  }, [needToProlongToken, refreshToken]);
 }

@@ -130,7 +130,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
           .catch((err) => setError(err));
       }
     };
-  }, [authToken]);
+  }, [authToken, connection]);
 
   // Media files added on scroll to bottom event
   useEffect(() => {

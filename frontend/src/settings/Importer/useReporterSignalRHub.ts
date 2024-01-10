@@ -54,11 +54,13 @@ export const useReporterSignalRHub = () => {
     // clean up:
     return () => {
       if (connection?.state === HubConnectionState.Connected) {
+        connectCalledOnce.current = false;
+        console.log('Disconnecting from hub..');
         connection
           .stop()
           .then(() => console.log('Disconnected from the reporter hub'))
           .catch((err) => setError(err));
       }
     };
-  }, [authToken]);
+  }, [authToken, connection]);
 };
