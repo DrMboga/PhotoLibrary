@@ -22,7 +22,7 @@ public static class MediaMapper
                     ThumbnailWidth = media.ThumbnailWidth ?? 0,
                     ThumbnailHeight = media.ThumbnailHeight ?? 0,
                     DateTimeOriginal = media.DateTimeOriginalUtc.ToUnixTimestamp(),
-                    PictureMaker = media.PictureMaker ?? string.Empty,
+                    PictureMaker = string.IsNullOrWhiteSpace(media.PictureMaker) ? string.Empty : media.PictureMaker,
                     Latitude = media.MediaAddress != null ? Convert.ToDouble(media.MediaAddress.Latitude) : 0,
                     Longitude = media.MediaAddress != null ? Convert.ToDouble(media.MediaAddress.Longitude) : 0,
                     Country = media.MediaAddress?.Country ?? string.Empty,

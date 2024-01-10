@@ -25,6 +25,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import ScheduleIcon from '@mui/icons-material/Schedule';
 import PlaceIcon from '@mui/icons-material/Place';
 import SellIcon from '@mui/icons-material/Sell';
+import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
 
 type Props = {
   media?: MediaInfo;
@@ -130,6 +131,21 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
             {media.tag}
           </Typography>
         </Box>
+        {media.pictureMaker && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
+            <CameraEnhanceIcon fontSize="small" />
+            <Typography
+              id={`typography-4-${media.id}`}
+              sx={{
+                fontSize: '10px',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              {media.pictureMaker}
+            </Typography>
+          </Box>
+        )}
         {address && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
             <PlaceIcon fontSize="small" />
