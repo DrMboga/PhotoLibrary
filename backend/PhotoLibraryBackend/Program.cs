@@ -174,5 +174,13 @@ app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
 .WithDescription("Downloads a media by address.")
 .WithOpenApi();
 
+app.MapDelete("/mediaEdit", async(int mediaId, IMediator mediator) => {
+    await mediator.Publish(new DeleteMediaNotification(mediaId));
+})
+.RequireAuthorization()
+.WithName("MediaEdit")
+.WithDescription("Deletes media by id.")
+.WithOpenApi();
+
 app.Run();
 

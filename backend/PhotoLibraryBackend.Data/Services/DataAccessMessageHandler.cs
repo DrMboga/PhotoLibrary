@@ -11,7 +11,9 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetPreviousPhotosChunkRequest, MediaFileInfo[]>,
     IRequestHandler<SaveNewFolderInfoRequest, FolderInfo>,
     IRequestHandler<GetLibraryInfoRequest, LibraryInfo?>,
-    IRequestHandler<GetImporterLogsRequest, ImporterReport[]?>
+    IRequestHandler<GetImporterLogsRequest, ImporterReport[]?>,
+    IRequestHandler<GetMediaFullPathByIdRequest, string>,
+    INotificationHandler<MarkMediaAsDeletedNotification>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -73,7 +75,7 @@ public class DataAccessMessageHandler :
                 .AsNoTracking()
                 .Include(m => m.MediaAddress)
                 .AsNoTracking()
-                .Where(m => m.DateTimeOriginalUtc <= request.DateFrom)
+                .Where(m => m.DateTimeOriginalUtc <= request.DateFrom && m.Deleted == false)
                 .OrderByDescending(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
                 .ToArrayAsync();
@@ -88,7 +90,7 @@ public class DataAccessMessageHandler :
                 .AsNoTracking()
                 .Include(m => m.MediaAddress)
                 .AsNoTracking()
-                .Where(m => m.DateTimeOriginalUtc > request.DateTo)
+                .Where(m => m.DateTimeOriginalUtc > request.DateTo && m.Deleted == false)
                 .OrderBy(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
                 .ToArrayAsync();
@@ -146,6 +148,34 @@ public class DataAccessMessageHandler :
                 .OrderByDescending(r => r.Timestamp)
                 .Take(request.PageSize)
                 .ToArrayAsync();
+        }
+    }
+
+    public async Task<string> Handle(GetMediaFullPathByIdRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var fullPath = await context.Media
+                .AsNoTracking()
+                .Where(m => m.Id == request.MediaId)
+                .Select(m => m.FullPath)
+                .FirstOrDefaultAsync();
+            return fullPath ?? string.Empty;
+        }
+    }
+
+    public async Task Handle(MarkMediaAsDeletedNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .Where(m => m.Id == notification.MediaId)
+                .FirstOrDefaultAsync();
+            if (media != null)
+            {
+                media.Deleted = true;
+            }
+            await context.SaveChangesAsync();
         }
     }
 }
