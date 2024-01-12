@@ -1,7 +1,11 @@
 ﻿
+using PhotoLibraryBackend.Common.Messages;
+
 namespace PhotoLibraryBackend.MediaReader;
 
-public class MediaEditorService : INotificationHandler<DeleteMediaNotification>
+public class MediaEditorService : 
+    INotificationHandler<DeleteMediaNotification>,
+    IRequestHandler<GetMediaListByAlbumRequest, MediaInfo[]>
 {
     private readonly IMediator _mediator;
     private readonly PhotoLibrarySettings _settings;
@@ -28,5 +32,17 @@ public class MediaEditorService : INotificationHandler<DeleteMediaNotification>
         File.Delete(fullFilePath);
 
         await _mediator.Publish(new MarkMediaAsDeletedNotification(notification.MediaId));
+    }
+
+    public async Task<MediaInfo[]> Handle(GetMediaListByAlbumRequest request, CancellationToken cancellationToken)
+    {
+        var medias = await _mediator.Send(new GetMediaListByAlbumDataBaseRequest(request.IsFavorite, request.IsImportant, request.IsToPrint));
+        var resultMedias = new List<MediaInfo>();
+        foreach (var media in medias)
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
+        }
+
+        return [.. resultMedias];
     }
 }

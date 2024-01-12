@@ -32,8 +32,26 @@ public static class MediaMapper
                     Venue = media.MediaAddress?.VenueName ?? string.Empty,
                     Thumbnail = media.Thumbnail == null ? ByteString.Empty : ByteString.CopyFrom(media.Thumbnail),
                     Tag = media.TagLabel ?? string.Empty,
-                    // IsFavorite = false | true,
-                    // AlbumName = "Favorite" | "Important" | "ToPrint"
+                    IsFavorite = media.Album?.MarkedAsFavorite ?? false,
+                    AlbumName = media.Album == null ? null :  GetAlbumName(media.Album)
         };
+    }
+
+    private static string GetAlbumName(Album album)
+    {
+        string albumName = string.Empty;
+        if (album.MarkedAsFavorite)
+        {
+            albumName = "Favorite;";
+        }
+        if (album.MarkedAsImportant)
+        {
+            albumName = $"{albumName}Important;";
+        }
+        if (album.MarkedAsPrint)
+        {
+            albumName = $"{albumName}ToPrint;";
+        }
+        return albumName;
     }
 }

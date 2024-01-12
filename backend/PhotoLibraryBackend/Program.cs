@@ -174,12 +174,42 @@ app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
 .WithDescription("Downloads a media by address.")
 .WithOpenApi();
 
-app.MapDelete("/mediaEdit", async(int mediaId, IMediator mediator) => {
+// https://localhost:7056/mediaEdit?mediaId=573
+app.MapDelete("/mediaEdit", async(long mediaId, IMediator mediator) => {
     await mediator.Publish(new DeleteMediaNotification(mediaId));
+    return Results.Ok();
 })
 .RequireAuthorization()
 .WithName("MediaEdit")
 .WithDescription("Deletes media by id.")
+.WithOpenApi();
+
+// https://localhost:7056/mediaAlbum?mediaId=573&isFavorite=true
+app.MapPut("/mediaAlbum", async(long mediaId, bool? isFavorite, bool? isImportant, bool? isToPrint, IMediator mediator) => {
+    if (!isFavorite.HasValue && !isImportant.HasValue && !isToPrint.HasValue)
+    {
+        return Results.BadRequest("One of album marks should be set");
+    }
+    await mediator.Publish(new ChangeMediaAlbumNotification(mediaId, isFavorite, isImportant, isToPrint));
+    return Results.Ok();
+})
+.RequireAuthorization()
+.WithName("MediaAlbum")
+.WithDescription("Changes media album mark.")
+.WithOpenApi();
+
+// https://localhost:7056/mediaByAlbum?isImportant=true&isToPrint=true
+app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isToPrint, IMediator mediator) => {
+    if (!isFavorite.HasValue && !isImportant.HasValue && !isToPrint.HasValue)
+    {
+        return Results.BadRequest("One of album marks should be set");
+    }
+    var mediaList = await mediator.Send(new GetMediaListByAlbumRequest(isFavorite, isImportant, isToPrint));
+    return Results.Ok(mediaList);
+})
+.RequireAuthorization()
+.WithName("MediaByAlbum")
+.WithDescription("Returns media list by album mark.")
 .WithOpenApi();
 
 app.Run();

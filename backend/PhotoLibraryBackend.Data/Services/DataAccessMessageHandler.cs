@@ -13,7 +13,9 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetLibraryInfoRequest, LibraryInfo?>,
     IRequestHandler<GetImporterLogsRequest, ImporterReport[]?>,
     IRequestHandler<GetMediaFullPathByIdRequest, string>,
-    INotificationHandler<MarkMediaAsDeletedNotification>
+    INotificationHandler<MarkMediaAsDeletedNotification>,
+    INotificationHandler<ChangeMediaAlbumNotification>,
+    IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -75,6 +77,8 @@ public class DataAccessMessageHandler :
                 .AsNoTracking()
                 .Include(m => m.MediaAddress)
                 .AsNoTracking()
+                .Include(m => m.Album)
+                .AsNoTracking()
                 .Where(m => m.DateTimeOriginalUtc <= request.DateFrom && m.Deleted == false)
                 .OrderByDescending(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
@@ -89,6 +93,8 @@ public class DataAccessMessageHandler :
             return await context.Media
                 .AsNoTracking()
                 .Include(m => m.MediaAddress)
+                .AsNoTracking()
+                .Include(m => m.Album)
                 .AsNoTracking()
                 .Where(m => m.DateTimeOriginalUtc > request.DateTo && m.Deleted == false)
                 .OrderBy(m => m.DateTimeOriginalUtc)
@@ -176,6 +182,62 @@ public class DataAccessMessageHandler :
                 media.Deleted = true;
             }
             await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task Handle(ChangeMediaAlbumNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .Where(m => m.Id == notification.MediaId)
+                .Include(m => m.Album)
+                .FirstOrDefaultAsync();
+            if (media != null)
+            {
+                if(media.Album != null) {
+                    if (notification.IsFavorite.HasValue)
+                    {
+                        media.Album.MarkedAsFavorite = notification.IsFavorite.Value;
+                    }
+                    if (notification.IsImportant.HasValue)
+                    {
+                        media.Album.MarkedAsImportant = notification.IsImportant.Value;
+                    }
+                    if (notification.IsToPrint.HasValue)
+                    {
+                        media.Album.MarkedAsPrint = notification.IsToPrint.Value;
+                    }
+                }
+                else {
+                    media.Album = new Album {
+                        MarkedAsFavorite = notification.IsFavorite ?? false,
+                        MarkedAsImportant = notification.IsImportant ?? false,
+                        MarkedAsPrint = notification.IsToPrint ?? false
+                    };
+                }
+            }
+            await context.SaveChangesAsync();
+        }
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetMediaListByAlbumDataBaseRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var medias = await context.Media
+                .AsNoTracking()
+                .Include(m => m.MediaAddress)
+                .AsNoTracking()
+                .Include(m => m.Album)
+                .AsNoTracking()
+                .Where(m => m.Album != null 
+                    && ((request.IsFavorite.HasValue && m.Album.MarkedAsFavorite == request.IsFavorite) || !request.IsFavorite.HasValue)
+                    && ((request.IsImportant.HasValue && m.Album.MarkedAsImportant == request.IsImportant) || !request.IsImportant.HasValue)
+                    && ((request.IsToPrint.HasValue && m.Album.MarkedAsPrint == request.IsToPrint) || !request.IsToPrint.HasValue)
+                )
+                .ToArrayAsync();
+            return medias ?? [];
         }
     }
 }
