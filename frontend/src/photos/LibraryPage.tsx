@@ -41,6 +41,7 @@ function LibraryPage() {
     photos,
     cleanPhotos,
     handleDeleteCard,
+    handleAlbumMarkChanged,
   } = useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
@@ -153,6 +154,7 @@ function LibraryPage() {
         open={dialogOpen}
         onClose={handleDialogClose}
         deleteCardFromList={handleDeleteCard}
+        albumMarkChanged={handleAlbumMarkChanged}
       />
     </>
   );

@@ -4,6 +4,7 @@ import { MediaInfo } from '../model/media-info';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { changeDateOfFirstPhoto, changeDateOfLastPhoto, errorOccurred } from './photosSlice';
 import { selectToken } from '../keycloak-auth/authSlice';
+import { checkIsFavorite } from '../helpers/album-helper';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
@@ -95,6 +96,29 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     setPhotos(photos.filter((m) => m.id !== mediaIdToDelete));
   };
 
+  const handleAlbumMarkChanged = (mediaId: string, album: string) => {
+    const changedMedia = photos.find((m) => m.id === mediaId);
+    if (!changedMedia) {
+      return;
+    }
+    const index = photos.indexOf(changedMedia);
+    changedMedia.isFavorite = checkIsFavorite(album);
+    changedMedia.albumName = album;
+    let newPhotos: MediaInfo[];
+    if (index === 0) {
+      newPhotos = [changedMedia, ...photos.slice(1, photos.length - 1)];
+    } else if (index === photos.length - 1) {
+      newPhotos = [...photos.slice(0, index - 1), changedMedia];
+    } else {
+      newPhotos = [
+        ...photos.slice(0, index),
+        changedMedia,
+        ...photos.slice(index + 1, photos.length - 1),
+      ];
+    }
+    setPhotos(newPhotos);
+  };
+
   useEffect(() => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
@@ -166,5 +190,6 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     photos,
     cleanPhotos,
     handleDeleteCard,
+    handleAlbumMarkChanged,
   };
 };

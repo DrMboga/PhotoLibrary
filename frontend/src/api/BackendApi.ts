@@ -121,6 +121,37 @@ const backendAPI = {
     });
     checkStatus(response);
   },
+  async setMediaAlbumFlag(
+    mediaId: string,
+    favorite?: boolean,
+    important?: boolean,
+    toPrint?: boolean,
+    authToken?: string,
+  ): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/mediaAlbum?mediaId=${mediaId}`;
+    if (favorite !== undefined) {
+      url = `${url}&isFavorite=${favorite ? 'true' : 'false'}`;
+    }
+    if (important !== undefined) {
+      url = `${url}&isImportant=${important ? 'true' : 'false'}`;
+    }
+    if (toPrint !== undefined) {
+      url = `${url}&isToPrint=${toPrint ? 'true' : 'false'}`;
+    }
+    const response = await fetch(url, {
+      method: 'put',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    checkStatus(response);
+  },
 };
 
 export { backendAPI };

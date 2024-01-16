@@ -33,7 +33,7 @@ public static class MediaMapper
                     Thumbnail = media.Thumbnail == null ? ByteString.Empty : ByteString.CopyFrom(media.Thumbnail),
                     Tag = media.TagLabel ?? string.Empty,
                     IsFavorite = media.Album?.MarkedAsFavorite ?? false,
-                    AlbumName = media.Album == null ? null :  GetAlbumName(media.Album)
+                    AlbumName = media.Album == null ? string.Empty :  GetAlbumName(media.Album)
         };
     }
 

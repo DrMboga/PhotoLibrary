@@ -26,14 +26,26 @@ import ScheduleIcon from '@mui/icons-material/Schedule';
 import PlaceIcon from '@mui/icons-material/Place';
 import SellIcon from '@mui/icons-material/Sell';
 import CameraEnhanceIcon from '@mui/icons-material/CameraEnhance';
+import { buildAlbumName, checkIsImportant, checkIsPrint } from '../helpers/album-helper';
+import StarIcon from '@mui/icons-material/Star';
+import StarOutlineIcon from '@mui/icons-material/StarOutline';
+import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
+import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 
 type Props = {
   media?: MediaInfo;
   open: boolean;
   onClose: () => void;
   deleteCardFromList: (mediaIdToDelete: string) => void;
+  albumMarkChanged: (mediaId: string, album: string) => void;
 };
-export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props) => {
+export const MediaPreview = ({
+  media,
+  open,
+  onClose,
+  deleteCardFromList,
+  albumMarkChanged,
+}: Props) => {
   const mediaDate = dateFromUnixTime(media?.dateTimeOriginal ?? 0);
   const country = media?.country ?? '';
   const city = media?.locality ?? media?.region ?? '';
@@ -47,6 +59,8 @@ export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props
       : '';
 
   const [isFavorite, setIsFavorite] = useState(media?.isFavorite ?? false);
+  const [isImportant, setIsImportant] = useState(checkIsImportant(media?.albumName));
+  const [isPrint, setIsPrint] = useState(checkIsPrint(media?.albumName));
 
   const authToken = useAppSelector(selectToken);
   const [mediaData, setMediaData] = useState<Blob | undefined>(undefined);
@@ -58,6 +72,10 @@ export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props
     if (!media || !open) {
       return;
     }
+    setIsFavorite(media?.isFavorite ?? false);
+    setIsImportant(checkIsImportant(media?.albumName));
+    setIsPrint(checkIsPrint(media?.albumName));
+
     setMediaLoading(true);
     backendAPI
       .downloadMedia(media.fullPath, authToken)
@@ -75,9 +93,32 @@ export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props
     if (!media) {
       return;
     }
-    media.isFavorite = !media.isFavorite;
-    setIsFavorite(media.isFavorite);
-    // TODO: Call API
+    const flagToSet = !isFavorite;
+    backendAPI.setMediaAlbumFlag(media.id, flagToSet, undefined, undefined, authToken).then(() => {
+      setIsFavorite(flagToSet);
+      albumMarkChanged(media.id, buildAlbumName(flagToSet, isImportant, isPrint));
+    });
+  };
+
+  const handleImportantClick = () => {
+    if (!media) {
+      return;
+    }
+    const flagToSet = !isImportant;
+    backendAPI.setMediaAlbumFlag(media.id, undefined, flagToSet, undefined, authToken).then(() => {
+      setIsImportant(flagToSet);
+      albumMarkChanged(media.id, buildAlbumName(isFavorite, flagToSet, isPrint));
+    });
+  };
+  const handlePrintClick = () => {
+    if (!media) {
+      return;
+    }
+    const flagToSet = !isPrint;
+    backendAPI.setMediaAlbumFlag(media.id, undefined, undefined, flagToSet, authToken).then(() => {
+      setIsPrint(flagToSet);
+      albumMarkChanged(media.id, buildAlbumName(isFavorite, isImportant, flagToSet));
+    });
   };
 
   const handleDownload = () => {
@@ -181,6 +222,12 @@ export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props
         <Box sx={{ flexGrow: 1 }}>
           <IconButton aria-label="Add to favorites" size="small" onClick={handleFavoriteClick}>
             {isFavorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+          </IconButton>
+          <IconButton aria-label="Mark as important" size="small" onClick={handleImportantClick}>
+            {isImportant ? <StarIcon /> : <StarOutlineIcon />}
+          </IconButton>
+          <IconButton aria-label="Mark as print" size="small" onClick={handlePrintClick}>
+            {isPrint ? <LocalPrintshopIcon /> : <LocalPrintshopOutlinedIcon />}
           </IconButton>
           <IconButton aria-label="Download" size="small" onClick={handleDownload}>
             <DownloadIcon />
