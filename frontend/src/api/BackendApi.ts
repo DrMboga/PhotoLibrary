@@ -1,4 +1,4 @@
-import { ImportStepReport } from '../model/media-info';
+import { ImportStepReport, MediaInfo } from '../model/media-info';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
@@ -151,6 +151,38 @@ const backendAPI = {
       }),
     });
     checkStatus(response);
+  },
+  async getMediasByAlbum(
+    favorite?: boolean,
+    important?: boolean,
+    toPrint?: boolean,
+    authToken?: string,
+  ): Promise<MediaInfo[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/mediaByAlbum?`;
+    if (favorite !== undefined && favorite) {
+      url = `${url}isFavorite=true`;
+    }
+    if (important !== undefined && important) {
+      url = `${url}isImportant=true`;
+    }
+    if (toPrint !== undefined && toPrint) {
+      url = `${url}isToPrint=true`;
+    }
+    const response = await fetch(url, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? [];
   },
 };
 
