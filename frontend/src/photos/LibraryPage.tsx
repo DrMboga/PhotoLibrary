@@ -40,6 +40,7 @@ function LibraryPage() {
     getPreviousPhotosChunkFromBackend,
     photos,
     cleanPhotos,
+    handleDeleteCard,
   } = useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
@@ -147,7 +148,12 @@ function LibraryPage() {
           {loadingBottom && <CircularProgress />}
         </Box>
       </ScrollableBox>
-      <MediaPreview media={selectedMedia} open={dialogOpen} onClose={handleDialogClose} />
+      <MediaPreview
+        media={selectedMedia}
+        open={dialogOpen}
+        onClose={handleDialogClose}
+        deleteCardFromList={handleDeleteCard}
+      />
     </>
   );
 }

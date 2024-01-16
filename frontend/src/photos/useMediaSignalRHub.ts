@@ -91,6 +91,10 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     setPhotos([]);
   };
 
+  const handleDeleteCard = (mediaIdToDelete: string) => {
+    setPhotos(photos.filter((m) => m.id !== mediaIdToDelete));
+  };
+
   useEffect(() => {
     if (!connectCalledOnce.current) {
       connectCalledOnce.current = true;
@@ -161,5 +165,6 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     getPreviousPhotosChunkFromBackend,
     photos,
     cleanPhotos,
+    handleDeleteCard,
   };
 };

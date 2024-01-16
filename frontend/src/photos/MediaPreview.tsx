@@ -31,8 +31,9 @@ type Props = {
   media?: MediaInfo;
   open: boolean;
   onClose: () => void;
+  deleteCardFromList: (mediaIdToDelete: string) => void;
 };
-export const MediaPreview = ({ media, open, onClose }: Props) => {
+export const MediaPreview = ({ media, open, onClose, deleteCardFromList }: Props) => {
   const mediaDate = dateFromUnixTime(media?.dateTimeOriginal ?? 0);
   const country = media?.country ?? '';
   const city = media?.locality ?? media?.region ?? '';
@@ -87,6 +88,16 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
       tempLink.setAttribute('download', media.fileName);
       tempLink.click();
     }
+  };
+
+  const handleDelete = () => {
+    if (!media?.id) {
+      return;
+    }
+    backendAPI.deleteMedia(media.id, authToken).then(() => {
+      deleteCardFromList(media.id);
+      handleClose();
+    });
   };
 
   const handleClose = () => {
@@ -176,7 +187,7 @@ export const MediaPreview = ({ media, open, onClose }: Props) => {
           </IconButton>
         </Box>
         <Box sx={{ flexGrow: 0 }}>
-          <IconButton aria-label="Delete" size="small">
+          <IconButton aria-label="Delete" size="small" onClick={handleDelete}>
             <DeleteIcon />
           </IconButton>
         </Box>

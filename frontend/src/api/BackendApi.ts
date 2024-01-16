@@ -106,6 +106,21 @@ const backendAPI = {
     const responseWithStatus = checkStatus(response);
     return responseWithStatus.blob();
   },
+  async deleteMedia(mediaId: string, authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/mediaEdit?mediaId=${mediaId}`, {
+      method: 'delete',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    checkStatus(response);
+  },
 };
 
 export { backendAPI };
