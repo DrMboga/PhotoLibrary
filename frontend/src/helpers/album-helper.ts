@@ -1,6 +1,6 @@
-const favoriteAlbumName = 'Favorite';
-const importantAlbumName = 'Important';
-const printAlbumName = 'ToPrint';
+export const favoriteAlbumName = 'Favorite';
+export const importantAlbumName = 'Important';
+export const printAlbumName = 'ToPrint';
 
 export const checkIsFavorite = (albumName?: string) =>
   albumName?.includes(favoriteAlbumName) ?? false;

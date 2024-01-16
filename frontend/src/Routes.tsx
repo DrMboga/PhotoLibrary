@@ -11,6 +11,8 @@ import InfoIcon from '@mui/icons-material/Info';
 import ImportExportIcon from '@mui/icons-material/ImportExport';
 import EditLocationIcon from '@mui/icons-material/EditLocation';
 import React from 'react';
+import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum';
+import { AlbumsPage } from './photos/AlbumsPage';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -23,6 +25,17 @@ export const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <CollectionsIcon fontSize="small" />,
+  },
+  {
+    key: 'album',
+    route: '/album',
+    displayName: 'Albums',
+    element: (
+      <RequireAuth>
+        <AlbumsPage />
+      </RequireAuth>
+    ),
+    iconElement: <PhotoAlbumIcon fontSize="small" />,
   },
   {
     key: 'settings',
