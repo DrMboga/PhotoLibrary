@@ -12,9 +12,6 @@ class EnvironmentParameters {
     [string]$PhotoLibraryBackendUrl
 }
 
-Clear-Host
-Write-Host "Reading deployment parameters..."
-
 function ReadParameters {
     $envParametersFileContent = Get-Content -Path ".\raspberry-deploy.env" | Out-String
     $envParametersLines = $envParametersFileContent -split '\r?\n'
@@ -60,7 +57,7 @@ function ReadParameters {
                 continue
             }
             'PHOTO_DB_CONNECTION_STRING' { 
-                # Connection string has this syntax Host=localhost;Database=photo;Username=postgres;Password=MyDocker6
+                # Connection string has this syntax: Host=localhost;Database=photo;Username=postgres;Password=MyDocker6
                 # So, it is split and here we are assemble it back
                 $connectionString = ""
                 for ($i = 1; $i -lt $keyValue.Count; $i++) {
@@ -82,6 +79,8 @@ function ReadParameters {
     return $envParametersObject
 }
 
+Clear-Host
 # Read parameters
+Write-Host "Reading deployment parameters..."
 $EnvironmentParams = ReadParameters
 $EnvironmentParams
