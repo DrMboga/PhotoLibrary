@@ -19,7 +19,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
 import { useAppSelector } from '../storeHooks';
-import { selectToken } from '../keycloak-auth/authSlice';
+import { selectToken } from '../authentication/authSlice';
 import { backendAPI } from '../api/BackendApi';
 import CircularProgress from '@mui/material/CircularProgress';
 import ScheduleIcon from '@mui/icons-material/Schedule';

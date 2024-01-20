@@ -3,7 +3,7 @@ import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@micros
 import { MediaInfo } from '../model/media-info';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { changeDateOfFirstPhoto, changeDateOfLastPhoto, errorOccurred } from './photosSlice';
-import { selectToken } from '../keycloak-auth/authSlice';
+import { selectToken } from '../authentication/authSlice';
 import { checkIsFavorite } from '../helpers/album-helper';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;

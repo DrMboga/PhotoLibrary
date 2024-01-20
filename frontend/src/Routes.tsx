@@ -1,5 +1,5 @@
 import { PageRouteInfo } from './nav-bar/pageRouteInfo';
-import { RequireAuth } from './keycloak-auth/RequireAuth';
+import { RequireAuth } from './authentication/RequireAuth';
 import LibraryPage from './photos/LibraryPage';
 import CollectionsIcon from '@mui/icons-material/Collections';
 import SettingsPage from './settings/SettingsPage';

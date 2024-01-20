@@ -1,6 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit';
 import appReducer from './appSlice';
-import authReducer from './keycloak-auth/authSlice';
+import authReducer from './authentication/authSlice';
 import photosReducer from './photos/photosSlice';
 import {
   persistStore,

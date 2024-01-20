@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { useAppDispatch, useAppSelector } from '../../storeHooks';
-import { selectToken } from '../../keycloak-auth/authSlice';
+import { selectToken } from '../../authentication/authSlice';
 import { ImportStepReport } from '../../model/media-info';
 import {
   importerFinished,

@@ -22,13 +22,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { selectTheme, toggleTheme } from '../appSlice';
-import {
-  initKeycloak,
-  logoutKeycloak,
-  selectAuthenticated,
-  selectUserName,
-} from '../keycloak-auth/authSlice';
-import keycloak from '../keycloak-auth/keycloak';
+import { selectAuthenticated, selectUserName } from '../authentication/authSlice';
 
 type Props = {
   routesInfo: PageRouteInfo[];
@@ -62,8 +56,7 @@ export const NavBar = ({ routesInfo }: Props) => {
   };
 
   const handleLogout = () => {
-    const keycloakInstance = keycloak();
-    dispatch(initKeycloak(keycloakInstance)).then(() => dispatch(logoutKeycloak(keycloakInstance)));
+    // TODO: Handle logout
     handleCloseUserMenu();
   };
 

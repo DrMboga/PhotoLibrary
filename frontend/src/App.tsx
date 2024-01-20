@@ -5,12 +5,9 @@ import { Container, createTheme, CssBaseline, ThemeProvider } from '@mui/materia
 import { NavBar } from './nav-bar/NavBar';
 import { useAppSelector } from './storeHooks';
 import { selectTheme } from './appSlice';
-import { useAuth } from './keycloak-auth/useAuth';
 import { pages } from './Routes';
 
 function App() {
-  useAuth();
-
   const mode = useAppSelector(selectTheme);
   const theme = createTheme({
     palette: {

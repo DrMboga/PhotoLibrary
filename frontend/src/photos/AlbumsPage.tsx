@@ -10,7 +10,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import { useAppSelector } from '../storeHooks';
-import { selectToken } from '../keycloak-auth/authSlice';
+import { selectToken } from '../authentication/authSlice';
 import { MediaInfo } from '../model/media-info';
 import CircularProgress from '@mui/material/CircularProgress';
 import { backendAPI } from '../api/BackendApi';

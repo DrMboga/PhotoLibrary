@@ -14,7 +14,7 @@ import {
 } from './importerSlice';
 import CircularProgress from '@mui/material/CircularProgress';
 import { Alert, Box, Button, Divider, Typography } from '@mui/material';
-import { selectToken } from '../../keycloak-auth/authSlice';
+import { selectToken } from '../../authentication/authSlice';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import { dateFromUnixTime } from '../../helpers/date-helper';
 import InfoIcon from '@mui/icons-material/Info';
