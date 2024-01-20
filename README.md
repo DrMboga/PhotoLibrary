@@ -27,32 +27,6 @@ REACT_APP_BACKEND_URL=https://localhost:7056
 REACT_APP_VERSION=$npm_package_version
 ```
 
-# Keycloack setup
-
-## On Dev machine
-
-[Spec](https://www.keycloak.org/getting-started/getting-started-docker)
-
-## 1.
-
-```bash
-docker run -p 8070:8080 -e KEYCLOAK_ADMIN=<username> -e KEYCLOAK_ADMIN_PASSWORD=<password> quay.io/keycloak/keycloak:22.0.5 start-dev
-```
-
-## 2. Add user
-
-1. Go to `http://localhost:8070/admin/`
-2. Create new realm (`photo-library`)
-3. Create new user (set e-mail verified)
-4. Go to credentials and set password for created user
-
-## 3. Add app to the keycloak
-
-1. Open admin console. Go to clients, click Create
-2. Set up id (`photo-library-app`), add name (optional), choose OpenID
-3. Setup valid redirect URL (`http://localhost:3000` or prod root url)
-4. Setup valid origins (`http://localhost:3000` or prod root url)
-
 # How to teach ML model to classify images using ML Net CLI
 
 1. Create a folder which contain a model data to learn. Each subfolder contains a set of images, and subfolder name will be used as a label name

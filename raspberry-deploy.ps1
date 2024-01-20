@@ -84,3 +84,5 @@ Clear-Host
 Write-Host "Reading deployment parameters..."
 $EnvironmentParams = ReadParameters
 $EnvironmentParams
+
+#Read .\backend\PhotoLibraryBackend\appsettings.json

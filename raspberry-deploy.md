@@ -30,96 +30,6 @@ createuser pi -P --interactive
 exit
 ```
 
-## Install Keycloak
-
-[Article](https://www.keycloak.org/getting-started/getting-started-zip)
-[Article](https://medium.com/@hasnat.saeed/setup-keycloak-server-on-ubuntu-18-04-ed8c7c79a2d9)
-
-### Install JDK
-
-```bash
-java -version
-sudo apt-get update
-sudo apt install openjdk-17-jre
-```
-
-### Download and Extract Keycloak Server
-
-```bash
-cd /projects/keycloak
-sudo wget https://github.com/keycloak/keycloak/releases/download/23.0.4/keycloak-23.0.4.zip
-unzip keycloak-23.0.4.zip
-rm keycloak-23.0.4.zip
-cd keycloak-23.0.4/
-cp -r . ..
-cd ..
-rm -r keycloak-23.0.4/
-```
-
-As result - unzipped keycloak app will be in the `/projects/keycloak` folder
-
-### Configure keycloak
-
-```bash
-cd ../home/pi/projects/keycloak/conf/
-sudo nano keycloak.conf
-```
-
-```
-db=postgres
-db-username=postgres
-db-password=MyDocker6
-proxy=edge
-```
-
-NOTE: Create database `keycloak` manually
-
-### Create a user for running the keycloak service
-
-- Create a group `keycloak`
-
-```bash
-sudo groupadd keycloak
-```
-
-- Create a system user `keycloak` with home directory `/projects/keycloak` (`-r` means system user, `-s` - login shell option)
-
-```bash
-sudo useradd -r -g keycloak -d /home/pi/projects/keycloak -s /sbin/nologin -c "Keycloak service user" keycloak
-```
-
-- Give new user ownership and permissions to Keycloak installation folder
-
-```bash
-# under `/projects` folder. This command gives an ownership to user `keycloak` (first) to folder `keycloak` (last)
-sudo chown -R keycloak: keycloak
-
-sudo chmod o+x /home/pi/projects/keycloak/bin/
-```
-
-### Create systemD service for keycloak
-
-- Copy a service file
-
-```bash
-scp -r ./keycloak.service pi@192.168.0.65:/home/pi/projects
-```
-
-- Register a service as `systemctl`
-
-ssh:
-
-```bash
-#Copy service file to the system dir:
-sudo cp keycloak.service /etc/systemd/system/keycloak.service
-# Restart daemon
-sudo systemctl daemon-reload
-# Start services
-sudo systemctl start keycloak.service
-# Enable auto start
-sudo systemctl enable keycloak.service
-```
-
 ## Install NGINX
 
 [Article](https://pimylifeup.com/raspberry-pi-nginx/)
@@ -176,51 +86,6 @@ sudo systemctl enable photo-library.service
 
 ## Setup NGINX for backend and frontend
 
-### Keycloak
-
-- Setup nginx.config
-
-```bash
-cd /etc/nginx
-sudo nano nginx.conf
-```
-
-Add this to http section:
-
-```json
-  map $http_connection $connection_upgrade {
-    "~*Upgrade" $http_connection;
-    default keep-alive;
-  }
-
-  server {
-    listen        8845;
-    server_name   example.com *.example.com;
-    location / {
-        proxy_pass         http://127.0.0.1:8080;
-        proxy_http_version 1.1;
-        proxy_set_header   Upgrade $http_upgrade;
-        proxy_set_header   Connection $connection_upgrade;
-        proxy_set_header   Host $host;
-        proxy_cache_bypass $http_upgrade;
-        proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header   X-Forwarded-Proto $scheme;
-    }
-  }
-```
-
-```bash
-sudo systemctl restart nginx.service
-```
-
-#### Access keycloak:
-
-Internally:
-http://127.0.0.1:8080
-
-From outside:
-http://192.168.0.65:8845
-
 ### Backend
 
 - Setup nginx.config
@@ -255,6 +120,10 @@ Add this to http section:
 ```
 
 TODO: add settings for SignalR [like here](https://learn.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-8.0#linux-with-nginx)
+
+```bash
+sudo systemctl restart nginx.service
+```
 
 #### Access backend:
 
@@ -324,4 +193,7 @@ sudo journalctl -u photo-library.service
 # Services list
 sudo systemctl list-units --type=service --all
 (q for exit)
+# Service status
+ sudo systemctl status keycloak
+ (q for exit)
 ```
