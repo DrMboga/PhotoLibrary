@@ -19,10 +19,6 @@ Your entire family's cherished memories, beautifully organized and easily access
 There is a `.env` file in the root of frontend near the package.json. It is excluded from source control and contains some environment setting which used by frontend. Here is the example of such `.env` file:
 
 ```
-REACT_APP_KEYCLOAK_URL=http://localhost:8070
-REACT_APP_KEYCLOAK_REALM=photo-library
-REACT_APP_KEYCLOAK_CLIENT_ID=photo-library-app
-REACT_APP_REDIRECT_URL=http://localhost:3000
 REACT_APP_BACKEND_URL=https://localhost:7056
 REACT_APP_VERSION=$npm_package_version
 ```

@@ -75,10 +75,10 @@ Solution would be like this:
 2. There should be 2 layers of application - Backend and frontend.
 3. Backend is implemented via .Net web Application and it has access to USB Hard drive file system.
 4. Backend using the PostgreSQL database instance which installed on the same Raspberry Pi home server.
-5. Backend is deployed as .net app to the Raspberry Pi server. (the asp.net runtime should be installed in the server and script on the dev machine should publish the web api app and copy to server)
-6. Frontend is implemented as React web application
-7. Frontend is deployed as Docker Container? Or maybe it is easier to install `nginx` on a raspberry and deploy the client the same way as backend - build on dev machine and copy `dist` to the Raspberry.
-8. [Keycloack](https://www.keycloak.org/) is used as the identity provider. It is also installed to the Raspberry Pi as Docker container.
+5. Backend uses [Identity](https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-8.0) for authorization.
+6. Backend is deployed as .net app to the Raspberry Pi server. (the asp.net runtime should be installed in the server and script on the dev machine should publish the web api app and copy to server)
+7. Frontend is implemented as React web application
+8. Frontend is deployed as Docker Container? Or maybe it is easier to install `nginx` on a raspberry and deploy the client the same way as backend - build on dev machine and copy `dist` to the Raspberry.
 
 ## 5. Building Block View
 
