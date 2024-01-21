@@ -2,6 +2,8 @@ using System.Globalization;
 using System.Net;
 using System.Reflection;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PhotoLibraryBackend;
 using PhotoLibraryBackend.Data;
 using Serilog;
@@ -35,6 +37,13 @@ builder.Services.AddCors(options =>
         });
 });
 
+// Configure Authentication
+builder.Services.AddDbContext<IdentityDbContext>(
+    options => options.UseNpgsql(builder.Configuration.GetConnectionString("photo-identity-db") ?? "undefined"));
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<IdentityUser>()
+    .AddEntityFrameworkStores<IdentityDbContext>();
+
 // Configure Serilog
 builder.Logging.ClearProviders();
 builder.Host.UseSerilog((context, services, configuration) => configuration
@@ -67,8 +76,8 @@ builder.Services.AddSignalR();
 var app = builder.Build();
 
 app.UseCors(AllowCors);
-// app.UseAuthentication();
-// app.UseAuthorization();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseStaticFiles();
 
@@ -87,12 +96,21 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 });
 
 app.MapHub<MediaHub>("/Media")
-    // .RequireAuthorization()
+    .RequireAuthorization()
     ;
 
 app.MapHub<ImporterLoggerHub>("/ImporterLogger")
-    // .RequireAuthorization()
+    .RequireAuthorization()
     ;
+
+app.MapIdentityApi<IdentityUser>();
+
+app.MapPost("/migrateIdentityDb", async (IdentityDbContext identityDbContext) => {
+    await identityDbContext.Database.MigrateAsync();
+})
+.WithName("MigrateIdentityDb")
+.WithDescription("On first run identity DB does not exist and user can not register and login. Call this method to create it.")
+.WithOpenApi();
 
 // Root endpoint returns text info about backend version and DB info
 app.MapGet("/", async (IMediator mediator) => 
@@ -128,7 +146,7 @@ app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
     }
     return Results.BadRequest(result);
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("TriggerMediaImport")
 .WithDescription("Triggers a new media import process")
 .WithOpenApi();
@@ -137,7 +155,7 @@ app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) =>
 {
     return dispatcher.IsInProgress ? Results.Ok<string>("InProgress") : Results.Ok<string>("Idle");
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaImportStatus")
 .WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
 .WithOpenApi();
@@ -147,7 +165,7 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
     var logs = await mediator.Send(new GetImporterLogsRequest(pageSize ?? 100));
     return Results.Ok(logs.ToStepReports());
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("ImporterLogs")
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
@@ -162,7 +180,7 @@ app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
     var mimeType = await mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
     return Results.File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaDownload")
 .WithDescription("Downloads a media by address.")
 .WithOpenApi();
@@ -172,7 +190,7 @@ app.MapDelete("/mediaEdit", async(long mediaId, IMediator mediator) => {
     await mediator.Publish(new DeleteMediaNotification(mediaId));
     return Results.Ok();
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaEdit")
 .WithDescription("Deletes media by id.")
 .WithOpenApi();
@@ -186,7 +204,7 @@ app.MapPut("/mediaAlbum", async(long mediaId, bool? isFavorite, bool? isImportan
     await mediator.Publish(new ChangeMediaAlbumNotification(mediaId, isFavorite, isImportant, isToPrint));
     return Results.Ok();
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaAlbum")
 .WithDescription("Changes media album mark.")
 .WithOpenApi();
@@ -200,7 +218,7 @@ app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isTo
     var mediaList = await mediator.Send(new GetMediaListByAlbumRequest(isFavorite, isImportant, isToPrint));
     return Results.Ok(mediaList);
 })
-// .RequireAuthorization()
+.RequireAuthorization()
 .WithName("MediaByAlbum")
 .WithDescription("Returns media list by album mark.")
 .WithOpenApi();

@@ -8,15 +8,15 @@ public class PhotoLibraryBackendDbContext: DbContext
     // TODO: For migrations uncomment this constructor and comment out another one. Then run:
     // dotnet ef migrations add InitialCreate
     // dotnet ef database update
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-    optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    // optionsBuilder.UseNpgsql("Host=localhost;Database=photo;Username=postgres;Password=MyDocker6");
+    // }
     
 
-    // public PhotoLibraryBackendDbContext(DbContextOptions options): base(options)
-    // {
-    // }
+    public PhotoLibraryBackendDbContext(DbContextOptions options): base(options)
+    {
+    }
     public virtual DbSet<MediaFileInfo> Media { get; set; }
 
     public virtual DbSet<MediaAddress> Address { get; set; }
