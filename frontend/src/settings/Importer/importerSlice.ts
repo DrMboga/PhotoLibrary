@@ -67,8 +67,8 @@ export const importerSlice = createSlice({
       .addCase(getImporterStatus.rejected, (state, action) => {
         state.loading = false;
         state.isImporterInProgress = false;
-        if (action.payload) {
-          const error = ensureError(action.payload);
+        if (action.error) {
+          const error = ensureError(action.error);
           state.error = error.message;
         } else {
           state.error = 'Unable to reach backend';
@@ -87,16 +87,16 @@ export const importerSlice = createSlice({
       .addCase(getImporterLogs.rejected, (state, action) => {
         state.loading = false;
         state.importSteps = undefined;
-        if (action.payload) {
-          const error = ensureError(action.payload);
+        if (action.error) {
+          const error = ensureError(action.error);
           state.error = error.message;
         } else {
           state.error = 'Unable to reach backend';
         }
       })
       .addCase(triggerMediaImport.rejected, (state, action) => {
-        if (action.payload) {
-          const error = ensureError(action.payload);
+        if (action.error) {
+          const error = ensureError(action.error);
           state.error = error.message;
         } else {
           state.error = 'Unable to reach backend';
