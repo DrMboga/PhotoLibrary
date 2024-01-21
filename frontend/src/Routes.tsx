@@ -13,6 +13,7 @@ import EditLocationIcon from '@mui/icons-material/EditLocation';
 import React from 'react';
 import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum';
 import { AlbumsPage } from './photos/AlbumsPage';
+import { LoginForm } from './authentication/LoginForm';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -25,6 +26,7 @@ export const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <CollectionsIcon fontSize="small" />,
+    showMenuButton: true,
   },
   {
     key: 'album',
@@ -36,6 +38,7 @@ export const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <PhotoAlbumIcon fontSize="small" />,
+    showMenuButton: true,
   },
   {
     key: 'settings',
@@ -54,6 +57,7 @@ export const pages: PageRouteInfo[] = [
         displayName: 'Import',
         element: <ImporterPage />,
         iconElement: <ImportExportIcon fontSize="small" />,
+        showMenuButton: true,
       },
       {
         key: 'geocoding',
@@ -61,8 +65,10 @@ export const pages: PageRouteInfo[] = [
         displayName: 'Geocoding',
         element: <GeocodingSettingsPage />,
         iconElement: <EditLocationIcon fontSize="small" />,
+        showMenuButton: true,
       },
     ],
+    showMenuButton: true,
   },
   {
     key: 'about',
@@ -70,5 +76,14 @@ export const pages: PageRouteInfo[] = [
     displayName: 'About',
     element: <AboutPage />,
     iconElement: <InfoIcon fontSize="small" />,
+    showMenuButton: true,
+  },
+  {
+    key: 'login',
+    route: '/login',
+    displayName: 'Login',
+    element: <LoginForm />,
+    iconElement: <InfoIcon fontSize="small" />,
+    showMenuButton: false,
   },
 ];

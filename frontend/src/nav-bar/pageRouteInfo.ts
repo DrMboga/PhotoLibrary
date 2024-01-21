@@ -7,4 +7,5 @@ export interface PageRouteInfo {
   element: ReactElement;
   iconElement: ReactElement;
   children?: PageRouteInfo[];
+  showMenuButton: boolean;
 }

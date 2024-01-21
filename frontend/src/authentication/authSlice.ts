@@ -11,9 +11,7 @@ export interface AuthState {
 }
 
 export const initialState: AuthState = {
-  authenticated: true, // TODO: Change to false when connect the Auth provider
-  userName: 'FakeUser', // TODO: This should be set up after Login thunk when connect AuthProvider
-  token: 'FakeToken', // TODO: This should be set up after Login thunk when connect AuthProvider
+  authenticated: false,
 };
 
 export const authSlice = createSlice({

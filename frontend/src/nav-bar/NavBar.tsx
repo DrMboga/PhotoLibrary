@@ -116,14 +116,16 @@ export const NavBar = ({ routesInfo }: Props) => {
                 display: { xs: 'block', md: 'none' },
               }}
             >
-              {routesInfo.map((page) => (
-                <Link to={page.route} key={page.key}>
-                  <MenuItem key={page.key} onClick={handleCloseNavMenu}>
-                    <ListItemIcon>{page.iconElement}</ListItemIcon>
-                    <Typography textAlign="center">{page.displayName}</Typography>
-                  </MenuItem>
-                </Link>
-              ))}
+              {routesInfo
+                .filter((p) => p.showMenuButton)
+                .map((page) => (
+                  <Link to={page.route} key={page.key}>
+                    <MenuItem key={page.key} onClick={handleCloseNavMenu}>
+                      <ListItemIcon>{page.iconElement}</ListItemIcon>
+                      <Typography textAlign="center">{page.displayName}</Typography>
+                    </MenuItem>
+                  </Link>
+                ))}
             </Menu>
           </Box>
 
@@ -147,20 +149,22 @@ export const NavBar = ({ routesInfo }: Props) => {
             {logo}
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {routesInfo.map((page) => (
-              <Button
-                key={page.key}
-                onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: 'white', display: 'block' }}
-                href={page.route}
-                variant={
-                  `/${routeLocation.pathname.split('/')[1]}` === page.route ? 'outlined' : 'text'
-                }
-              >
-                <IconButton sx={{ color: 'white' }}>{page.iconElement}</IconButton>
-                {page.displayName}
-              </Button>
-            ))}
+            {routesInfo
+              .filter((p) => p.showMenuButton)
+              .map((page) => (
+                <Button
+                  key={page.key}
+                  onClick={handleCloseNavMenu}
+                  sx={{ my: 2, color: 'white', display: 'block' }}
+                  href={page.route}
+                  variant={
+                    `/${routeLocation.pathname.split('/')[1]}` === page.route ? 'outlined' : 'text'
+                  }
+                >
+                  <IconButton sx={{ color: 'white' }}>{page.iconElement}</IconButton>
+                  {page.displayName}
+                </Button>
+              ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
