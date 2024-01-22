@@ -72,7 +72,24 @@ const authenticationApi = {
     return parseJSON(responseWithStatus);
   },
 
-  // TODO: logout
+  async logout(authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/logout`, {
+      method: 'post',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify({}),
+    });
+    checkStatus(response);
+  },
 };
 
 export { authenticationApi };

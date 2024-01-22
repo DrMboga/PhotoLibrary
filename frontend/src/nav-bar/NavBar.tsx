@@ -22,7 +22,12 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import { selectTheme, toggleTheme } from '../appSlice';
-import { selectAuthenticated, selectUserName } from '../authentication/authSlice';
+import {
+  logout,
+  selectAuthenticated,
+  selectToken,
+  selectUserName,
+} from '../authentication/authSlice';
 
 type Props = {
   routesInfo: PageRouteInfo[];
@@ -34,6 +39,7 @@ export const NavBar = ({ routesInfo }: Props) => {
   const theme = useAppSelector(selectTheme);
   const authenticated = useAppSelector(selectAuthenticated);
   const userName = useAppSelector(selectUserName);
+  const authToken = useAppSelector(selectToken);
   const dispatch = useAppDispatch();
   const [anchorElNav, setAnchorElNav] = useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -56,7 +62,7 @@ export const NavBar = ({ routesInfo }: Props) => {
   };
 
   const handleLogout = () => {
-    // TODO: Handle logout
+    dispatch(logout(authToken));
     handleCloseUserMenu();
   };
 

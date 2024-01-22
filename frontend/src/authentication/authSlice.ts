@@ -35,6 +35,10 @@ export const refresh = createAsyncThunk('refresh', async (refreshToken: string) 
   return await authenticationApi.refresh(refreshToken);
 });
 
+export const logout = createAsyncThunk('logout', async (authToken?: string) => {
+  return await authenticationApi.logout(authToken);
+});
+
 export const authSlice = createSlice({
   name: 'authentication',
   initialState,
@@ -97,6 +101,18 @@ export const authSlice = createSlice({
         state.tokenExpiration = tokenExpiration;
         state.refreshToken = action.payload.refreshToken;
         state.error = undefined;
+      })
+      .addCase(logout.rejected, (state, action) => {
+        state.error = errorFromObject(ensureError(action.error).message);
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.authenticated = false;
+        state.userName = undefined;
+        state.token = undefined;
+        state.tokenExpiration = undefined;
+        state.refreshToken = undefined;
+        state.error = undefined;
+        state.authStatus = undefined;
       });
   },
 });

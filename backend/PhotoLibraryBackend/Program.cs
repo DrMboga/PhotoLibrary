@@ -3,6 +3,7 @@ using System.Net;
 using System.Reflection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoLibraryBackend;
 using PhotoLibraryBackend.Data;
@@ -111,6 +112,19 @@ app.MapPost("/migrateIdentityDb", async (IdentityDbContext identityDbContext) =>
 .WithName("MigrateIdentityDb")
 .WithDescription("On first run identity DB does not exist and user can not register and login. Call this method to create it.")
 .WithOpenApi();
+
+app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
+    [FromBody]object empty) =>
+{
+    if (empty != null)
+    {
+        await signInManager.SignOutAsync();
+        return Results.Ok();
+    }
+    return Results.Unauthorized();
+})
+.WithOpenApi()
+.RequireAuthorization();
 
 // Root endpoint returns text info about backend version and DB info
 app.MapGet("/", async (IMediator mediator) => 
