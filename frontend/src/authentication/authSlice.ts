@@ -34,7 +34,11 @@ export const login = createAsyncThunk(
 export const authSlice = createSlice({
   name: 'authentication',
   initialState,
-  reducers: {},
+  reducers: {
+    clearLoginState: (state) => {
+      state.authStatus = undefined;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
@@ -70,7 +74,7 @@ export const authSlice = createSlice({
         console.log('login success', tokenExpiration);
 
         state.authenticated = true;
-        state.userName = action.payload.accessToken;
+        state.userName = action.payload.accessToken; // TODO: Retrieve userName
         state.token = action.payload.accessToken;
         state.tokenExpiration = tokenExpiration;
         state.refreshToken = action.payload.refreshToken;
@@ -81,6 +85,8 @@ export const authSlice = createSlice({
 });
 
 export default authSlice.reducer;
+
+export const { clearLoginState } = authSlice.actions;
 
 export const selectAuthenticated = (state: RootState) => state.auth.authenticated;
 export const selectUserName = (state: RootState) => state.auth.userName;

@@ -21,7 +21,13 @@ import { useEffect, useRef, useState } from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuItem from '@mui/material/MenuItem';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import { login, register, selectAuthenticationStatus, selectAuthError } from './authSlice';
+import {
+  clearLoginState,
+  login,
+  register,
+  selectAuthenticationStatus,
+  selectAuthError,
+} from './authSlice';
 import { useNavigate } from 'react-router-dom';
 
 const EmailInputName = 'email';
@@ -86,6 +92,7 @@ export function LoginForm() {
 
   useEffect(() => {
     if (authStatus === 'login success') {
+      dispatch(clearLoginState());
       navigate('/');
     }
   }, [authStatus]);
