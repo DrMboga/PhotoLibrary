@@ -31,6 +31,10 @@ export const login = createAsyncThunk(
   },
 );
 
+export const refresh = createAsyncThunk('refresh', async (refreshToken: string) => {
+  return await authenticationApi.refresh(refreshToken);
+});
+
 export const authSlice = createSlice({
   name: 'authentication',
   initialState,
@@ -80,6 +84,19 @@ export const authSlice = createSlice({
         state.refreshToken = action.payload.refreshToken;
         state.error = undefined;
         state.authStatus = 'login success';
+      })
+      .addCase(refresh.rejected, (state, action) => {
+        state.error = errorFromObject(ensureError(action.error).message);
+      })
+      .addCase(refresh.fulfilled, (state, action) => {
+        const currentDate = currentDateLinuxTime();
+        const tokenExpiration = currentDate + action.payload.expiresIn; // expiresIn in seconds
+        console.log('Refresh token success');
+
+        state.token = action.payload.accessToken;
+        state.tokenExpiration = tokenExpiration;
+        state.refreshToken = action.payload.refreshToken;
+        state.error = undefined;
       });
   },
 });

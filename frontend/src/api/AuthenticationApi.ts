@@ -53,7 +53,7 @@ const authenticationApi = {
     }
   },
 
-  async refresh(refreshToken?: string): Promise<void> {
+  async refresh(refreshToken?: string): Promise<AuthenticationResponse> {
     if (!backendUrl) {
       throw new Error('Please specify Backend URL in environment settings');
     }
@@ -62,6 +62,10 @@ const authenticationApi = {
 }`;
     const response = await fetch(`${backendUrl}/refresh`, {
       method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
       body,
     });
     const responseWithStatus = checkStatus(response);
