@@ -27,7 +27,13 @@ export const register = createAsyncThunk(
 export const login = createAsyncThunk(
   'login',
   async (payload: { email?: string; password?: string }) => {
-    return await authenticationApi.login(payload.email, payload.password);
+    const loginData = await authenticationApi.login(payload.email, payload.password);
+    return {
+      email: payload.email,
+      expiresIn: loginData.expiresIn,
+      accessToken: loginData.accessToken,
+      refreshToken: loginData.refreshToken,
+    };
   },
 );
 
@@ -82,7 +88,7 @@ export const authSlice = createSlice({
         console.log('login success', tokenExpiration);
 
         state.authenticated = true;
-        state.userName = action.payload.accessToken; // TODO: Retrieve userName
+        state.userName = action.payload.email;
         state.token = action.payload.accessToken;
         state.tokenExpiration = tokenExpiration;
         state.refreshToken = action.payload.refreshToken;
