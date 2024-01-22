@@ -96,6 +96,7 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
 });
 
+#region SingnalR hubs
 app.MapHub<MediaHub>("/Media")
     .RequireAuthorization()
     ;
@@ -103,7 +104,9 @@ app.MapHub<MediaHub>("/Media")
 app.MapHub<ImporterLoggerHub>("/ImporterLogger")
     .RequireAuthorization()
     ;
+#endregion
 
+#region Identity API
 app.MapIdentityApi<IdentityUser>();
 
 app.MapPost("/migrateIdentityDb", async (IdentityDbContext identityDbContext) => {
@@ -126,6 +129,9 @@ app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
 .WithOpenApi()
 .RequireAuthorization();
 
+#endregion
+
+#region photo library backend API
 // Root endpoint returns text info about backend version and DB info
 app.MapGet("/", async (IMediator mediator) => 
 {
@@ -236,6 +242,7 @@ app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isTo
 .WithName("MediaByAlbum")
 .WithDescription("Returns media list by album mark.")
 .WithOpenApi();
+#endregion
 
 app.Run();
 
