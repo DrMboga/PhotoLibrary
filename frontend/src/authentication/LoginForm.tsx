@@ -83,7 +83,7 @@ export function LoginForm() {
   };
 
   const handleClose = (event: Event) => {
-    if (anchorRef.current && anchorRef.current.contains(event.target as HTMLElement)) {
+    if (anchorRef.current?.contains(event.target as HTMLElement)) {
       return;
     }
 
