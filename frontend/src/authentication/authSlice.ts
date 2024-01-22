@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 import { authenticationApi } from '../api/AuthenticationApi';
-import { ensureError } from '../helpers/error-helper';
+import { ensureError, errorFromObject } from '../helpers/error-helper';
 import { currentDateLinuxTime } from '../helpers/date-helper';
 
 export interface AuthState {
@@ -51,7 +51,7 @@ export const authSlice = createSlice({
         state.authStatus = undefined;
       })
       .addCase(register.rejected, (state, action) => {
-        state.error = ensureError(action.error).message;
+        state.error = errorFromObject(ensureError(action.error).message);
       })
       .addCase(register.fulfilled, (state) => {
         state.authStatus = 'Successfully registered. Now please login.';
@@ -66,7 +66,7 @@ export const authSlice = createSlice({
         state.authStatus = undefined;
       })
       .addCase(login.rejected, (state, action) => {
-        state.error = ensureError(action.error).message;
+        state.error = errorFromObject(ensureError(action.error).message);
       })
       .addCase(login.fulfilled, (state, action) => {
         const currentDate = currentDateLinuxTime();

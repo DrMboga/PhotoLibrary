@@ -107,7 +107,11 @@ export function LoginForm() {
         marginTop: '10ch',
       }}
     >
-      {authError && <Alert severity="error">{authError}</Alert>}
+      {authError && (
+        <Alert severity="error" sx={{ whiteSpace: 'pre-wrap' }}>
+          {authError}
+        </Alert>
+      )}
       {authStatus && <Alert severity="info">{authStatus}</Alert>}
       <FormControl sx={{ m: 1, width: '25ch' }} variant="outlined">
         <InputLabel htmlFor="outlined-adornment-email">Email</InputLabel>

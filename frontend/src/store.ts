@@ -27,6 +27,7 @@ const persistAuthConfig = {
   key: 'photo-lib-auth',
   version: 1,
   storage,
+  blacklist: ['error', 'authStatus'],
 };
 
 const persistPhotosConfig = {
