@@ -30,6 +30,13 @@ createuser pi -P --interactive
 exit
 ```
 
+## Set up File Access Control for media/pi
+
+```bash
+cd /media
+sudo setfacl -m u:pi:rwx pi
+```
+
 ## Install NGINX
 
 [Article](https://pimylifeup.com/raspberry-pi-nginx/)
@@ -50,13 +57,14 @@ cd ./backend/PhotoLibraryBackend
 
 dotnet publish -c release -r linux-arm64 --self-contained
 
-scp -r ./bin/release/net8.0/linux-arm64/publish pi@192.168.0.65:/home/pi/projects/photo-library
+scp -r ./bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
+scp -r ./PhotoLibraryModel.zip pi@192.168.0.65:/home/pi/projects/photo-library/backend/PhotoLibraryModel.zip
 ```
 
 - Using ssh, add run permissions and run app (just for test, in next step, we should create a service to run it):
 
 ```bash
-cd projects/photo-library/publish
+cd projects/photo-library/backend
 chmod +x ./PhotoLibraryBackend
 ./PhotoLibraryBackend
 ```
@@ -82,7 +90,23 @@ sudo systemctl start photo-library.service
 sudo systemctl enable photo-library.service
 ```
 
-## Photo library backend initial setup
+- Migrate database on fitst start:
+
+```bash
+curl http://127.0.0.1:5000
+curl http://127.0.0.1:5000/migrateIdentityDb
+```
+
+## Photo library frontend initial setup
+
+- change values in `.env`
+- build react app in production mode
+
+```bash
+cd frontend
+npm run build
+scp -r ./build/* pi@192.168.0.65:/home/pi/projects/photo-library/frontend
+```
 
 ## Setup NGINX for backend and frontend
 
@@ -115,11 +139,18 @@ Add this to http section:
         proxy_cache_bypass $http_upgrade;
         proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header   X-Forwarded-Proto $scheme;
+
+        # Configuration for WebSockets
+        proxy_cache off;
+
+        # Configuration for ServerSentEvents
+        proxy_buffering off;
+
+        # Configuration for LongPolling or if your KeepAliveInterval is longer than 60 seconds
+        proxy_read_timeout 100s;
     }
   }
 ```
-
-TODO: add settings for SignalR [like here](https://learn.microsoft.com/en-us/aspnet/core/signalr/scale?view=aspnetcore-8.0#linux-with-nginx)
 
 ```bash
 sudo systemctl restart nginx.service
@@ -132,6 +163,29 @@ http://127.0.0.1:5000
 
 From outside:
 http://192.168.0.65:8850/swagger/index.html
+
+## Frontend
+
+```json
+server {
+    listen 8860;
+    server_name photo-library.com *.photo-library.com;
+
+    access_log /var/log/nginx/photo_library_frontend.log;
+    error_log  /var/log/nginx/photo_library_frontend_error.log;
+
+    root /home/pi/projects/photo-library/frontend;
+    index index.html;
+
+    location / {
+        try_files $uri /index.html;
+    }
+}
+```
+
+```bash
+sudo systemctl restart nginx.service
+```
 
 # Rollout a new version from dev machine to running application on Raspberry
 
