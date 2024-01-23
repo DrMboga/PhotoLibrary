@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Net;
 using System.Reflection;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,8 @@ using Serilog;
 const string HostServer = "192.168.0.65:8850";
 
 const string AllowCors = "AllowEverything";
+
+const string ConfirmedEmailPolicyName = "EmailShouldBeConfirmed";
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,7 +44,12 @@ builder.Services.AddCors(options =>
 // Configure Authentication
 builder.Services.AddDbContext<IdentityDbContext>(
     options => options.UseNpgsql(builder.Configuration.GetConnectionString("photo-identity-db") ?? "undefined"));
-builder.Services.AddAuthorization();
+builder.Services.AddScoped<IAuthorizationHandler, ShouldHaveConfirmedEmailRequirementAuthorizationHandler>();
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy(ConfirmedEmailPolicyName, policy => {
+        policy.Requirements.Add(new ShouldHaveConfirmedEmailRequirement());
+    });
+});
 builder.Services.AddIdentityApiEndpoints<IdentityUser>()
     .AddEntityFrameworkStores<IdentityDbContext>();
 
@@ -98,11 +106,11 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 
 #region SingnalR hubs
 app.MapHub<MediaHub>("/Media")
-    .RequireAuthorization()
+    .RequireAuthorization(ConfirmedEmailPolicyName)
     ;
 
 app.MapHub<ImporterLoggerHub>("/ImporterLogger")
-    .RequireAuthorization()
+    .RequireAuthorization(ConfirmedEmailPolicyName)
     ;
 #endregion
 
@@ -128,7 +136,6 @@ app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
 })
 .WithOpenApi()
 .RequireAuthorization();
-
 #endregion
 
 #region photo library backend API
@@ -166,7 +173,7 @@ app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
     }
     return Results.BadRequest(result);
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("TriggerMediaImport")
 .WithDescription("Triggers a new media import process")
 .WithOpenApi();
@@ -175,7 +182,7 @@ app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) =>
 {
     return dispatcher.IsInProgress ? Results.Ok<string>("InProgress") : Results.Ok<string>("Idle");
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("MediaImportStatus")
 .WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
 .WithOpenApi();
@@ -185,7 +192,7 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
     var logs = await mediator.Send(new GetImporterLogsRequest(pageSize ?? 100));
     return Results.Ok(logs.ToStepReports());
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("ImporterLogs")
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
@@ -200,7 +207,7 @@ app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
     var mimeType = await mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
     return Results.File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("MediaDownload")
 .WithDescription("Downloads a media by address.")
 .WithOpenApi();
@@ -210,7 +217,7 @@ app.MapDelete("/mediaEdit", async(long mediaId, IMediator mediator) => {
     await mediator.Publish(new DeleteMediaNotification(mediaId));
     return Results.Ok();
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("MediaEdit")
 .WithDescription("Deletes media by id.")
 .WithOpenApi();
@@ -224,7 +231,7 @@ app.MapPut("/mediaAlbum", async(long mediaId, bool? isFavorite, bool? isImportan
     await mediator.Publish(new ChangeMediaAlbumNotification(mediaId, isFavorite, isImportant, isToPrint));
     return Results.Ok();
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("MediaAlbum")
 .WithDescription("Changes media album mark.")
 .WithOpenApi();
@@ -238,7 +245,7 @@ app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isTo
     var mediaList = await mediator.Send(new GetMediaListByAlbumRequest(isFavorite, isImportant, isToPrint));
     return Results.Ok(mediaList);
 })
-.RequireAuthorization()
+.RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("MediaByAlbum")
 .WithDescription("Returns media list by album mark.")
 .WithOpenApi();

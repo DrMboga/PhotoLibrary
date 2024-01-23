@@ -43,7 +43,7 @@ export function AlbumsPage() {
       .catch((err) => {
         setIsLoading(false);
         setPhotos([]);
-        setError(err);
+        setError(err.message);
       });
   }, [selectedAlbum]);
 

@@ -5,7 +5,7 @@ const translateStatusToErrorMessage = (status: number) => {
     case 401:
       return 'Please login again.';
     case 403:
-      return 'You do not have permission to view the project(s).';
+      return 'You do not have permission to view the content.';
     default:
       return 'There was an error retrieving backend data. Please try again.';
   }
