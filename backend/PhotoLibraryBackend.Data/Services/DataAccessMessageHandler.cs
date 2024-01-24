@@ -107,6 +107,14 @@ public class DataAccessMessageHandler :
     {
         using (var context = _dbContextFactory.CreateDbContext())
         {
+            var existingFolder = await context.Folder.AsNoTracking()
+                .Where(f => f.FullName == request.FullPath)
+                .FirstOrDefaultAsync();
+
+            if (existingFolder != null) {
+                return existingFolder;
+            }
+
             var newFolder = new FolderInfo
             {
                 ParentFolderId = request.ParentId,
