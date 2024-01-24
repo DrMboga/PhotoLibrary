@@ -58,7 +58,6 @@ cd ./backend/PhotoLibraryBackend
 dotnet publish -c release -r linux-arm64 --self-contained
 
 scp -r ./bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
-scp -r ./PhotoLibraryModel.zip pi@192.168.0.65:/home/pi/projects/photo-library/backend/PhotoLibraryModel.zip
 ```
 
 - Using ssh, add run permissions and run app (just for test, in next step, we should create a service to run it):

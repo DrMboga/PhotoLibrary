@@ -177,12 +177,14 @@ export const MediaPreview = ({
             {mediaDate.toLocaleString('ru-RU')}
           </Typography>
         </Box>
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
-          <SellIcon fontSize="small" />
-          <Typography id={`typography-2-${media.id}`} variant="body2">
-            {media.tag}
-          </Typography>
-        </Box>
+        {media.tag && (
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
+            <SellIcon fontSize="small" />
+            <Typography id={`typography-2-${media.id}`} variant="body2">
+              {media.tag}
+            </Typography>
+          </Box>
+        )}
         {media.pictureMaker && (
           <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
             <CameraEnhanceIcon fontSize="small" />

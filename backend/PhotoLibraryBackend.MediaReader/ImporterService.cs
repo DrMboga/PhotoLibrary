@@ -1,6 +1,5 @@
 ﻿
 using PhotoLibraryBackend.Common.Messages;
-using Tensorflow;
 
 namespace PhotoLibraryBackend.MediaReader;
 
@@ -9,18 +8,15 @@ public class ImporterService : IImporterService
     private readonly ILogger<ImporterService> _logger;
     private readonly IMediator _mediator;
     private readonly IMediaMetadataService _mediaMetadataService;
-    private readonly ILabelsPredictionService _labelPredictor;
 
     public ImporterService(
         ILogger<ImporterService> logger,
         IMediator mediator,
-        IMediaMetadataService mediaMetadataService,
-        ILabelsPredictionService labelPredictor)
+        IMediaMetadataService mediaMetadataService)
     {
         _logger = logger;
         _mediator = mediator;
         _mediaMetadataService = mediaMetadataService;
-        _labelPredictor = labelPredictor;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -60,7 +56,7 @@ public class ImporterService : IImporterService
         {
             var dirInfo = new DirectoryInfo(dir);
             var folderInfo = await _mediator.Send(new SaveNewFolderInfoRequest(dirInfo.FullName, dirInfo.Name, parentFolderId));
-            result.add(folderInfo);
+            result.Add(folderInfo);
             // Recursion
             var subDirs = await GetAllFoldersAsFlatList(dir, folderInfo.Id);
             if (subDirs.Length > 0)
@@ -146,11 +142,7 @@ public class ImporterService : IImporterService
                 await ReportStep(ImporterReportSeverity.Error, $"Unable to make thumbnail for '{mediaFilePath}'", e);
             }
             // 4. Predict label
-            if (mediaType == MediaType.Image)
-            {
-                var label = _labelPredictor.PredictLabel(mediaFilePath);
-                mediaFileInfo.TagLabel = label.Label;
-            }
+
             // 5. Save media to DB 
             await _mediator.Publish(new SaveMediaFileInfoToDbNotification(mediaFileInfo));
 

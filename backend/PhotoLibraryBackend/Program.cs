@@ -65,7 +65,6 @@ var settings = builder.Configuration
                 .Get<PhotoLibrarySettings>();
 builder.Services.AddSingleton<PhotoLibrarySettings>(settings!);
 builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
-builder.Services.AddTransient<ILabelsPredictionService, LabelPredictionService>();
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 builder.Services.AddScoped<IImporterService, ImporterService>();
 
