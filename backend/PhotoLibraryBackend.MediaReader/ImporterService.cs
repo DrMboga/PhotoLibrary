@@ -116,7 +116,8 @@ public class ImporterService : IImporterService
                     var videoMetadata = await _mediaMetadataService.ReadVideoMetadata(mediaFilePath);
                     if (videoMetadata != null)
                     {
-                        mediaFileInfo.DateTimeOriginalUtc = videoMetadata.CreationTime ?? mediaFileInfo.DateTimeOriginalUtc;
+                        DateTime[] times = [(videoMetadata.CreationTime ?? mediaFileInfo.DateTimeOriginalUtc), mediaFileInfo.DateTimeOriginalUtc];
+                        mediaFileInfo.DateTimeOriginalUtc = times.Min() ;
                         mediaFileInfo.Width = videoMetadata.Width ?? mediaFileInfo.Width;
                         mediaFileInfo.Height = videoMetadata.Height ?? mediaFileInfo.Height;
                         mediaFileInfo.VideoDurationSec = videoMetadata.DurationSec;
