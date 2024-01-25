@@ -131,6 +131,12 @@ public class ImporterService : IImporterService
                         }
                     }
                     mediaFileInfo.Thumbnail = await _mediaMetadataService.MakeVideoThumbnail(mediaFilePath);
+                    if (mediaFileInfo.Width.HasValue && mediaFileInfo.Height.HasValue)
+                    {
+                        var (newWidth, newHeight) = MediaHelper.CalculateNewDimensions(mediaFileInfo.Width.Value, mediaFileInfo.Height.Value);
+                        mediaFileInfo.ThumbnailWidth = newWidth;
+                        mediaFileInfo.ThumbnailHeight = newHeight;
+                    }
                 }
                 else
                 {

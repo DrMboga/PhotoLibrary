@@ -86,7 +86,7 @@ public static class MediaHelper
         return null;
     }
 
-    private static (int width, int height) CalculateNewDimensions(int width, int height)
+    public static (int width, int height) CalculateNewDimensions(int width, int height)
     {
         int newWidth, newHeight;
         var ratio = ((decimal)width) / ((decimal)height);
