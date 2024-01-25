@@ -68,6 +68,8 @@ builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
 builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 builder.Services.AddScoped<IImporterService, ImporterService>();
 
+builder.Services.AddTransient<ImportMediaBackgroundOperationType>();
+
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
 
@@ -165,7 +167,9 @@ app.MapGet("/", async (IMediator mediator) =>
 // /swagger/index.html
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {
-    var result = dispatcher.StatNewProcess();
+    var result = dispatcher.StatNewProcess(
+            typeof(ImportMediaBackgroundOperationType), 
+            new ImportMediaBackgroundOperationContext());
     if (result.WorkflowSuccessfullyStarted)
     {
         return Results.Ok();
