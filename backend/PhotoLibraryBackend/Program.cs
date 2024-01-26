@@ -69,6 +69,7 @@ builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 builder.Services.AddScoped<IImporterService, ImporterService>();
 
 builder.Services.AddTransient<ImportMediaBackgroundOperationType>();
+builder.Services.AddTransient<FixVideoDatesBackgroundOperationType>();
 
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
@@ -178,6 +179,21 @@ app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 })
 .RequireAuthorization(ConfirmedEmailPolicyName)
 .WithName("TriggerMediaImport")
+.WithDescription("Triggers a new media import process")
+.WithOpenApi();
+
+app.MapPost("/triggerVideoDatesFix", (WorkerDispatcher dispatcher) =>
+{
+    var result = dispatcher.StatNewProcess(
+            typeof(FixVideoDatesBackgroundOperationType), 
+            new FixVideoDatesBackgroundOperationContext());
+    if (result.WorkflowSuccessfullyStarted)
+    {
+        return Results.Ok();
+    }
+    return Results.BadRequest(result);
+})
+.WithName("TriggerVideoDatesFix")
 .WithDescription("Triggers a new media import process")
 .WithOpenApi();
 
