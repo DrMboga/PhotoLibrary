@@ -15,7 +15,9 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetMediaFullPathByIdRequest, string>,
     INotificationHandler<MarkMediaAsDeletedNotification>,
     INotificationHandler<ChangeMediaAlbumNotification>,
-    IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>
+    IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
+    IRequestHandler<GetAllVideosRequest, MediaFileInfo[]>,
+    INotificationHandler<UpdateVideoDateNotification>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -246,6 +248,41 @@ public class DataAccessMessageHandler :
                 )
                 .ToArrayAsync();
             return medias ?? [];
+        }
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetAllVideosRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+                    /*
+select m.*
+from "Media" m
+where lower(m."FileExt") in ('.avi', '.mov', '.mp4')
+order by m."FileExt"
+== 2777
+        */
+            string[] videoExtensions = [".avi", ".mov", ".mp4"];
+            var videos = await context.Media
+                .AsNoTracking()
+                .Where(m => videoExtensions.Contains(m.FileExt.ToLower()))
+                .ToArrayAsync();
+            return videos ?? [];
+        }
+    }
+
+    public async Task Handle(UpdateVideoDateNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .Where(m => m.Id == notification.MediaId)
+                .FirstOrDefaultAsync();
+            if (media != null)
+            {
+                media.DateTimeOriginalUtc = notification.NewDate;
+                await context.SaveChangesAsync();
+            }
         }
     }
 }
