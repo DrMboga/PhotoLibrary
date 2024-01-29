@@ -33,7 +33,7 @@ public class MediaMetadataService : IMediaMetadataService
     {
         var fileNameWithoutExt = Path.GetFileNameWithoutExtension(filePath);
         var videoThumbnailFilePath = Path.Combine(_tempFolderPath, $"{fileNameWithoutExt}.jpg");
-        await $"ffmpeg -i {filePath} -ss 00:00:01.000 -vframes 1 {videoThumbnailFilePath}".Bash(_logger);
+        await $"ffmpeg -i {filePath} -ss 00:00:00.010 -vframes 1 {videoThumbnailFilePath}".Bash(_logger);
 
         // Resize the big picture
         var smallThumbnail = videoThumbnailFilePath.MakePhotoThumbnail();

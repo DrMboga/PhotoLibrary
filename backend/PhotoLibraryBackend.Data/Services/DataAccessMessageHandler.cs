@@ -17,7 +17,8 @@ public class DataAccessMessageHandler :
     INotificationHandler<ChangeMediaAlbumNotification>,
     IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
     IRequestHandler<GetAllVideosRequest, MediaFileInfo[]>,
-    INotificationHandler<UpdateVideoDateNotification>
+    INotificationHandler<UpdateVideoDateNotification>,
+    INotificationHandler<UpdateVideoThumbnailNotification>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -281,6 +282,21 @@ order by m."FileExt"
             if (media != null)
             {
                 media.DateTimeOriginalUtc = notification.NewDate;
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+
+    public async Task Handle(UpdateVideoThumbnailNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .Where(m => m.Id == notification.MediaId)
+                .FirstOrDefaultAsync();
+            if (media != null)
+            {
+                media.Thumbnail = notification.Thumbnail;
                 await context.SaveChangesAsync();
             }
         }

@@ -4,10 +4,12 @@ namespace PhotoLibraryBackend.MediaReader;
 public class FixingVideoDatesService : INotificationHandler<StartFixingVideoDatesNotification>
 {
     private readonly IMediator _mediator;
+    private readonly IMediaMetadataService _mediaMetadataService;
 
-    public FixingVideoDatesService(IMediator mediator)
+    public FixingVideoDatesService(IMediator mediator, IMediaMetadataService mediaMetadataService)
     {
         _mediator = mediator;
+        _mediaMetadataService = mediaMetadataService;
     }
 
     public async Task Handle(StartFixingVideoDatesNotification notification, CancellationToken cancellationToken)
@@ -33,9 +35,24 @@ public class FixingVideoDatesService : INotificationHandler<StartFixingVideoDate
                     await _mediator.Publish(new UpdateVideoDateNotification(videoInfo.Id, newTime));
                     await MessageToDb(ImporterReportSeverity.Information, $"Change date for '{videoInfo.FullPath}' from '{videoInfo.DateTimeOriginalUtc.ToUniversalTime()}' to '{newTime}'");
                 }
-            }
 
-            // TODO: Try remake the thumbnail if it is empty
+                if (videoInfo.Thumbnail == null)
+                {
+                    try
+                    {
+                        var thumbnail = await _mediaMetadataService.MakeVideoThumbnail(videoInfo.FullPath);
+                        if (thumbnail != null)
+                        {
+                            await _mediator.Publish(new UpdateVideoThumbnailNotification(videoInfo.Id, thumbnail));
+                            await MessageToDb(ImporterReportSeverity.Information, $"Updated thumbnail for '{videoInfo.FullPath}'");
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        await MessageToDb(ImporterReportSeverity.Error, $"Can not make a thumbnail for '{videoInfo.FullPath}': {ex.Message}");
+                    }
+                }
+            }
         }
         await MessageToDb(ImporterReportSeverity.Information, $"Finished Fixing VideoDates");
     }
