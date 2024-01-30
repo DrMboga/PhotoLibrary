@@ -13,6 +13,8 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
     public async Task Handle(StartCollectGeocodingDataNotification notification, CancellationToken cancellationToken)
     {
         await MessageToDb(ImporterReportSeverity.Information, $"Start Geocoding collection, requests limit: {notification.RequestsLimit}");
+        var emptyAddresses = await _mediator.Send(new GetAddressesListRequest(notification.RequestsLimit, true));
+        await MessageToDb(ImporterReportSeverity.Information, $"Got {emptyAddresses.Length} empty address rows for process");
         
         await MessageToDb(ImporterReportSeverity.Information, $"Finished Geocoding collection");
     }

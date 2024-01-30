@@ -18,7 +18,8 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
     IRequestHandler<GetAllVideosRequest, MediaFileInfo[]>,
     INotificationHandler<UpdateVideoDateNotification>,
-    INotificationHandler<UpdateVideoThumbnailNotification>
+    INotificationHandler<UpdateVideoThumbnailNotification>,
+    IRequestHandler<GetAddressesListRequest, MediaAddress[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -301,20 +302,26 @@ order by m."FileExt"
             }
         }
     }
+
+    public async Task<MediaAddress[]> Handle(GetAddressesListRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var addressesQuery = context.Address
+                .AsNoTracking();
+            if (request.ReadDateIsEmpty.HasValue && request.ReadDateIsEmpty.Value)
+            {
+                addressesQuery = addressesQuery.Where(a => a.AddressReadDate == null);
+            }
+            if (request.ReadDateIsEmpty.HasValue && !request.ReadDateIsEmpty.Value)
+            {
+                addressesQuery = addressesQuery.Where(a => a.AddressReadDate != null);
+            }
+            addressesQuery = addressesQuery.Take(request.TopRows);
+
+            var addresses = await addressesQuery.ToArrayAsync();
+
+            return addresses ?? [];
+        }
+    }
 }
-
-        /*
--- select * from "ImporterReport" r
--- order by r."Timestamp" desc
-
-select m.*
-from "Media" m
--- where 
--- m."FileName" = 'IMG_5843.JPG'
--- m."MediaAddressId" = 966 --is not null
-order by m."DateTimeOriginalUtc" desc
-
--- select * from "Address" a
-
--- truncate table "Media"
-        */
