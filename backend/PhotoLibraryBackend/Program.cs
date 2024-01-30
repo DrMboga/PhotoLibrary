@@ -59,6 +59,14 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .ReadFrom.Configuration(builder.Configuration)
 );
 
+// GeolocationService
+builder.Services.AddHttpClient("PositionStackApi", c =>
+{
+    c.BaseAddress = new Uri("http://api.positionstack.com/");
+    c.DefaultRequestHeaders.Add("Accept", "*/*");
+    c.DefaultRequestHeaders.Add("User-Agent", "Mike's photo library");
+});
+
 // Setup PhotoLibrary services
 var settings = builder.Configuration
                 .GetSection("PhotoLibrary")
@@ -116,7 +124,7 @@ app.MapHub<ImporterLoggerHub>("/ImporterLogger")
     .RequireAuthorization(ConfirmedEmailPolicyName)
     ;
 app.MapHub<GeocodingLoggerHub>("/GeocodingLogger")
-    // .RequireAuthorization(ConfirmedEmailPolicyName)
+    .RequireAuthorization(ConfirmedEmailPolicyName)
     ;
 #endregion
 
