@@ -70,6 +70,7 @@ builder.Services.AddScoped<IImporterService, ImporterService>();
 
 builder.Services.AddTransient<ImportMediaBackgroundOperationType>();
 builder.Services.AddTransient<FixVideoDatesBackgroundOperationType>();
+builder.Services.AddTransient<GeocodingCollectBackgroundOperationType>();
 
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
@@ -195,6 +196,22 @@ app.MapPost("/triggerVideoDatesFix", (WorkerDispatcher dispatcher) =>
 })
 .WithName("TriggerVideoDatesFix")
 .WithDescription("Triggers a new media import process")
+.WithOpenApi();
+
+// /triggerGeocodingDataCollect?requestsLimit=15
+app.MapPost("/triggerGeocodingDataCollect", (int requestsLimit, WorkerDispatcher dispatcher) =>
+{
+    var result = dispatcher.StatNewProcess(
+            typeof(GeocodingCollectBackgroundOperationType), 
+            new GeocodingCollectBackgroundOperationContext(requestsLimit));
+    if (result.WorkflowSuccessfullyStarted)
+    {
+        return Results.Ok();
+    }
+    return Results.BadRequest(result);
+})
+.WithName("TriggerGeocodingDataCollect")
+.WithDescription("Triggers a process of getting the coordinates from DB and request location info from PositionStack")
 .WithOpenApi();
 
 app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) => 
