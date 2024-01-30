@@ -19,7 +19,8 @@ public class DataAccessMessageHandler :
     IRequestHandler<GetAllVideosRequest, MediaFileInfo[]>,
     INotificationHandler<UpdateVideoDateNotification>,
     INotificationHandler<UpdateVideoThumbnailNotification>,
-    IRequestHandler<GetAddressesListRequest, MediaAddress[]>
+    IRequestHandler<GetAddressesListRequest, MediaAddress[]>,
+    INotificationHandler<SaveAddressInfoNotification>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -322,6 +323,29 @@ order by m."FileExt"
             var addresses = await addressesQuery.ToArrayAsync();
 
             return addresses ?? [];
+        }
+    }
+
+    public async Task Handle(SaveAddressInfoNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var address = await context.Address
+                .Where(a => a.AddressId == notification.Address.AddressId)
+                .FirstOrDefaultAsync();
+            if (address != null)
+            {
+                address.Country = notification.Address.Country;
+                address.Region = notification.Address.Region;
+                address.Locality = notification.Address.Locality;
+                address.AddressName = notification.Address.AddressName;
+                address.AddressLabel = notification.Address.AddressLabel;
+                address.VenueName = notification.Address.VenueName;
+                address.VenueLabel = notification.Address.VenueLabel;
+                address.AddressDistance = notification.Address.AddressDistance;
+                address.AddressReadDate = notification.Address.AddressReadDate;
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

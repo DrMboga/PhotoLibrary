@@ -46,7 +46,11 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
                         address.VenueName = closestVenue?.Name;
                         address.VenueLabel = closestVenue?.Label;
                         address.AddressDistance = closestAddress?.Distance;
-                        // TODO: Save address
+                        address.AddressReadDate = DateTime.UtcNow.ToUniversalTime();
+
+                        // Save address
+                        await _mediator.Publish(new SaveAddressInfoNotification(address));
+
                         await ReportStep(ImporterReportSeverity.Information, $"{address.Latitude}; {address.Longitude}: {address.Country}; {address.Region}; {address.VenueLabel}: {address.VenueName}; {address.AddressLabel}: {address.AddressName}", false, percent);
                     }
                     else
