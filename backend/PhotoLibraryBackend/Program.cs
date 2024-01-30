@@ -115,6 +115,9 @@ app.MapHub<MediaHub>("/Media")
 app.MapHub<ImporterLoggerHub>("/ImporterLogger")
     .RequireAuthorization(ConfirmedEmailPolicyName)
     ;
+app.MapHub<GeocodingLoggerHub>("/GeocodingLogger")
+    // .RequireAuthorization(ConfirmedEmailPolicyName)
+    ;
 #endregion
 
 #region Identity API
