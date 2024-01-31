@@ -20,7 +20,8 @@ public class DataAccessMessageHandler :
     INotificationHandler<UpdateVideoDateNotification>,
     INotificationHandler<UpdateVideoThumbnailNotification>,
     IRequestHandler<GetAddressesListRequest, MediaAddress[]>,
-    INotificationHandler<SaveAddressInfoNotification>
+    INotificationHandler<SaveAddressInfoNotification>,
+    IRequestHandler<GetMediaAddressesCountRequest, int>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -346,6 +347,24 @@ order by m."FileExt"
                 address.AddressReadDate = notification.Address.AddressReadDate;
                 await context.SaveChangesAsync();
             }
+        }
+    }
+
+    public async Task<int> Handle(GetMediaAddressesCountRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var addressesQuery = context.Address
+                .AsNoTracking();
+            if (request.EmptyAddresses)
+            {
+                addressesQuery = addressesQuery.Where(a => a.AddressReadDate == null);
+            } else
+            {
+                addressesQuery = addressesQuery.Where(a => a.AddressReadDate != null);
+            }
+
+            return await addressesQuery.CountAsync();
         }
     }
 }

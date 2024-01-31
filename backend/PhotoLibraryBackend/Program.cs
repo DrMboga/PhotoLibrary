@@ -234,6 +234,17 @@ app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) =>
 .WithDescription("Checks the media import status. Can return 'InProgress' or 'Idle'")
 .WithOpenApi();
 
+app.MapGet("/geocodingStatus", async (IMediator mediator) => 
+{
+    var emptyAddresses = await mediator.Send(new GetMediaAddressesCountRequest(true));
+    var filledAddresses = await mediator.Send(new GetMediaAddressesCountRequest(false));
+    return Results.Ok(new {EmptyAddressesCount = emptyAddresses, FilledAddressesCount = filledAddresses});
+})
+// .RequireAuthorization(ConfirmedEmailPolicyName)
+.WithName("GeocodingStatus")
+.WithDescription("Checks how many addresses got read")
+.WithOpenApi();
+
 // // GET /importerLogs?pageSize==15
 app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
     var logs = await mediator.Send(new GetImporterLogsRequest(pageSize ?? 100));
