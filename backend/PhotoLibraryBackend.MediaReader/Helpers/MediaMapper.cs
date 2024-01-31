@@ -26,14 +26,15 @@ public static class MediaMapper
                     Latitude = media.MediaAddress != null ? Convert.ToDouble(media.MediaAddress.Latitude) : 0,
                     Longitude = media.MediaAddress != null ? Convert.ToDouble(media.MediaAddress.Longitude) : 0,
                     Country = media.MediaAddress?.Country ?? string.Empty,
-                    Address = media.MediaAddress?.AddressLabel ?? string.Empty,
+                    Address = media.MediaAddress?.AddressName ?? string.Empty,
                     Region = media.MediaAddress?.Region ?? string.Empty,
                     Locality = media.MediaAddress?.Locality ?? string.Empty,
                     Venue = media.MediaAddress?.VenueName ?? string.Empty,
                     Thumbnail = media.Thumbnail == null ? ByteString.Empty : ByteString.CopyFrom(media.Thumbnail),
                     Tag = media.TagLabel ?? string.Empty,
                     IsFavorite = media.Album?.MarkedAsFavorite ?? false,
-                    AlbumName = media.Album == null ? string.Empty :  GetAlbumName(media.Album)
+                    AlbumName = media.Album == null ? string.Empty :  GetAlbumName(media.Album),
+                    VideoDurationSec = media.VideoDurationSec ?? 0
         };
     }
 

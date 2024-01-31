@@ -47,16 +47,14 @@ export const MediaPreview = ({
   albumMarkChanged,
 }: Props) => {
   const mediaDate = dateFromUnixTime(media?.dateTimeOriginal ?? 0);
-  const country = media?.country ?? '';
-  const city = media?.locality ?? media?.region ?? '';
-  const venue = media?.venue ?? '';
 
-  const address =
-    city && country
-      ? `${city}, ${country}${venue}`
-      : media?.latitude && media?.longitude
-      ? `${media.latitude}, ${media.longitude}`
-      : '';
+  const address = `${media?.latitude ?? ''}, ${media?.longitude ?? ''} | ${media?.venue ?? ''} | ${
+    media?.address ?? ''
+  } | ${media?.locality ?? ''} | ${media?.region ?? ''} | ${media?.country ?? ''}`;
+  const textMinWidth =
+    (((media?.thumbnailWidth ?? 0) < (media?.thumbnailHeight ?? 0)
+      ? media?.thumbnailWidth
+      : media?.thumbnailHeight) ?? 0) * 1.2;
 
   const [isFavorite, setIsFavorite] = useState(media?.isFavorite ?? false);
   const [isImportant, setIsImportant] = useState(checkIsImportant(media?.albumName));
@@ -200,21 +198,32 @@ export const MediaPreview = ({
             </Typography>
           </Box>
         )}
-        {address && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '2px' }}>
-            <PlaceIcon fontSize="small" />
-            <Typography
-              id={`typography-3-${media.id}`}
+        {media.country && (
+          <Tooltip title={address}>
+            <Box
               sx={{
-                fontSize: '12px',
                 display: 'flex',
                 alignItems: 'center',
+                gap: '3px',
+                marginTop: '2px',
               }}
-              color="text.secondary"
             >
-              {address}
-            </Typography>
-          </Box>
+              <PlaceIcon fontSize="small" />
+              <Typography
+                id={`typography-3-${media.id}`}
+                sx={{
+                  fontSize: '12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  inlineSize: `${textMinWidth}px`,
+                  overflowWrap: 'break-word',
+                }}
+                color="text.secondary"
+              >
+                {media.address}
+              </Typography>
+            </Box>
+          </Tooltip>
         )}
       </DialogContent>
       <DialogActions

@@ -27,22 +27,31 @@ export const MediaCard = ({ media, onClick }: Props) => {
           image={blobToImage(media.thumbnail)}
         ></CardMedia>
         {media.mediaType === MediaType.VIDEO && (
-          <Typography
-            id={`typography-0-${media.id}`}
+          <Box
             sx={{
-              fontSize: '10px',
               display: 'flex',
               alignItems: 'center',
               position: 'absolute',
               top: '10px',
               left: '10px',
               gap: '5px',
-              color: 'white',
             }}
           >
-            <PlayCircleIcon />
-            {videoDuration}
-          </Typography>
+            <Typography
+              id={`typography-0-${media.id}`}
+              sx={{
+                fontSize: '10px',
+                color: 'white',
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
+              <PlayCircleIcon />
+            </Typography>
+            <Typography id={`typography-video-duration-${media.id}`} variant="body2" align="right">
+              {videoDuration}
+            </Typography>
+          </Box>
         )}
       </Box>
       <CardContent
