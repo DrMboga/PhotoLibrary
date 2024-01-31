@@ -9,6 +9,9 @@ export interface ImporterState {
   isImporterInProgress: boolean;
   error?: string;
   importSteps?: ImportStepReport[];
+  progress?: number;
+  emptyAddressesCount?: number;
+  filledAddressesCount?: number;
 }
 
 export const initialImporterState: ImporterState = {
@@ -27,11 +30,23 @@ export const getImporterLogs = createAsyncThunk('getImporterLogs', async (authTo
   return await backendAPI.getImporterLogs(authToken);
 });
 
-// triggerMediaImport thunk
+export const triggerGeocodingCollect = createAsyncThunk(
+  'triggerGeocodingCollect',
+  async (payload: { requestLimit: number; authToken?: string }) => {
+    await backendAPI.triggerGeocodingCollect(payload.requestLimit, payload.authToken);
+  },
+);
 export const triggerMediaImport = createAsyncThunk(
   'triggerMediaImport',
   async (authToken?: string) => {
     await backendAPI.triggerMediaImport(authToken);
+  },
+);
+
+export const getGeocodingStatus = createAsyncThunk(
+  'getGeocodingStatus',
+  async (authToken?: string) => {
+    return await backendAPI.getGeocodingStatus(authToken);
   },
 );
 
@@ -50,6 +65,9 @@ export const importerSlice = createSlice({
     },
     importerFinished: (state) => {
       state.isImporterInProgress = false;
+    },
+    importerProgressChanged: (state, action: PayloadAction<number>) => {
+      state.progress = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -101,6 +119,22 @@ export const importerSlice = createSlice({
         } else {
           state.error = 'Unable to reach backend';
         }
+      })
+      .addCase(triggerGeocodingCollect.rejected, (state, action) => {
+        if (action.error) {
+          const error = ensureError(action.error);
+          state.error = error.message;
+        } else {
+          state.error = 'Unable to reach backend';
+        }
+      })
+      .addCase(getGeocodingStatus.pending, (state) => {
+        state.emptyAddressesCount = 0;
+        state.filledAddressesCount = 0;
+      })
+      .addCase(getGeocodingStatus.fulfilled, (state, action) => {
+        state.emptyAddressesCount = action.payload.emptyAddressesCount;
+        state.filledAddressesCount = action.payload.filledAddressesCount;
       });
   },
 });
@@ -110,6 +144,7 @@ export const {
   importerNewStepAdded,
   importerStarted,
   importerFinished,
+  importerProgressChanged,
 } = importerSlice.actions;
 
 export default importerSlice.reducer;
@@ -118,3 +153,6 @@ export const selectImporterLoading = (state: RootState) => state.importer.loadin
 export const selectIsImporterInProgress = (state: RootState) => state.importer.isImporterInProgress;
 export const selectImporterError = (state: RootState) => state.importer.error;
 export const selectImporterSteps = (state: RootState) => state.importer.importSteps;
+export const selectReporterProgress = (state: RootState) => state.importer.progress;
+export const selectEmptyAddressesCount = (state: RootState) => state.importer.emptyAddressesCount;
+export const selectFilledAddressesCount = (state: RootState) => state.importer.filledAddressesCount;

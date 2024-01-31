@@ -58,6 +58,24 @@ const backendAPI = {
     });
     checkStatus(response);
   },
+  async triggerGeocodingCollect(requestLimit: number, authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(
+      `${backendUrl}/triggerGeocodingDataCollect?requestsLimit=${requestLimit}`,
+      {
+        method: 'post',
+        headers: new Headers({
+          Authorization: `Bearer ${authToken}`,
+        }),
+      },
+    );
+    checkStatus(response);
+  },
   async downloadMedia(fullPath: string, authToken?: string): Promise<Blob> {
     if (!backendUrl) {
       throw new Error('Please specify Backend URL in environment settings');
@@ -151,6 +169,25 @@ const backendAPI = {
     const responseWithStatus = checkStatus(response);
     const result = await parseJSON(responseWithStatus);
     return result ?? [];
+  },
+  async getGeocodingStatus(
+    authToken?: string,
+  ): Promise<{ emptyAddressesCount: number; filledAddressesCount: number }> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/geocodingStatus?`, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? { emptyAddressesCount: 0, filledAddressesCount: 0 };
   },
 };
 
