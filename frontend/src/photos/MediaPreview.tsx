@@ -164,6 +164,7 @@ export const MediaPreview = ({
         <video
           controls
           style={{ height: media.thumbnailHeight === 0 ? 504 : media.thumbnailHeight * 3 }}
+          playsInline
         >
           <source src={URL.createObjectURL(mediaData)} />
         </video>
