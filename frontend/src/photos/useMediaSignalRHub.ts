@@ -2,14 +2,21 @@ import { useEffect, useRef, useState } from 'react';
 import { HubConnection, HubConnectionBuilder, HubConnectionState } from '@microsoft/signalr';
 import { MediaInfo } from '../model/media-info';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
-import { changeDateOfFirstPhoto, changeDateOfLastPhoto, errorOccurred } from './photosSlice';
+import {
+  changeDateOfFirstPhoto,
+  changeDateOfLastPhoto,
+  errorOccurred,
+  selectPhotosLoadingBottom,
+  selectPhotosLoadingTop,
+} from './photosSlice';
 import { selectToken } from '../authentication/authSlice';
 import { checkIsFavorite } from '../helpers/album-helper';
+import { dateFromUnixTime } from '../helpers/date-helper';
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const mediaHubPath = `${backendUrl}/Media`;
 const defaultDateFrom = 9999999999; //Sat Nov 20 2286 17:46:39
-const maxSizeOfPhotosOnAPage = 50;
+const maxSizeOfPhotosOnAPage = 100;
 
 export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const connectCalledOnce = useRef(false);
@@ -21,6 +28,8 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const [newUpperMedias, setNewUpperMedias] = useState<MediaInfo[]>();
 
   const authToken = useAppSelector(selectToken);
+  const loadingTop = useAppSelector(selectPhotosLoadingTop);
+  const loadingBottom = useAppSelector(selectPhotosLoadingBottom);
 
   const dispatch = useAppDispatch();
 
@@ -32,7 +41,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
   const getNextPhotosChunkFromBackend = async (dateFrom: number, connection: HubConnection) => {
     if (connection.state === HubConnectionState.Connected) {
       await connection.send('GetNextPhotosChunk', dateFrom);
-      console.log('getNextPhotosChunkFromBackend', dateFrom);
+      console.log('getNextPhotosChunkFromBackend', dateFrom, dateFromUnixTime(dateFrom));
     }
   };
 
@@ -136,10 +145,10 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
           hubConnection.on('GetNextPhotosChunk', handleNextPhotoPushed);
           hubConnection.on('GetPreviousPhotosChunk', handlePreviousPhotoPushed);
 
-          // Initial call to SignalR to get first chunk of photos
-          getNextPhotosChunkFromBackend(dateOfLastPhoto ?? defaultDateFrom, hubConnection).catch(
-            (err) => setError(err),
-          );
+          // // Initial call to SignalR to get first chunk of photos
+          // getNextPhotosChunkFromBackend(dateOfLastPhoto ?? defaultDateFrom, hubConnection).catch(
+          //   (err) => setError(err),
+          // );
         })
         .catch((err) => setError(err));
     }
@@ -191,5 +200,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     cleanPhotos,
     handleDeleteCard,
     handleAlbumMarkChanged,
+    loadingTop,
+    loadingBottom,
   };
 };

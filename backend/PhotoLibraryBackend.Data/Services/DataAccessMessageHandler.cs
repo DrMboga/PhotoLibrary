@@ -85,8 +85,8 @@ public class DataAccessMessageHandler :
                 .AsNoTracking()
                 .Include(m => m.Album)
                 .AsNoTracking()
-                .Where(m => m.DateTimeOriginalUtc <= request.DateFrom && m.Deleted == false)
-                .OrderByDescending(m => m.DateTimeOriginalUtc)
+                .Where(m => m.DateTimeOriginalUtc >= request.DateFrom && m.Deleted == false)
+                .OrderBy(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
                 .ToArrayAsync();
         }
@@ -102,8 +102,8 @@ public class DataAccessMessageHandler :
                 .AsNoTracking()
                 .Include(m => m.Album)
                 .AsNoTracking()
-                .Where(m => m.DateTimeOriginalUtc > request.DateTo && m.Deleted == false)
-                .OrderBy(m => m.DateTimeOriginalUtc)
+                .Where(m => m.DateTimeOriginalUtc <= request.DateTo && m.Deleted == false)
+                .OrderByDescending(m => m.DateTimeOriginalUtc)
                 .Take(request.ChunkSize)
                 .ToArrayAsync();
         }
@@ -137,7 +137,7 @@ public class DataAccessMessageHandler :
 
     public async Task<LibraryInfo?> Handle(GetLibraryInfoRequest request, CancellationToken cancellationToken)
     {
-        string query = "select Count(m.*), Min(m.\"DateTimeOriginalUtc\"), Max(m.\"DateTimeOriginalUtc\") from \"Media\" m";
+        string query = "select Count(m.\"Id\"), Min(m.\"DateTimeOriginalUtc\"), Max(m.\"DateTimeOriginalUtc\") from \"Media\" m";
         using (var context = _dbContextFactory.CreateDbContext())
         using(var connection = context.Database.GetDbConnection())
         using (var command = connection.CreateCommand())

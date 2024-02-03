@@ -18,10 +18,10 @@ const photoSlice = createSlice({
   name: 'photos',
   initialState,
   reducers: {
-    scrollToTop: (state) => {
+    setLoadingTop: (state) => {
       state.loadingTop = true;
     },
-    scrollToBottom: (state) => {
+    setLoadingBottom: (state) => {
       state.loadingBottom = true;
     },
     changeDateOfFirstPhoto: (state, action: PayloadAction<number>) => {
@@ -43,8 +43,8 @@ const photoSlice = createSlice({
 });
 
 export const {
-  scrollToTop,
-  scrollToBottom,
+  setLoadingTop,
+  setLoadingBottom,
   changeDateOfFirstPhoto,
   changeDateOfLastPhoto,
   errorOccurred,

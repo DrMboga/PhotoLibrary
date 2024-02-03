@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
-import { useAppSelector } from '../storeHooks';
+import { useAppDispatch, useAppSelector } from '../storeHooks';
 import {
   selectDateOfFirstPhoto,
   selectDateOfLastPhoto,
   selectPhotosLibraryError,
-  selectPhotosLoadingBottom,
-  selectPhotosLoadingTop,
+  setLoadingBottom,
+  setLoadingTop,
 } from './photosSlice';
 import { Alert, Box, IconButton } from '@mui/material';
 import { MediaCard } from './MediaCard';
 import { ScrollableBox } from '../components/ScrollableBox';
-import { dateFromUnixTime } from '../helpers/date-helper';
+import { currentDateLinuxTime, dateFromUnixTime } from '../helpers/date-helper';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MediaPreview } from './MediaPreview';
 import { useMediaSignalRHub } from './useMediaSignalRHub';
@@ -22,10 +22,10 @@ import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import { DatesFilterComponent } from './DatesFilterComponent';
 
 const topBarHeight = 56;
+const oneYear = 31536000;
 
 function LibraryPage() {
-  const loadingTop = useAppSelector(selectPhotosLoadingTop);
-  const loadingBottom = useAppSelector(selectPhotosLoadingBottom);
+  const dispatch = useAppDispatch();
   const dateOfFirstPhoto = useAppSelector(selectDateOfFirstPhoto);
   const dateOfLastPhoto = useAppSelector(selectDateOfLastPhoto);
   const error = useAppSelector(selectPhotosLibraryError);
@@ -42,12 +42,15 @@ function LibraryPage() {
     cleanPhotos,
     handleDeleteCard,
     handleAlbumMarkChanged,
+    loadingTop,
+    loadingBottom,
   } = useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
     setSelectedMedia(undefined);
     if (dateOfFirstPhoto) {
-      if (connection) {
+      if (connection && !loadingTop) {
+        dispatch(setLoadingTop());
         getPreviousPhotosChunkFromBackend(dateOfFirstPhoto, connection).catch((err) =>
           console.error(err),
         );
@@ -57,12 +60,13 @@ function LibraryPage() {
 
   const handleScrollToBottom = (): void => {
     setSelectedMedia(undefined);
-    if (dateOfLastPhoto) {
-      if (connection) {
-        getNextPhotosChunkFromBackend(dateOfLastPhoto, connection).catch((err) =>
-          console.error(err),
-        );
-      }
+
+    const dateFrom = dateOfLastPhoto ?? currentDateLinuxTime() - oneYear;
+
+    console.log('dateOfLastPhoto', dateFrom, connection?.state);
+    if (connection && !loadingBottom) {
+      dispatch(setLoadingBottom());
+      getNextPhotosChunkFromBackend(dateFrom, connection).catch((err) => console.error(err));
     }
   };
 
