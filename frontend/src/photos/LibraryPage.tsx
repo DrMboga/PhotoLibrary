@@ -23,6 +23,7 @@ import { DatesFilterComponent } from './DatesFilterComponent';
 
 const topBarHeight = 56;
 const oneYear = 31536000;
+const threeSeconds = 3;
 
 function LibraryPage() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ function LibraryPage() {
   const [selectedMedia, setSelectedMedia] = useState<MediaInfo>();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [lastRequestTime, setLastRequestTime] = useState(currentDateLinuxTime());
 
   const {
     connection,
@@ -63,8 +65,12 @@ function LibraryPage() {
 
     const dateFrom = dateOfLastPhoto ?? currentDateLinuxTime() - oneYear;
 
-    console.log('dateOfLastPhoto', dateFrom, connection?.state);
-    if (connection && !loadingBottom) {
+    const now = currentDateLinuxTime();
+    const debounce = now - lastRequestTime < threeSeconds;
+    console.log('debounce', now - lastRequestTime, debounce);
+
+    if (connection && !loadingBottom && !debounce) {
+      setLastRequestTime(now);
       dispatch(setLoadingBottom());
       getNextPhotosChunkFromBackend(dateFrom, connection).catch((err) => console.error(err));
     }
