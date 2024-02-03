@@ -25,6 +25,12 @@ export const ScrollableBox = ({ children, indent, scrollToTop, scrollToBottom }:
       targetDiv?.scrollTop !== 0 &&
       scrollToBottom
     ) {
+      console.log(
+        'scrollTop, offsetHeight, scrollHeight',
+        targetDiv?.scrollTop,
+        targetDiv.offsetHeight,
+        targetDiv?.scrollHeight,
+      );
       scrollToBottom();
     }
 

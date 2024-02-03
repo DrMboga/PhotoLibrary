@@ -79,8 +79,11 @@ export const MediaPreview = ({
     backendAPI
       .downloadMedia(media.fullPath, authToken)
       .then((value) => {
-        setMediaData(value);
         value.arrayBuffer().then((valueAsArray) => {
+          const mimeType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
+          const ext = media.fileExtension.toLowerCase().replace('.', '');
+          const blob = new Blob([valueAsArray], { type: `${mimeType}/${ext}` });
+          setMediaData(blob);
           setMediaLoading(false);
           setMediaDataAsUint8(new Uint8Array(valueAsArray));
         });
