@@ -31,7 +31,7 @@ import StarIcon from '@mui/icons-material/Star';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
-import ReactPlayer from 'react-player/lazy';
+import ReactPlayer from 'react-player/file';
 
 type Props = {
   media?: MediaInfo;
@@ -149,6 +149,10 @@ export const MediaPreview = ({
     onClose();
   };
 
+  function handleVideoError(error: any, data: any, hlsInstance: any, hlsGlobal: any) {
+    console.error('handleVideoError', error, data, hlsInstance, hlsGlobal);
+  }
+
   return media ? (
     <Dialog onClose={handleClose} open={open}>
       <Tooltip title={media.fullPath}>
@@ -170,6 +174,10 @@ export const MediaPreview = ({
           controls
           width={media.thumbnailWidth === 0 ? 493 : media.thumbnailWidth * 2.2}
           height={media.thumbnailHeight === 0 ? 367 : media.thumbnailHeight * 2.2}
+          playsinline
+          volume={0.5}
+          muted
+          onError={handleVideoError}
         />
       )}
       <DialogContent sx={{ paddingTop: '1px', paddingBottom: '0px' }}>
