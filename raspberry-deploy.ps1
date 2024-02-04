@@ -92,12 +92,54 @@ function ChangeBackendApplicationSettings {
     $AppSettingsContent | ConvertTo-Json -Depth 100 | Out-File $AppSettingsFileName -Encoding utf8
 }
 
+function IncreaseBackendVersion {
+    $BackendProjectFile = ".\backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj"
+
+    $newContent = foreach($line in Get-Content $BackendProjectFile) {
+        if($line -match '<Version>'){
+            # Get Version
+            $VersionFound = $line -match '\d{1,}\.\d{1,}\.\d{1,}\.\d{1,}'
+            if ($VersionFound) {
+                $VersionString = $matches[0]
+                $Versions = $VersionString -split '\.'
+                $BuildNumber = [int32]$Versions[3]
+                $NewBuildNumber = $BuildNumber + 1
+                $NewVersion = "$($Versions[0]).$($Versions[1]).$($Versions[2]).$($NewBuildNumber)"
+                Write-Host "New backend version: $($NewVersion)"
+                $line -replace $VersionString, $NewVersion
+            } else {
+                $line
+            }
+        }
+        else {
+            # leave the line unmodified
+            $line
+        }
+    }
+    
+    $newContent | Set-Content -Path $BackendProjectFile
+}
+
 #--Start--
 Clear-Host
-# Read parameters
+# 1. Read parameters
 Write-Host "Reading deployment parameters..."
 $EnvironmentParams = ReadParameters
 $EnvironmentParams
 
-#Read .\backend\PhotoLibraryBackend\appsettings.json
+#2. Change backend settings to prod settings
 ChangeBackendApplicationSettings $EnvironmentParams ".\backend\PhotoLibraryBackend\appsettings.json"
+
+#3. Increase backend version
+IncreaseBackendVersion
+
+#4. Build backend
+Write-Host '--------------'
+dotnet publish .\backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj -c release -r linux-arm64 --self-contained
+Write-Host '--------------'
+Write-Host
+
+#5. Copy backend to Raspberry
+Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`'
+Read-Host 'Hit Enter when ready'
+# scp -r ./photo-library.service pi@192.168.0.65:/home/pi/projects/photo-library
