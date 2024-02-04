@@ -4,7 +4,7 @@ import { Box, Chip, Divider, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { dateFromUnixTime, dateToUnixTime } from '../helpers/date-helper';
 
-const minYear = 2002;
+const minYear = 2000;
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -43,7 +43,7 @@ export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
   const handleYearChipClick = (year: number) => {
     const newDate = new Date(year, 12, 0);
     setCurrentYear(year);
-    setCurrentMonth(11);
+    setCurrentMonth(1);
     newDateSelected(dateToUnixTime(newDate));
   };
   const handleMonthChipClick = (month: number) => {

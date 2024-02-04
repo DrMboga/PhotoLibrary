@@ -63,7 +63,7 @@ export const ScrollableBox = ({ children, indent, scrollToTop, scrollToBottom }:
   }, []);
 
   return (
-    <Box ref={divRef} onScroll={handleScroll} sx={{ overflow: 'auto' }}>
+    <Box ref={divRef} onScroll={handleScroll} sx={{ overflow: 'auto', scrollSnapType: 'x none' }}>
       {children}
     </Box>
   );
