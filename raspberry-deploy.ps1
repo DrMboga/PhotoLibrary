@@ -195,16 +195,16 @@ ChangeBackendApplicationSettings $EnvironmentParams '.\backend\PhotoLibraryBacke
 IncreaseBackendVersion
 
 # #4. Build backend
-# Write-Host '--------------'
-# dotnet publish .\backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj -c release -r linux-arm64 --self-contained
-# Write-Host '--------------'
-# Write-Host
+Write-Host '--------------'
+dotnet publish .\backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj -c release -r linux-arm64 --self-contained
+Write-Host '--------------'
+Write-Host
 
-# #5. Copy backend to Raspberry
-# Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`'
-# Read-Host 'Hit Enter when ready'
-# #TODO: Use $EnvironmentParams.RaspberryAddress
-# scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
+#5. Copy backend to Raspberry
+Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`'
+Read-Host 'Hit Enter when ready'
+#TODO: Use $EnvironmentParams.RaspberryAddress
+scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
 
 #6. Update frontend .env file
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $true
@@ -212,13 +212,14 @@ ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $true
 #7. Increase frontend version
 IncreaseFrontendVersion
 
-# #8. Build frontend
-# Set-Location frontend
-# npm run build
-# Set-Location ..
+#8. Build frontend
+Set-Location frontend
+npm run build
+Set-Location ..
 
 # #9. Copy frontend to Raspberry
-# scp -r ./frontend/build/* pi@192.168.0.65:/home/pi/projects/photo-library/frontend
+#TODO: Use $EnvironmentParams.RaspberryAddress
+scp -r ./frontend/build/* pi@192.168.0.65:/home/pi/projects/photo-library/frontend
 
 #10. Revert frontend Env
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $false
