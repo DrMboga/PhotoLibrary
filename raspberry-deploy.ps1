@@ -1,6 +1,5 @@
 class EnvironmentParameters {
     [string]$RaspberryAddress
-    [string]$RaspberryPwd
     [string]$PhotoLibraryLocalPath
     [string]$PhotoLibraryLocalDeleteFolder
     [string]$PhotoDbConnectionString
@@ -19,10 +18,6 @@ function ReadParameters {
         switch ($keyValue[0]) {
             'RASPBERRY_ADDR' { 
                 $envParametersObject.RaspberryAddress = $keyValue[1]
-                continue
-            }
-            'RASPBERRY_PWD' { 
-                $envParametersObject.RaspberryPwd = $keyValue[1]
                 continue
             }
             'PHOTO_LIBRARY_LOCAL_PATH' { 
@@ -142,4 +137,5 @@ Write-Host
 #5. Copy backend to Raspberry
 Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`'
 Read-Host 'Hit Enter when ready'
-# scp -r ./photo-library.service pi@192.168.0.65:/home/pi/projects/photo-library
+#TODO: Use $EnvironmentParams.RaspberryAddress
+scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
