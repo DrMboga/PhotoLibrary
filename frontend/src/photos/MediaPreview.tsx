@@ -31,7 +31,6 @@ import StarIcon from '@mui/icons-material/Star';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
-import ReactPlayer from 'react-player/file';
 
 type Props = {
   media?: MediaInfo;
@@ -66,6 +65,7 @@ export const MediaPreview = ({
   const [mediaDataAsUint8, setMediaDataAsUint8] = useState<Uint8Array>(new Uint8Array());
   const [mediaLoading, setMediaLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
+  const [mimeType, setMimeType] = useState('image/jpeg');
 
   useEffect(() => {
     if (!media || !open) {
@@ -80,9 +80,10 @@ export const MediaPreview = ({
       .downloadMedia(media.fullPath, authToken)
       .then((value) => {
         value.arrayBuffer().then((valueAsArray) => {
-          const mimeType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
+          const mediaType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
           const ext = media.fileExtension.toLowerCase().replace('.', '');
-          const blob = new Blob([valueAsArray], { type: `${mimeType}/${ext}` });
+          setMimeType(`${mediaType}/${ext}`);
+          const blob = new Blob([valueAsArray], { type: `${mediaType}/${ext}` });
           setMediaData(blob);
           setMediaLoading(false);
           setMediaDataAsUint8(new Uint8Array(valueAsArray));
@@ -169,16 +170,15 @@ export const MediaPreview = ({
         />
       )}
       {!mediaLoading && media.mediaType === MediaType.VIDEO && mediaData && (
-        <ReactPlayer
-          url={URL.createObjectURL(mediaData)}
+        <video
+          autoPlay
+          muted
+          playsInline
           controls
           width={media.thumbnailWidth === 0 ? 493 : media.thumbnailWidth * 2.2}
           height={media.thumbnailHeight === 0 ? 367 : media.thumbnailHeight * 2.2}
-          playsinline
-          volume={0.5}
-          muted
-          onError={handleVideoError}
-        />
+          src={URL.createObjectURL(mediaData)}
+        ></video>
       )}
       <DialogContent sx={{ paddingTop: '1px', paddingBottom: '0px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
