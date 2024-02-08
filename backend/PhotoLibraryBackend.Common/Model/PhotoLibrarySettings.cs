@@ -5,4 +5,5 @@ public class PhotoLibrarySettings
     public string PhotoLibraryPath { get; set; } = string.Empty;
     public string PhotoLibraryDeletedFolder { get; set; } = string.Empty;
     public string PositionStackApiKey { get; set; } = string.Empty;
+    public string ConvertedVideosFolder { get; set; } = string.Empty;
 }

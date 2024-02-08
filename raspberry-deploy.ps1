@@ -7,6 +7,7 @@ class EnvironmentParameters {
     [string]$PhotoLibraryBackendUrl
     [string]$PositionStackApiKey
     [string]$PhotoLibraryBackendDevUrl
+    [string]$PhotoLibraryLocalConvertedVideosFolder
 }
 
 function ReadParameters {
@@ -67,6 +68,10 @@ function ReadParameters {
                 $envParametersObject.PhotoLibraryBackendDevUrl = $keyValue[1]
                 continue
             }
+            'PHOTO_LIBRARY_LOCAL_CONVERTED_VIDEO_FOLDER' { 
+                $envParametersObject.PhotoLibraryLocalConvertedVideosFolder = $keyValue[1]
+                continue
+            }
         }
     }
 
@@ -84,6 +89,7 @@ function ChangeBackendApplicationSettings {
     $PhotoLobrarySectionContent.PhotoLibraryPath = $EnvironmentParams.PhotoLibraryLocalPath
     $PhotoLobrarySectionContent.PhotoLibraryDeletedFolder = $EnvironmentParams.PhotoLibraryLocalDeleteFolder
     $PhotoLobrarySectionContent.PositionStackApiKey = $EnvironmentParams.PositionStackApiKey
+    $PhotoLobrarySectionContent.ConvertedVideosFolder = $EnvironmentParams.PhotoLibraryLocalConvertedVideosFolder
 
     $ConnectionStringsSectionContent = $AppSettingsContent.ConnectionStrings
     $ConnectionStringsSectionContent."photo-db" = $EnvironmentParams.PhotoDbConnectionString
