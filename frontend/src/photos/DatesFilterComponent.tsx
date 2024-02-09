@@ -43,7 +43,7 @@ export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
   const handleYearChipClick = (year: number) => {
     const newDate = new Date(year, 12, 0);
     setCurrentYear(year);
-    setCurrentMonth(1);
+    setCurrentMonth(0);
     newDateSelected(dateToUnixTime(newDate));
   };
   const handleMonthChipClick = (month: number) => {

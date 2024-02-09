@@ -255,13 +255,18 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
 
-app.MapGet("/mediaDownload", async (string? filePath, IMediator mediator) => {
+app.MapGet("/mediaDownload", async (string? filePath, bool? useConvertedVideo, IMediator mediator) => {
     if (filePath == null)
     {
         return Results.BadRequest();
     }
-    var fileInfo = new FileInfo(filePath);
-    var fileStream = File.OpenRead(filePath);
+    string realFilePath = filePath;
+    if (useConvertedVideo.HasValue && useConvertedVideo.Value == true)
+    {
+        realFilePath = await mediator.Send(new GetPathOfConvertedVideoRequest(filePath));
+    }
+    var fileInfo = new FileInfo(realFilePath);
+    var fileStream = File.OpenRead(realFilePath);
     var mimeType = await mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
     return Results.File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
 })

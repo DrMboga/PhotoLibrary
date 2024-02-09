@@ -65,7 +65,7 @@ export const MediaPreview = ({
   const [mediaDataAsUint8, setMediaDataAsUint8] = useState<Uint8Array>(new Uint8Array());
   const [mediaLoading, setMediaLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [mimeType, setMimeType] = useState('image/jpeg');
+  const [useConvertedVideo, setUseConvertedVideo] = useState(false);
 
   useEffect(() => {
     if (!media || !open) {
@@ -75,15 +75,16 @@ export const MediaPreview = ({
     setIsImportant(checkIsImportant(media?.albumName));
     setIsPrint(checkIsPrint(media?.albumName));
 
+    const isAppleQuickTimeVideo =
+      media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase() === '.mov';
+    setUseConvertedVideo(isAppleQuickTimeVideo);
+
     setMediaLoading(true);
     backendAPI
-      .downloadMedia(media.fullPath, authToken)
+      .downloadMedia(media.fullPath, useConvertedVideo, authToken)
       .then((value) => {
         value.arrayBuffer().then((valueAsArray) => {
-          const mediaType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
-          const ext = media.fileExtension.toLowerCase().replace('.', '');
-          setMimeType(`${mediaType}/${ext}`);
-          const blob = new Blob([valueAsArray], { type: `${mediaType}/${ext}` });
+          const blob = new Blob([valueAsArray]);
           setMediaData(blob);
           setMediaLoading(false);
           setMediaDataAsUint8(new Uint8Array(valueAsArray));
@@ -125,13 +126,26 @@ export const MediaPreview = ({
   };
 
   const handleDownload = () => {
-    if (media && mediaData) {
-      const mediaUrl = window.URL.createObjectURL(mediaData);
-      const tempLink = document.createElement('a');
-      tempLink.href = mediaUrl;
-      tempLink.setAttribute('download', media.fileName);
-      tempLink.click();
+    if (media && mediaData && !useConvertedVideo) {
+      downloadAction(media.fileName, mediaData);
     }
+    if (media && useConvertedVideo) {
+      // Download originalData
+      backendAPI
+        .downloadMedia(media.fullPath, false, authToken)
+        .then((value) => {
+          downloadAction(media.fileName, value);
+        })
+        .catch((err) => setError(err));
+    }
+  };
+
+  const downloadAction = (fileName: string, data: Blob) => {
+    const mediaUrl = window.URL.createObjectURL(data);
+    const tempLink = document.createElement('a');
+    tempLink.href = mediaUrl;
+    tempLink.setAttribute('download', fileName);
+    tempLink.click();
   };
 
   const handleDelete = () => {
