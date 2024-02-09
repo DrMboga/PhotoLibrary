@@ -79,14 +79,14 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
       const mediaWithMiddleDate = updatedPhotos.find((m) => m.dateTimeOriginal === middleDate);
       const middleDateIndex = updatedPhotos.indexOf(mediaWithMiddleDate!);
       // Cut top of the medias (on scroll to bottom)
-      if (middleDateIndex - maxSizeOfPhotosOnAPage > 0) {
+      if (middleDateIndex - maxSizeOfPhotosOnAPage * 3 > 0) {
         updatedPhotos = updatedPhotos.slice(
           middleDateIndex - maxSizeOfPhotosOnAPage,
           updatedPhotos.length - 1,
         );
       }
       // Cut bottom of the medias (on scroll to top)
-      if (middleDateIndex + maxSizeOfPhotosOnAPage > updatedPhotos.length) {
+      if (middleDateIndex + maxSizeOfPhotosOnAPage * 3 > updatedPhotos.length) {
         updatedPhotos = updatedPhotos.slice(0, middleDateIndex + maxSizeOfPhotosOnAPage);
       }
     }
