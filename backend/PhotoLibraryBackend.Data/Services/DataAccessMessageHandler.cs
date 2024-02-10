@@ -21,7 +21,8 @@ public class DataAccessMessageHandler :
     INotificationHandler<UpdateVideoThumbnailNotification>,
     IRequestHandler<GetAddressesListRequest, MediaAddress[]>,
     INotificationHandler<SaveAddressInfoNotification>,
-    IRequestHandler<GetMediaAddressesCountRequest, int>
+    IRequestHandler<GetMediaAddressesCountRequest, int>,
+    IRequestHandler<GetAllQuickTimeVideosRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
     private readonly ILogger<DataAccessMessageHandler> _logger;
@@ -365,6 +366,19 @@ order by m."FileExt"
             }
 
             return await addressesQuery.CountAsync();
+        }
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetAllQuickTimeVideosRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            string[] videoExtensions = [".mov"];
+            var videos = await context.Media
+                .AsNoTracking()
+                .Where(m => videoExtensions.Contains(m.FileExt.ToLower()))
+                .ToArrayAsync();
+            return videos ?? [];
         }
     }
 }

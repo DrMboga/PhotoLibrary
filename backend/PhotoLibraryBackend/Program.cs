@@ -79,6 +79,7 @@ builder.Services.AddScoped<IImporterService, ImporterService>();
 builder.Services.AddTransient<ImportMediaBackgroundOperationType>();
 builder.Services.AddTransient<FixVideoDatesBackgroundOperationType>();
 builder.Services.AddTransient<GeocodingCollectBackgroundOperationType>();
+builder.Services.AddTransient<ConvertQuickTimeVideosOperationType>();
 
 builder.Services.AddSingleton<WorkerDispatcher>();
 builder.Services.AddHostedService<WorkerService>();
@@ -223,6 +224,21 @@ app.MapPost("/triggerGeocodingDataCollect", (int requestsLimit, WorkerDispatcher
 })
 .WithName("TriggerGeocodingDataCollect")
 .WithDescription("Triggers a process of getting the coordinates from DB and request location info from PositionStack")
+.WithOpenApi();
+
+app.MapPost("/triggerQuickTimeVideosConversion", (WorkerDispatcher dispatcher) =>
+{
+    var result = dispatcher.StatNewProcess(
+            typeof(ConvertQuickTimeVideosOperationType), 
+            new ConvertQuickTimeVideosOperationContext());
+    if (result.WorkflowSuccessfullyStarted)
+    {
+        return Results.Ok();
+    }
+    return Results.BadRequest(result);
+})
+.WithName("TriggerQuickTimeVideosConversion")
+.WithDescription("Triggers the conversion on MOV files into mp4 format to have the ability to show them in Safari")
 .WithOpenApi();
 
 app.MapGet("/mediaImportStatus", (WorkerDispatcher dispatcher) => 
