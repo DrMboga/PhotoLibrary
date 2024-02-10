@@ -76,7 +76,7 @@ export const MediaPreview = ({
     setIsPrint(checkIsPrint(media?.albumName));
 
     const isAppleQuickTimeVideo =
-      media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase() === '.mov';
+      media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase().includes('mov');
     setUseConvertedVideo(isAppleQuickTimeVideo);
 
     setMediaLoading(true);
@@ -164,14 +164,12 @@ export const MediaPreview = ({
     onClose();
   };
 
-  function handleVideoError(error: any, data: any, hlsInstance: any, hlsGlobal: any) {
-    console.error('handleVideoError', error, data, hlsInstance, hlsGlobal);
-  }
-
   return media ? (
     <Dialog onClose={handleClose} open={open}>
       <Tooltip title={media.fullPath}>
-        <DialogTitle>{media.fileName}</DialogTitle>
+        <DialogTitle>
+          {media.fileName} {useConvertedVideo ? '*' : ''}
+        </DialogTitle>
       </Tooltip>
 
       {error && <Alert severity="error">{error}</Alert>}
