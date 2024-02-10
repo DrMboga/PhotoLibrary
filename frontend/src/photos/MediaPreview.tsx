@@ -81,7 +81,7 @@ export const MediaPreview = ({
 
     setMediaLoading(true);
     backendAPI
-      .downloadMedia(media.fullPath, useConvertedVideo, authToken)
+      .downloadMedia(media.fullPath, isAppleQuickTimeVideo, authToken)
       .then((value) => {
         value.arrayBuffer().then((valueAsArray) => {
           const blob = new Blob([valueAsArray]);
