@@ -84,7 +84,11 @@ export const MediaPreview = ({
       .downloadMedia(media.fullPath, isAppleQuickTimeVideo, authToken)
       .then((value) => {
         value.arrayBuffer().then((valueAsArray) => {
-          const blob = new Blob([valueAsArray]);
+          const mediaType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
+          const ext = media.fileExtension.toLowerCase().replace('.', '');
+          const blob = new Blob([valueAsArray], {
+            type: `${mediaType}/${isAppleQuickTimeVideo ? 'mp4' : ext}`,
+          });
           setMediaData(blob);
           setMediaLoading(false);
           setMediaDataAsUint8(new Uint8Array(valueAsArray));
