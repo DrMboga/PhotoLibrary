@@ -42,9 +42,15 @@ public class QuickTimeVideosConverterService : INotificationHandler<StartConvert
                 {
                     try
                     {
-                        await $"ffmpeg -i {videoFile.FullPath} -vcodec h264 -acodec aac {fullPathToConvert}".Bash(_logger);
+                        await ReportStep(ImporterReportSeverity.Information, $"<- Start converting '{videoFile.FullPath}' ({videoFile.FileSize} B)");
+                        var conversionTask = $"ffmpeg -i {videoFile.FullPath} -vcodec h264 -acodec aac {fullPathToConvert}".Bash(_logger);
+                        // Wait for convert execution about 4 hours
+                        var completed = await Task.WhenAny(conversionTask, Task.Delay(Convert.ToInt32(TimeSpan.FromHours(4).TotalMilliseconds), cancellationToken));
+                        // This trick with completed is to check if there was an exception in conversion task, 
+                        // because Task.WhenAny itself does not throw an exception if it was in conversionTask
+                        await completed;
                         convertedVideos++;
-                        await ReportStep(ImporterReportSeverity.Information, $"Converted '{videoFile.FileName}' to '{fullPathToConvert}'");
+                        await ReportStep(ImporterReportSeverity.Information, $"-> Converted '{videoFile.FileName}' to '{fullPathToConvert}'");
                     }
                     catch(Exception ex)
                     {
