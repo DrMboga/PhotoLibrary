@@ -11,6 +11,7 @@ export const dateToUnixTime = (date: Date): number => {
 
 export const secondsToTimeFormat = (totalSeconds: number): string => {
   const minutes: number = Math.trunc(totalSeconds / 60);
-  let seconds: number = totalSeconds - minutes * 60;
-  return `${minutes}:${seconds}`;
+  const seconds: number = totalSeconds - minutes * 60;
+  const secondsPad = seconds.toString().padStart(2, '0');
+  return `${minutes}:${secondsPad}`;
 };

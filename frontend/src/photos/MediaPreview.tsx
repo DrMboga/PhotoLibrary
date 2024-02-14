@@ -31,6 +31,7 @@ import StarIcon from '@mui/icons-material/Star';
 import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
+import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
 
 type Props = {
   media?: MediaInfo;
@@ -179,11 +180,15 @@ export const MediaPreview = ({
       {error && <Alert severity="error">{error}</Alert>}
       {mediaLoading && <CircularProgress />}
       {!mediaLoading && media.mediaType === MediaType.IMAGE && (
-        <img
-          src={blobToImage(mediaDataAsUint8)}
-          alt={media.fileName}
-          style={{ height: media.thumbnailHeight * 2.2 }}
-        />
+        <TransformWrapper>
+          <TransformComponent>
+            <img
+              src={blobToImage(mediaDataAsUint8)}
+              alt={media.fileName}
+              style={{ height: media.thumbnailHeight * 2.4 }}
+            />
+          </TransformComponent>
+        </TransformWrapper>
       )}
       {!mediaLoading && media.mediaType === MediaType.VIDEO && mediaData && (
         <video
