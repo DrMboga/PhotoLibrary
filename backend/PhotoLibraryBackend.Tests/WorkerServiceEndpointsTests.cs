@@ -20,6 +20,10 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
         response.EnsureSuccessStatusCode();
         var responseAsString = await response.Content.ReadAsStringAsync();
 
-        Assert.Equal("Photo library backend version 15.0.0.0\r\nThere are 5 media files in the library\r\nDate of last photo: 14.03.2024 17:29; date of first photo: 01.01.2000 15:00", responseAsString);
+        var expectedMediatRMessage = MediatRMessagesMock.LibraryInfoRequestMock();
+        var expectedTo = $"{expectedMediatRMessage.DateOfNewestPhoto:dd.MM.yyyy HH:mm}";
+        var expectedFrom = $"{expectedMediatRMessage.DateOfEarliestPhoto:dd.MM.yyyy HH:mm}";
+
+        Assert.Equal($"Photo library backend version 15.0.0.0\r\nThere are {expectedMediatRMessage.MediaFilesCount} media files in the library\r\nDate of last photo: {expectedTo}; date of first photo: {expectedFrom}", responseAsString);
     }
 }

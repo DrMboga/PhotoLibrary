@@ -12,7 +12,7 @@ public class MockedWebApplicationFactory<TProgram>
 
         var mockMediator = new Mock<IMediator>();
         mockMediator.Setup(m => m.Send(It.IsAny<GetLibraryInfoRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new LibraryInfo(5, new DateTime(2000, 1, 1, 15, 0, 0), new DateTime(2024, 3, 14, 17, 29, 15)));
+            .ReturnsAsync(MediatRMessagesMock.LibraryInfoRequestMock());
 
         // https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0#customize-webapplicationfactory
         builder.ConfigureServices(services =>
