@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibraryBackend.MediaRe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibraryBackend.Data", "PhotoLibraryBackend.Data\PhotoLibraryBackend.Data.csproj", "{096AD15C-2572-4756-AEF8-DA2B2957E35F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibraryBackend.Tests", "PhotoLibraryBackend.Tests\PhotoLibraryBackend.Tests.csproj", "{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{096AD15C-2572-4756-AEF8-DA2B2957E35F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{096AD15C-2572-4756-AEF8-DA2B2957E35F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{096AD15C-2572-4756-AEF8-DA2B2957E35F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

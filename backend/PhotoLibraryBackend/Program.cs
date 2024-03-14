@@ -332,3 +332,5 @@ app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isTo
 
 app.Run();
 
+// This row is here to make this class visible to integration tests
+public partial class Program { }
