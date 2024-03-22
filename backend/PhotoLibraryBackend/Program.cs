@@ -178,6 +178,7 @@ app.MapGet("/", async (IMediator mediator) =>
     return $"Photo library backend version {version}{Environment.NewLine}{secondLine}";
 });
 
+// -- Worker controller
 // /swagger/index.html
 app.MapPost("/triggerMediaImport", (WorkerDispatcher dispatcher) =>
 {
@@ -271,6 +272,9 @@ app.MapGet("/importerLogs", async (int? pageSize, IMediator mediator) => {
 .WithDescription("Gets a bunch of importer logs.")
 .WithOpenApi();
 
+// -- Worker controller
+
+// -- MediaData controller
 app.MapGet("/mediaDownload", async (string? filePath, bool? useConvertedVideo, IMediator mediator) => {
     if (filePath == null)
     {
@@ -328,6 +332,8 @@ app.MapGet("mediaByAlbum", async(bool? isFavorite, bool? isImportant, bool? isTo
 .WithName("MediaByAlbum")
 .WithDescription("Returns media list by album mark.")
 .WithOpenApi();
+
+// -- MediaData controller
 #endregion
 
 app.Run();

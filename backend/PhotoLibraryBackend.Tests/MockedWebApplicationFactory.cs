@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using MediatR;
 using Microsoft.AspNetCore.Authorization;
 
 namespace PhotoLibraryBackend.Tests;
@@ -8,16 +7,12 @@ namespace PhotoLibraryBackend.Tests;
 public class MockedWebApplicationFactory<TProgram>
     : WebApplicationFactory<TProgram> where TProgram : class
 {
+    public Mock<IMediator> MockMediator { get; } = new Mock<IMediator>();
     public Mock<IImporterService> MockImporter { get; } = new Mock<IImporterService>();
     public FakeAuthorizationHandler FakeAuthHandler { get; } = new FakeAuthorizationHandler();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-
-        var mockMediator = new Mock<IMediator>();
-        mockMediator.Setup(m => m.Send(It.IsAny<GetLibraryInfoRequest>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(MediatRMessagesMock.LibraryInfoRequestMock());
-
         // https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-8.0#customize-webapplicationfactory
         builder.ConfigureServices(services =>
         {
@@ -44,7 +39,7 @@ public class MockedWebApplicationFactory<TProgram>
             if (mediatorService != null)
             {
                 services.Remove(mediatorService);
-                services.AddSingleton(mockMediator.Object);
+                services.AddSingleton(MockMediator.Object);
             }
 
             // Mock importer service
