@@ -1,5 +1,4 @@
-﻿using System.Net.Http.Headers;
-using System.Text.Json.Nodes;
+﻿using System.Text.Json.Nodes;
 
 namespace PhotoLibraryBackend.Tests;
 
@@ -58,7 +57,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
 
         // Assert
         response.EnsureSuccessStatusCode();
-        _mediatorMock.Verify(m => m.Publish(It.IsAny<StartFixingVideoDatesNotification>(), It.IsAny<CancellationToken>()));
+        _mediatorMock.Verify(m => m.Publish(It.IsAny<StartFixingVideoDatesNotification>(), It.IsAny<CancellationToken>()), Times.Once());
     }
 
     [Fact]
@@ -72,7 +71,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
 
         // Assert
         response.EnsureSuccessStatusCode();
-        _mediatorMock.Verify(m => m.Publish(It.Is<StartCollectGeocodingDataNotification>(n => n.RequestsLimit == requestsLimit), It.IsAny<CancellationToken>()));
+        _mediatorMock.Verify(m => m.Publish(It.Is<StartCollectGeocodingDataNotification>(n => n.RequestsLimit == requestsLimit), It.IsAny<CancellationToken>()), Times.Once());
     }
 
     [Fact]
@@ -83,7 +82,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
 
         // Assert
         response.EnsureSuccessStatusCode();
-        _mediatorMock.Verify(m => m.Publish(It.IsAny<StartConvertQuickTimeVideosNotification>(), It.IsAny<CancellationToken>()));
+        _mediatorMock.Verify(m => m.Publish(It.IsAny<StartConvertQuickTimeVideosNotification>(), It.IsAny<CancellationToken>()), Times.Once());
     }
 
     [Fact]

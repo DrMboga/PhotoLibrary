@@ -5,3 +5,4 @@ global using Microsoft.AspNetCore.Mvc.Testing;
 global using Moq;
 global using PhotoLibraryBackend.Common;
 global using MediatR;
+global using System.Net.Http.Headers;
