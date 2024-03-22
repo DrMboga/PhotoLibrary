@@ -189,8 +189,27 @@ function IncreaseFrontendVersion {
 
 #--Start--
 Clear-Host
+
+# Backend tests
+Write-Host "Running backend tests..." -ForegroundColor Blue
+$TestsPassed = $false
+try {
+    Set-Location backend
+    dotnet test
+    Set-Location ..
+    $TestsPassed = $lastexitcode -eq 0
+}
+catch {
+    Write-Host "Backend tests failed" -ForegroundColor Red
+}
+
+if ($TestsPassed -eq $false) {
+    Write-Host "Backend tests failed" -ForegroundColor Red
+    exit
+}
+
 # 1. Read parameters
-Write-Host "Reading deployment parameters..."
+Write-Host "Reading deployment parameters..." -ForegroundColor Blue
 $EnvironmentParams = ReadParameters
 $EnvironmentParams
 
@@ -201,13 +220,14 @@ ChangeBackendApplicationSettings $EnvironmentParams '.\backend\PhotoLibraryBacke
 IncreaseBackendVersion
 
 # #4. Build backend
-Write-Host '--------------'
+Write-Host "Building backend..." -ForegroundColor Blue
+Write-Host '--------------' -ForegroundColor Blue
 dotnet publish .\backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj -c release -r linux-arm64 --self-contained
-Write-Host '--------------'
+Write-Host '--------------' -ForegroundColor Blue
 Write-Host
 
 #5. Copy backend to Raspberry
-Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`'
+Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`' -ForegroundColor Green
 Read-Host 'Hit Enter when ready'
 #TODO: Use $EnvironmentParams.RaspberryAddress
 scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
@@ -219,6 +239,7 @@ ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $true
 IncreaseFrontendVersion
 
 #8. Build frontend
+Write-Host "Building frontend..." -ForegroundColor Blue
 Set-Location frontend
 npm run build
 Set-Location ..
@@ -234,6 +255,7 @@ ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $false
 git checkout -- backend/PhotoLibraryBackend/appsettings.json
 
 #12. Commit new versions to git
+Write-Host "Commiting new app version to git..." -ForegroundColor Blue
 git add backend\PhotoLibraryBackend\PhotoLibraryBackend.csproj
 git add frontend\package.json
 git commit -a -m "Automatic rollout a new version to raspberry Pi"
