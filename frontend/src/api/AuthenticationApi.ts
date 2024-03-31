@@ -10,7 +10,7 @@ const authenticationApi = {
   "email": "${email ?? ''}",
   "password": "${password ?? ''}"
 }`;
-    const response = await fetch(`${backendUrl}/register`, {
+    const response = await fetch(`${backendUrl}/identity/register`, {
       method: 'post',
       headers: {
         Accept: 'application/json',
@@ -35,14 +35,17 @@ const authenticationApi = {
   "email": "${email}",
   "password": "${password}"
 }`;
-    const response = await fetch(`${backendUrl}/login?useCookies=false&useSessionCookies=false`, {
-      method: 'post',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+    const response = await fetch(
+      `${backendUrl}/identity/login?useCookies=false&useSessionCookies=false`,
+      {
+        method: 'post',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body,
       },
-      body,
-    });
+    );
     if (response.status === 400) {
       const errorResult = await response.json();
       const errorText = JSON.stringify(errorResult.errors);
@@ -60,7 +63,7 @@ const authenticationApi = {
     const body = `{
   "refreshToken": "${refreshToken}"
 }`;
-    const response = await fetch(`${backendUrl}/refresh`, {
+    const response = await fetch(`${backendUrl}/identity/refresh`, {
       method: 'post',
       headers: {
         Accept: 'application/json',
@@ -79,7 +82,7 @@ const authenticationApi = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/logout`, {
+    const response = await fetch(`${backendUrl}/identity/logout`, {
       method: 'post',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,

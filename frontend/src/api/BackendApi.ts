@@ -17,7 +17,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/mediaImportStatus`, {
+    const response = await fetch(`${backendUrl}/worker/MediaImportStatus`, {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,
@@ -34,7 +34,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/importerLogs`, {
+    const response = await fetch(`${backendUrl}/worker/ImporterLogs`, {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,
@@ -50,7 +50,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/triggerMediaImport`, {
+    const response = await fetch(`${backendUrl}/worker/TriggerMediaImport`, {
       method: 'post',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,
@@ -66,7 +66,7 @@ const backendAPI = {
       throw new Error('Please login');
     }
     const response = await fetch(
-      `${backendUrl}/triggerGeocodingDataCollect?requestsLimit=${requestLimit}`,
+      `${backendUrl}/worker/TriggerGeocodingDataCollect?requestsLimit=${requestLimit}`,
       {
         method: 'post',
         headers: new Headers({
@@ -88,7 +88,7 @@ const backendAPI = {
       throw new Error('Please login');
     }
     const response = await fetch(
-      `${backendUrl}/mediaDownload?filePath=${fullPath}&useConvertedVideo=${useConvertedVideo}`,
+      `${backendUrl}/media/MediaDownload?filePath=${fullPath}&useConvertedVideo=${useConvertedVideo}`,
       {
         method: 'get',
         headers: new Headers({
@@ -106,7 +106,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/mediaEdit?mediaId=${mediaId}`, {
+    const response = await fetch(`${backendUrl}/media/DeleteMedia?mediaId=${mediaId}`, {
       method: 'delete',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,
@@ -127,7 +127,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    let url = `${backendUrl}/mediaAlbum?mediaId=${mediaId}`;
+    let url = `${backendUrl}/media/SetMediaAlbum?mediaId=${mediaId}`;
     if (favorite !== undefined) {
       url = `${url}&isFavorite=${favorite ? 'true' : 'false'}`;
     }
@@ -157,7 +157,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    let url = `${backendUrl}/mediaByAlbum?`;
+    let url = `${backendUrl}/media/MediaByAlbum?`;
     if (favorite !== undefined && favorite) {
       url = `${url}isFavorite=true`;
     }
@@ -186,7 +186,7 @@ const backendAPI = {
     if (!authToken) {
       throw new Error('Please login');
     }
-    const response = await fetch(`${backendUrl}/geocodingStatus?`, {
+    const response = await fetch(`${backendUrl}/worker/GeocodingStatus?`, {
       method: 'get',
       headers: new Headers({
         Authorization: `Bearer ${authToken}`,
