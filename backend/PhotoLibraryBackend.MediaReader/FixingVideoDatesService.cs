@@ -4,12 +4,10 @@ namespace PhotoLibraryBackend.MediaReader;
 public class FixingVideoDatesService : INotificationHandler<StartFixingVideoDatesNotification>
 {
     private readonly IMediator _mediator;
-    private readonly IMediaMetadataService _mediaMetadataService;
 
-    public FixingVideoDatesService(IMediator mediator, IMediaMetadataService mediaMetadataService)
+    public FixingVideoDatesService(IMediator mediator)
     {
         _mediator = mediator;
-        _mediaMetadataService = mediaMetadataService;
     }
 
     public async Task Handle(StartFixingVideoDatesNotification notification, CancellationToken cancellationToken)
@@ -40,7 +38,7 @@ public class FixingVideoDatesService : INotificationHandler<StartFixingVideoDate
                 {
                     try
                     {
-                        var thumbnail = await _mediaMetadataService.MakeVideoThumbnail(videoInfo.FullPath);
+                        var thumbnail = await _mediator.Send(new MakeVideoThumbnailRequest(videoInfo.FullPath));
                         if (thumbnail != null)
                         {
                             await _mediator.Publish(new UpdateVideoThumbnailNotification(videoInfo.Id, thumbnail));

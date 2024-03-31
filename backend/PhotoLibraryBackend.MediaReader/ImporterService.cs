@@ -7,16 +7,13 @@ public class ImporterService : IImporterService
 {
     private readonly ILogger<ImporterService> _logger;
     private readonly IMediator _mediator;
-    private readonly IMediaMetadataService _mediaMetadataService;
 
     public ImporterService(
         ILogger<ImporterService> logger,
-        IMediator mediator,
-        IMediaMetadataService mediaMetadataService)
+        IMediator mediator)
     {
         _logger = logger;
         _mediator = mediator;
-        _mediaMetadataService = mediaMetadataService;
     }
 
     public async Task StartImport(string photoLibraryPath)
@@ -113,7 +110,7 @@ public class ImporterService : IImporterService
             {
                 if (mediaType == MediaType.Video)
                 {
-                    var videoMetadata = await _mediaMetadataService.ReadVideoMetadata(mediaFilePath);
+                    var videoMetadata = await _mediator.Send(new ReadVideoMetadataRequest(mediaFilePath));
                     if (videoMetadata != null)
                     {
                         DateTime[] times = [(videoMetadata.CreationTime ?? mediaFileInfo.DateTimeOriginalUtc), mediaFileInfo.DateTimeOriginalUtc];
@@ -131,7 +128,7 @@ public class ImporterService : IImporterService
                             };
                         }
                     }
-                    mediaFileInfo.Thumbnail = await _mediaMetadataService.MakeVideoThumbnail(mediaFilePath);
+                    mediaFileInfo.Thumbnail = await _mediator.Send(new MakeVideoThumbnailRequest(mediaFilePath));
                     if (mediaFileInfo.Width.HasValue && mediaFileInfo.Height.HasValue)
                     {
                         var (newWidth, newHeight) = MediaHelper.CalculateNewDimensions(mediaFileInfo.Width.Value, mediaFileInfo.Height.Value);
@@ -141,7 +138,7 @@ public class ImporterService : IImporterService
                 }
                 else
                 {
-                    mediaFileInfo.Thumbnail = _mediaMetadataService.MakePhotoThumbnail(mediaFilePath);
+                    mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(mediaFilePath));
                 }
             }
             catch (Exception e)

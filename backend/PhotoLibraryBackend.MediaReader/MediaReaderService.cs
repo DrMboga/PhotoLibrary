@@ -3,7 +3,9 @@ using PhotoLibraryBackend.Common.Messages;
 
 namespace PhotoLibraryBackend.MediaReader;
 
-public class MediaReaderService : IMediaReaderService
+public class MediaReaderService :
+    IRequestHandler<ReadNextPhotosChunkRequest, MediaInfo[]>,
+    IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -17,10 +19,9 @@ public class MediaReaderService : IMediaReaderService
         _mediator = mediator;
     }
 
-    /// <inheritdoc />
-    public async Task<MediaInfo[]> GetNextPhotosChunk(double dateFrom)
+    public async Task<MediaInfo[]> Handle(ReadNextPhotosChunkRequest request, CancellationToken cancellationToken)
     {
-        var dateFromAsDate = Convert.ToInt64(dateFrom).ToDateTime().ToUniversalTime();
+        var dateFromAsDate = Convert.ToInt64(request.DateFrom).ToDateTime().ToUniversalTime();
         var medias = await _mediator.Send(new GetNextPhotosChunkRequest(dateFromAsDate, PhotosSizeChunk));
         var resultMedias = new List<MediaInfo>();
         foreach (var media in medias)
@@ -35,10 +36,9 @@ public class MediaReaderService : IMediaReaderService
         return [.. resultMedias];
     }
 
-    /// <inheritdoc />
-    public async Task<MediaInfo[]> GetPreviousPhotosChunk(double dateTo)
+    public async Task<MediaInfo[]> Handle(ReadPreviousPhotosChunkRequest request, CancellationToken cancellationToken)
     {
-        var dateToAsDate = Convert.ToInt64(dateTo).ToDateTime().ToUniversalTime();
+        var dateToAsDate = Convert.ToInt64(request.DateTo).ToDateTime().ToUniversalTime();
         var medias = await _mediator.Send(new GetPreviousPhotosChunkRequest(dateToAsDate, PhotosSizeChunk));
         var resultMedias = new List<MediaInfo>();
 

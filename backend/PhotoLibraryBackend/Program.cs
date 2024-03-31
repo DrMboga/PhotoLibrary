@@ -72,8 +72,6 @@ var settings = builder.Configuration
                 .GetSection("PhotoLibrary")
                 .Get<PhotoLibrarySettings>();
 builder.Services.AddSingleton<PhotoLibrarySettings>(settings!);
-builder.Services.AddTransient<IMediaMetadataService, MediaMetadataService>();
-builder.Services.AddTransient<IMediaReaderService, MediaReaderService>();
 builder.Services.AddScoped<IImporterService, ImporterService>();
 
 builder.Services.AddTransient<ImportMediaBackgroundOperationType>();
