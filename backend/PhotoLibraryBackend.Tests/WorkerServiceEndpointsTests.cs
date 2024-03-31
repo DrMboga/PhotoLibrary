@@ -42,7 +42,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
     public async Task TriggerMediaImport_ShouldStartWorkerProcess()
     {
         // Act
-        var response = await _client.PostAsync("/triggerMediaImport", null);
+        var response = await _client.PostAsync("/worker/TriggerMediaImport", null);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -53,7 +53,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
     public async Task TriggerVideoDatesFix_ShouldStartWorkerProcess()
     {
         // Act
-        var response = await _client.PostAsync("/triggerVideoDatesFix", null);
+        var response = await _client.PostAsync("/worker/TriggerVideoDatesFix", null);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -67,7 +67,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
         int requestsLimit = 10000;
 
         // Act
-        var response = await _client.PostAsync($"/triggerGeocodingDataCollect?requestsLimit={requestsLimit}", null);
+        var response = await _client.PostAsync($"/worker/TriggerGeocodingDataCollect?requestsLimit={requestsLimit}", null);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -78,7 +78,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
     public async Task TriggerQuickTimeVideosConversion_ShouldStartWorkerProcess()
     {
         // Act
-        var response = await _client.PostAsync("/triggerQuickTimeVideosConversion", null);
+        var response = await _client.PostAsync("/worker/TriggerQuickTimeVideosConversion", null);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -89,12 +89,12 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
     public async Task MediaImportStatus_ShouldReturn_Idle()
     {
         // Act
-        var response = await _client.GetAsync("/mediaImportStatus");
+        var response = await _client.GetAsync("/worker/MediaImportStatus");
 
         // Assert
         response.EnsureSuccessStatusCode();
         var responseAsString = await response.Content.ReadAsStringAsync();
-        Assert.Equal("\"Idle\"", responseAsString);
+        Assert.Equal("Idle", responseAsString);
     }
 
     [Fact]
@@ -109,7 +109,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
             .ReturnsAsync(filledAddresses);
 
         // Act
-        var response = await _client.GetAsync("/geocodingStatus");
+        var response = await _client.GetAsync("/worker/GeocodingStatus");
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -131,7 +131,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
             .ReturnsAsync(importerReports);
 
         // Act
-        var response = await _client.GetAsync($"/importerLogs?pageSize={pageSize}");
+        var response = await _client.GetAsync($"/worker/ImporterLogs?pageSize={pageSize}");
 
         // Assert
         response.EnsureSuccessStatusCode();

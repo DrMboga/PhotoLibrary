@@ -19,7 +19,7 @@ public class MediaDataEndpointsTests: IClassFixture<MockedWebApplicationFactory<
         int mediaId = 42;
 
         // Act
-        var response = await _client.DeleteAsync($"/mediaEdit?mediaId={mediaId}");
+        var response = await _client.DeleteAsync($"/media/DeleteMedia?mediaId={mediaId}");
         
         // Assert
         response.EnsureSuccessStatusCode();
@@ -32,7 +32,7 @@ public class MediaDataEndpointsTests: IClassFixture<MockedWebApplicationFactory<
         int mediaId = 42;
 
         // Act
-        var response = await _client.PutAsync($"/mediaAlbum?mediaId={mediaId}&isImportant=true&isToPrint=true", null);
+        var response = await _client.PutAsync($"/media/SetMediaAlbum?mediaId={mediaId}&isImportant=true&isToPrint=true", null);
 
         // Assert
         response.EnsureSuccessStatusCode();
