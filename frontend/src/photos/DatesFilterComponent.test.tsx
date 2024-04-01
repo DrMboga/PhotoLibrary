@@ -5,7 +5,7 @@ import { currentDateLinuxTime, dateToUnixTime } from '../helpers/date-helper';
 
 test('should render DatesFilterComponent', () => {
   const currentDate = currentDateLinuxTime();
-  const newDateSelected = (newDate: number) => {};
+  const newDateSelected = (_: number) => {};
   render(<DatesFilterComponent currentDate={currentDate} newDateSelected={newDateSelected} />);
 });
 
@@ -17,7 +17,7 @@ test('should select particular date', async () => {
 
   const currentDateUnixTime = dateToUnixTime(currentDate);
 
-  const newDateSelected = (newDate: number) => {};
+  const newDateSelected = (_: number) => {};
   const { findAllByText } = render(
     <DatesFilterComponent currentDate={currentDateUnixTime} newDateSelected={newDateSelected} />,
   );
