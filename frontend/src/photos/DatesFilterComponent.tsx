@@ -13,7 +13,7 @@ type Props = {
   newDateSelected: (newDate: number) => void;
 };
 
-export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
+export function DatesFilterComponent({ currentDate, newDateSelected }: Readonly<Props>) {
   const [years, setYears] = useState<number[]>([]);
   const [currentYear, setCurrentYear] = useState<number>(0);
   const [currentMonth, setCurrentMonth] = useState<number>(0);
@@ -47,7 +47,7 @@ export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
     newDateSelected(dateToUnixTime(newDate));
   };
   const handleMonthChipClick = (month: number) => {
-    const newDate = new Date(currentYear, month + 1, 0);
+    const newDate = new Date(currentYear, month, 1);
     setCurrentMonth(month);
     newDateSelected(dateToUnixTime(newDate));
   };
@@ -84,7 +84,7 @@ export function DatesFilterComponent({ currentDate, newDateSelected }: Props) {
         {months.map((m, index) => {
           return (
             <Chip
-              key={`month-${index}`}
+              key={`month-${m}`}
               label={m}
               size="small"
               onClick={() => handleMonthChipClick(index)}
