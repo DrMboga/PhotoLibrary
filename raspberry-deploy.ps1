@@ -190,9 +190,22 @@ function IncreaseFrontendVersion {
 #--Start--
 Clear-Host
 
+$TestsPassed = $false
+# Frontend tests
+Write-Host "Running frontend tests..." -ForegroundColor Blue
+$env:CI = "true"
+Set-Location frontend
+npm test
+$TestsPassed = $lastexitcode -eq 0
+Set-Location ..
+
+if ($TestsPassed -eq $false) {
+    Write-Host "Frontend tests failed" -ForegroundColor Red
+    exit
+}
+
 # Backend tests
 Write-Host "Running backend tests..." -ForegroundColor Blue
-$TestsPassed = $false
 try {
     Set-Location backend
     dotnet test
