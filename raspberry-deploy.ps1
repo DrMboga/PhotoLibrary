@@ -198,6 +198,7 @@ Set-Location frontend
 npm test
 $TestsPassed = $lastexitcode -eq 0
 Set-Location ..
+$env:CI = "false"
 
 if ($TestsPassed -eq $false) {
     Write-Host "Frontend tests failed" -ForegroundColor Red
