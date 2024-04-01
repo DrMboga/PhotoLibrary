@@ -193,7 +193,7 @@ Clear-Host
 $TestsPassed = $false
 # Frontend tests
 Write-Host "Running frontend tests..." -ForegroundColor Blue
-$env:CI = "true"
+$env:CI = "true" #This env value needs to run jest in the CI mode
 Set-Location frontend
 npm test
 $TestsPassed = $lastexitcode -eq 0
