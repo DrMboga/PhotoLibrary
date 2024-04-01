@@ -77,6 +77,9 @@ test('should select particular date on year and month click', () => {
   const yearChip = getByText(yearToSelect.toString());
   expect(yearChip.parentElement).toBeTruthy();
   fireEvent.click(yearChip.parentElement!);
+  // When only year clicked, it should be the 01.01
+  const yearExpectedDate = dateToUnixTime(new Date(yearToSelect, 0, 1));
+  expect(selectedDate).toBe(yearExpectedDate);
 
   const monthChip = getByText(monthToSelect);
   expect(monthChip.parentElement).toBeTruthy();

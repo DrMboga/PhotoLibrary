@@ -41,7 +41,7 @@ export function DatesFilterComponent({ currentDate, newDateSelected }: Readonly<
   }, [currentDate]);
 
   const handleYearChipClick = (year: number) => {
-    const newDate = new Date(year, 12, 0);
+    const newDate = new Date(year, 0, 1);
     setCurrentYear(year);
     setCurrentMonth(0);
     newDateSelected(dateToUnixTime(newDate));
