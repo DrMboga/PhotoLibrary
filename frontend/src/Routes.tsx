@@ -14,6 +14,8 @@ import React from 'react';
 import PhotoAlbumIcon from '@mui/icons-material/PhotoAlbum';
 import { AlbumsPage } from './photos/AlbumsPage';
 import { LoginForm } from './authentication/LoginForm';
+import { MediasOfTheDayPage } from './photos/MediasOfTheDayPage';
+import TodayIcon from '@mui/icons-material/Today';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -38,6 +40,18 @@ export const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <PhotoAlbumIcon fontSize="small" />,
+    showMenuButton: true,
+  },
+  {
+    key: 'mediaoftheday',
+    route: 'mediaoftheday',
+    displayName: 'Today',
+    element: (
+      <RequireAuth>
+        <MediasOfTheDayPage />
+      </RequireAuth>
+    ),
+    iconElement: <TodayIcon fontSize="small" />,
     showMenuButton: true,
   },
   {

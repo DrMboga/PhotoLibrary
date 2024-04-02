@@ -15,3 +15,19 @@ export const secondsToTimeFormat = (totalSeconds: number): string => {
   const secondsPad = seconds.toString().padStart(2, '0');
   return `${minutes}:${secondsPad}`;
 };
+
+export const dateToDateInputFormat = (date: Date): string =>
+  `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date
+    .getDate()
+    .toString()
+    .padStart(2, '0')}`;
+
+export const parseDateInput = (dateAsString: string): Date => {
+  const dateReg = /^\d{4}-\d{2}-\d{2}$/;
+  const m = dateAsString.match(dateReg);
+  if (m) {
+    const dateParts = dateAsString.split('-');
+    return new Date(+dateParts[0], +dateParts[1] - 1, +dateParts[2]);
+  }
+  return new Date();
+};
