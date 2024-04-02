@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhotoLibraryBackend.Common.Messages;
 
 namespace PhotoLibraryBackend;
 
@@ -63,5 +64,12 @@ public class MediaController: ControllerBase
         }
         var mediaList = await _mediator.Send(new GetMediaListByAlbumRequest(isFavorite, isImportant, isToPrint));
         return Ok(mediaList);
+    }
+
+    // https://localhost:7056/media/MediasOfTheDay?today=1704103658
+    [HttpGet()]
+    public Task<MediaInfo[]> MediasOfTheDay(long today)
+    {
+        return _mediator.Send(new GetMediaListOfTheDayRequest(today));
     }
 }

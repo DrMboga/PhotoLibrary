@@ -5,7 +5,8 @@ namespace PhotoLibraryBackend.MediaReader;
 
 public class MediaReaderService :
     IRequestHandler<ReadNextPhotosChunkRequest, MediaInfo[]>,
-    IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>
+    IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>,
+    IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -51,6 +52,19 @@ public class MediaReaderService :
         var dateEnd = medias.LastOrDefault()?.DateTimeOriginalUtc  ?? DateTime.MinValue;
         _logger.MediaReadChunk(resultMedias.Count(), dateStart, dateEnd);
 
+        return [.. resultMedias];
+    }
+
+    public async Task<MediaInfo[]> Handle(GetMediaListOfTheDayRequest request, CancellationToken cancellationToken)
+    {
+        var today = request.Today.ToDateTime();
+        var mediasOfTheDay = await _mediator.Send(new GetMediasOfTheDayRequest(today.Month, today.Day));
+        var resultMedias = new List<MediaInfo>();
+
+        foreach (var media in mediasOfTheDay.Reverse())
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
+        }
         return [.. resultMedias];
     }
 }
