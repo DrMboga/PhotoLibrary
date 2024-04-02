@@ -9,7 +9,8 @@ public class MediaDataAccessMessagesHandler:
     IRequestHandler<GetMediaFullPathByIdRequest, string>,
     INotificationHandler<MarkMediaAsDeletedNotification>,
     INotificationHandler<ChangeMediaAlbumNotification>,
-    IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>
+    IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
+    IRequestHandler<GetMediasOfTheDayRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -147,4 +148,31 @@ public class MediaDataAccessMessagesHandler:
         }
     }
 
+        public async Task<MediaFileInfo[]> Handle(GetMediasOfTheDayRequest request, CancellationToken cancellationToken)
+    {
+                /*
+select *
+from "Media"
+where date_part('month', "DateTimeOriginalUtc") = 4 
+	AND date_part('day', "DateTimeOriginalUtc") = 1
+	AND "PictureMaker" is not null AND "PictureMaker" != ' '
+order by "DateTimeOriginalUtc"
+        */
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .AsNoTracking()
+                .Include(m => m.MediaAddress)
+                .AsNoTracking()
+                .Include(m => m.Album)
+                .AsNoTracking()
+                .Where(m => 
+                    m.DateTimeOriginalUtc.Month == request.Month && 
+                    m.DateTimeOriginalUtc.Day == request.Day &&
+                    m.PictureMaker != null &&
+                    m.PictureMaker != " ")
+                .ToArrayAsync();
+            return media ?? [];
+        }
+    }
 }
