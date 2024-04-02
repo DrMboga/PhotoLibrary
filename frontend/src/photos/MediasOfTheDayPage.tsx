@@ -61,7 +61,9 @@ export function MediasOfTheDayPage() {
           return currentDate.getFullYear();
         }),
       ),
-    ].sort();
+    ]
+      .sort()
+      .reverse();
 
     for (const currentYear of allYears) {
       const options: Intl.DateTimeFormatOptions = {
@@ -75,12 +77,14 @@ export function MediasOfTheDayPage() {
         todaySelectedAsDate.getMonth(),
         todaySelectedAsDate.getDate(),
       ).toLocaleDateString('en-US', options);
-      const medias = photos.filter((p) => {
-        const currentDate = dateFromUnixTime(p.dateTimeOriginal);
-        if (currentDate.getFullYear() === currentYear) {
-          return p;
-        }
-      });
+      const medias = photos
+        .filter((p) => {
+          const currentDate = dateFromUnixTime(p.dateTimeOriginal);
+          if (currentDate.getFullYear() === currentYear) {
+            return p;
+          }
+        })
+        .sort((a, b) => a.dateTimeOriginal - b.dateTimeOriginal);
       result.push({ label, photos: medias });
     }
 
@@ -159,7 +163,7 @@ export function MediasOfTheDayPage() {
             !error &&
             photos.length > 0 &&
             photos.map((photoWithLabel) => (
-              <Box key={`area-${photoWithLabel.label}`}>
+              <Box key={`area-${photoWithLabel.label}`} sx={{ mb: 3 }}>
                 <Divider />
                 <Typography variant="subtitle1" key={`label-${photoWithLabel.label}`}>
                   {photoWithLabel.label}
