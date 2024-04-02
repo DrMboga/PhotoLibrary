@@ -12,7 +12,7 @@ import {
 import { useAppSelector } from '../storeHooks';
 import { selectToken } from '../authentication/authSlice';
 import { backendAPI } from '../api/BackendApi';
-import { Alert, Box, TextField, Typography } from '@mui/material';
+import { Alert, Box, Divider, TextField, Typography } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MediaCard } from './MediaCard';
 import { MediaPreview } from './MediaPreview';
@@ -160,6 +160,7 @@ export function MediasOfTheDayPage() {
             photos.length > 0 &&
             photos.map((photoWithLabel) => (
               <Box key={`area-${photoWithLabel.label}`}>
+                <Divider />
                 <Typography variant="subtitle1" key={`label-${photoWithLabel.label}`}>
                   {photoWithLabel.label}
                 </Typography>
