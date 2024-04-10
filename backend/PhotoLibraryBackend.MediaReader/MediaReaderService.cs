@@ -6,7 +6,8 @@ namespace PhotoLibraryBackend.MediaReader;
 public class MediaReaderService :
     IRequestHandler<ReadNextPhotosChunkRequest, MediaInfo[]>,
     IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>,
-    IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>
+    IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>,
+    INotificationHandler<SendRandomPhotoOfTheDayToBotNotification>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -66,5 +67,26 @@ public class MediaReaderService :
             resultMedias.Add(media.ToMediaInfoMessage());
         }
         return [.. resultMedias];
+    }
+
+    public async Task Handle(SendRandomPhotoOfTheDayToBotNotification notification, CancellationToken cancellationToken)
+    {
+        try {
+            var photosOfTheDay = await _mediator.Send(new GetMediasOfTheDayRequest(notification.Month, notification.Day));
+            var photosOfTheDayIds = photosOfTheDay
+                .Where(m => m.FileExt.GetMediaType() != MediaType.Video)
+                .Select(m => m.Id)
+                .ToArray();
+
+            if(photosOfTheDayIds != null && photosOfTheDayIds.Length > 0)
+            {
+                var rand = new Random();
+                var randomIndex = rand.Next(0, photosOfTheDayIds.Length - 1);
+                await _mediator.Publish(new WriteImageToBotNotification(photosOfTheDayIds[randomIndex]));
+            }
+        } catch(Exception e) 
+        {
+            _logger.ReportImporterStepError("Error sending random photo of the day", e);
+        }
     }
 }

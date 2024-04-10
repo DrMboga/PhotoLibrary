@@ -166,11 +166,8 @@ app.MapGet("/", async (IMediator mediator) =>
 
 #region Test bot message endpoint
 
-app.MapPost("/sendBotMessage", async (IMediator mediator, [FromBody] string messageAsMarkdown) => {
-    await mediator.Publish(new WriteMessageToBotNotification(messageAsMarkdown));
-});
-app.MapPost("/sendBotImage", async (IMediator mediator, long mediaId) => {
-    await mediator.Publish(new WriteImageToBotNotification(mediaId));
+app.MapPost("/sendBotRandomPhotoOfTheDay", async (IMediator mediator, int month, int day) => {
+    await mediator.Publish(new SendRandomPhotoOfTheDayToBotNotification(month, day));
 });
 
 #endregion
