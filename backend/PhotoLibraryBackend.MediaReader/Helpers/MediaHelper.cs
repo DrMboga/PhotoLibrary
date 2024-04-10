@@ -68,13 +68,13 @@ public static class MediaHelper
     /// </summary>
     /// <param name="filePath">Full path to a file</param>
     /// <returns>Thumbnail as byte array</returns>
-    public static byte[]? MakePhotoThumbnail(this string filePath) 
+    public static byte[]? MakePhotoThumbnail(this string filePath, bool doubleSize = false) 
     {
         var fileName = Path.GetFileName(filePath);
         using Image image = Image.Load(filePath);
         var metadata = image.Metadata;
 
-        var (newWidth, newHeight) = CalculateNewDimensions(image.Width, image.Height);
+        var (newWidth, newHeight) = CalculateNewDimensions(image.Width, image.Height, doubleSize);
         image.Mutate(x => x.Resize(newWidth, newHeight));
 
         using var ms = new MemoryStream();
@@ -86,18 +86,18 @@ public static class MediaHelper
         return null;
     }
 
-    public static (int width, int height) CalculateNewDimensions(int width, int height)
+    public static (int width, int height) CalculateNewDimensions(int width, int height, bool doubleSize = false)
     {
         int newWidth, newHeight;
         var ratio = ((decimal)width) / ((decimal)height);
         if(width > height)
         {
-            newWidth = ThumbnailLongestSide;
+            newWidth = doubleSize ? ThumbnailLongestSide * 4 : ThumbnailLongestSide;
             newHeight = Convert.ToInt32(((decimal)newWidth) / ratio);
         }
         else
         {
-            newHeight = ThumbnailLongestSide;
+            newHeight = doubleSize ? ThumbnailLongestSide * 4 : ThumbnailLongestSide;
             newWidth = Convert.ToInt32(((decimal)newHeight) * ratio);
         }
         return (newWidth, newHeight);

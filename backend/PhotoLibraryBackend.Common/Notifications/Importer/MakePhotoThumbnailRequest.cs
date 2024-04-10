@@ -2,5 +2,5 @@
 
 namespace PhotoLibraryBackend.Common;
 
-public record MakePhotoThumbnailRequest(string filePath): IRequest<byte[]?>;
+public record MakePhotoThumbnailRequest(string filePath, bool DoubleSize = false): IRequest<byte[]?>;
 

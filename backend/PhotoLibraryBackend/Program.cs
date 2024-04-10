@@ -169,6 +169,9 @@ app.MapGet("/", async (IMediator mediator) =>
 app.MapPost("/sendBotMessage", async (IMediator mediator, [FromBody] string messageAsMarkdown) => {
     await mediator.Publish(new WriteMessageToBotNotification(messageAsMarkdown));
 });
+app.MapPost("/sendBotImage", async (IMediator mediator, long mediaId) => {
+    await mediator.Publish(new WriteImageToBotNotification(mediaId));
+});
 
 #endregion
 

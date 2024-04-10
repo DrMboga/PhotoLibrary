@@ -10,7 +10,8 @@ public class MediaDataAccessMessagesHandler:
     INotificationHandler<MarkMediaAsDeletedNotification>,
     INotificationHandler<ChangeMediaAlbumNotification>,
     IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
-    IRequestHandler<GetMediasOfTheDayRequest, MediaFileInfo[]>
+    IRequestHandler<GetMediasOfTheDayRequest, MediaFileInfo[]>,
+    IRequestHandler<GetMediaByIdRequest, MediaFileInfo>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -174,6 +175,20 @@ order by "DateTimeOriginalUtc"
                     m.Deleted == false)
                 .ToArrayAsync();
             return media ?? [];
+        }
+    }
+
+    public async Task<MediaFileInfo> Handle(GetMediaByIdRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .AsNoTracking()
+                .Include(m => m.MediaAddress)
+                .AsNoTracking()
+                .Where(m => m.Id == request.MediaId)
+                .SingleAsync();
+            return media;
         }
     }
 }
