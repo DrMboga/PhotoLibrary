@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoLibraryBackend;
 using PhotoLibraryBackend.Data;
+using Quartz;
 using Serilog;
 
 
@@ -100,6 +101,20 @@ builder.Services.AddSignalR();
 
 builder.Services.AddControllers();
 
+// Quartz scheduler
+builder.Services.AddQuartz(q =>
+{
+    var jobKey = new JobKey("SendRandomPhotoOfTheDayJob");
+    q.AddJob<SendRandomPhotoOfTheDayJob>(opts => opts.WithIdentity(jobKey));
+    q.AddTrigger(opts => opts
+        .ForJob(jobKey)
+        .WithIdentity("photo-of-the-day-trigger")
+         //This Cron interval can be described as "Run every day at 15:00"
+        .WithCronSchedule("0 0 15 1/1 * ? *")
+    );
+});
+builder.Services.AddQuartzHostedService(q => q.WaitForJobsToComplete = true);
+
 var app = builder.Build();
 
 app.UseCors(AllowCors);
@@ -162,14 +177,6 @@ app.MapGet("/", async (IMediator mediator) =>
     }
     return $"Photo library backend version {version}{Environment.NewLine}{secondLine}";
 });
-#endregion
-
-#region Test bot message endpoint
-
-app.MapPost("/sendBotRandomPhotoOfTheDay", async (IMediator mediator, int month, int day) => {
-    await mediator.Publish(new SendRandomPhotoOfTheDayToBotNotification(month, day));
-});
-
 #endregion
 
 app.MapControllers();
