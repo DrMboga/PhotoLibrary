@@ -4,6 +4,7 @@ using System.Reflection;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoLibraryBackend;
 using PhotoLibraryBackend.Data;
@@ -62,6 +63,13 @@ builder.Services.AddHttpClient("PositionStackApi", c =>
 {
     c.BaseAddress = new Uri("http://api.positionstack.com/");
     c.DefaultRequestHeaders.Add("Accept", "*/*");
+    c.DefaultRequestHeaders.Add("User-Agent", "Mike's photo library");
+});
+// Telegram bot api
+builder.Services.AddHttpClient("TelegramBotApi", c =>
+{
+    c.BaseAddress = new Uri("https://api.telegram.org/");
+    c.DefaultRequestHeaders.Add("Accept", "application/json");
     c.DefaultRequestHeaders.Add("User-Agent", "Mike's photo library");
 });
 
@@ -154,6 +162,14 @@ app.MapGet("/", async (IMediator mediator) =>
     }
     return $"Photo library backend version {version}{Environment.NewLine}{secondLine}";
 });
+#endregion
+
+#region Test bot message endpoint
+
+app.MapPost("/sendBotMessage", async (IMediator mediator, [FromBody] string messageAsMarkdown) => {
+    await mediator.Publish(new WriteMessageToBotNotification(messageAsMarkdown));
+});
+
 #endregion
 
 app.MapControllers();

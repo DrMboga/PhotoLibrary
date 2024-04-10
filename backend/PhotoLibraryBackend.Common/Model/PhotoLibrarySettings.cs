@@ -6,4 +6,6 @@ public class PhotoLibrarySettings
     public string PhotoLibraryDeletedFolder { get; set; } = string.Empty;
     public string PositionStackApiKey { get; set; } = string.Empty;
     public string ConvertedVideosFolder { get; set; } = string.Empty;
+    public string TelegramBotToken { get; set; } = string.Empty;
+    public string TelegramChatId { get; set; } = string.Empty;
 }

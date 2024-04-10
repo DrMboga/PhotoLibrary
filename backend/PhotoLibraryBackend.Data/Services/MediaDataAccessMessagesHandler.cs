@@ -170,7 +170,8 @@ order by "DateTimeOriginalUtc"
                     m.DateTimeOriginalUtc.Month == request.Month && 
                     m.DateTimeOriginalUtc.Day == request.Day &&
                     m.PictureMaker != null &&
-                    m.PictureMaker != " ")
+                    m.PictureMaker != " " &&
+                    m.Deleted == false)
                 .ToArrayAsync();
             return media ?? [];
         }

@@ -8,6 +8,8 @@ class EnvironmentParameters {
     [string]$PositionStackApiKey
     [string]$PhotoLibraryBackendDevUrl
     [string]$PhotoLibraryLocalConvertedVideosFolder
+    [string]$TelegramBotToken
+    [string]$TelegramChatId
 }
 
 function ReadParameters {
@@ -72,6 +74,14 @@ function ReadParameters {
                 $envParametersObject.PhotoLibraryLocalConvertedVideosFolder = $keyValue[1]
                 continue
             }
+            'TELEGRAM_BOT_TOKEN' { 
+                $envParametersObject.TelegramBotToken = $keyValue[1]
+                continue
+            }
+            'TELEGRAM_CHAT_ID' { 
+                $envParametersObject.TelegramChatId = $keyValue[1]
+                continue
+            }
         }
     }
 
@@ -90,6 +100,8 @@ function ChangeBackendApplicationSettings {
     $PhotoLobrarySectionContent.PhotoLibraryDeletedFolder = $EnvironmentParams.PhotoLibraryLocalDeleteFolder
     $PhotoLobrarySectionContent.PositionStackApiKey = $EnvironmentParams.PositionStackApiKey
     $PhotoLobrarySectionContent.ConvertedVideosFolder = $EnvironmentParams.PhotoLibraryLocalConvertedVideosFolder
+    $PhotoLobrarySectionContent.TelegramBotToken = $EnvironmentParams.TelegramBotToken
+    $PhotoLobrarySectionContent.TelegramChatId = $EnvironmentParams.TelegramChatId
 
     $ConnectionStringsSectionContent = $AppSettingsContent.ConnectionStrings
     $ConnectionStringsSectionContent."photo-db" = $EnvironmentParams.PhotoDbConnectionString

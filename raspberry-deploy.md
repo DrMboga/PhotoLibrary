@@ -200,6 +200,8 @@ IDENTITY_DB_CONNECTION_STRING=Host=localhost;Database=photo;Username=postgres;Pa
 PHOTO_LIBRARY_BACKEND_URL=your-backend-local-url
 POSITION_STACK_API_KEY=<API Key>
 PHOTO_LIBRARY_BACKEND_DEV_URL=http://localhost:5101
+TELEGRAM_BOT_TOKEN=<Your bot token>
+TELEGRAM_CHAT_ID=<Your chat id>
 ```
 
 1. ssh:
@@ -225,12 +227,33 @@ sudo systemctl daemon-reload
 sudo systemctl start photo-library.service
 ```
 
+# Creating the Telegram bot and chat
+
+1. Search for the “botfather” telegram bot in the Telegram client.
+2. Type `/newbot` to create a new bot. You need to specify the bot's screen name and username. If the bot is successfully created, you will see the bot's API token like `356111742:cFiWcIKXX5SsYHDRDj34oa3YE`. You must not share this token with anyone.
+3. Create a _public_ channel with a suitable name (the chat name started with `@` we will need to get chat id in step 5).
+4. Add your bot to the list of administrators of the created channel. At least, the bot must have permission to post messages.
+5. Get the chat ID, calling the `sendMessage` method like this:
+   HTTP POST `https://api.telegram.org/bot[your-bot-token]/sendMessage`
+   with this body as JSON:
+   ```json
+   {
+     "parse_mode": "Markdown",
+     "text": "_Hello there_\r\nFrom *Postman*\r\nTa da",
+     "chat_id": "[public chat id started with @]"
+   }
+   ```
+   Response will contain the numeric chat id like `"id": -1001701183067`,
+6. Put the API token from step 2 and numeric chat id from step 5 into appropriate parameters in `appsettings.json` or/and into env values in the `raspberry-deploy.env`
+7. As soon as we got the numeric chat id, we can make a created in step 3 channel as private. We don't need that public name started from `@` anymore.
+
 # Useful links
 
 - [Host asp.net core in Linux with NGINX](https://learn.microsoft.com/en-us/aspnet/core/host-and-deploy/linux-nginx?view=aspnetcore-8.0&tabs=linux-sles)
 - [Raspberry Pi 4 specifications](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/specifications/)
   `Quad core Cortex-A72 (ARM v8) 64-bit SoC` -> ARM 64
 - [RID catalog](https://learn.microsoft.com/en-us/dotnet/core/rid-catalog)
+  = [Telegram bot api](https://core.telegram.org/bots/api#available-methods)
 
 ## Linux services helpful commands
 
