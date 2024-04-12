@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibraryBackend.Data", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibraryBackend.Tests", "PhotoLibraryBackend.Tests\PhotoLibraryBackend.Tests.csproj", "{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotoLibrary.Ml.LabelPredictor", "PhotoLibrary.Ml.LabelPredictor\PhotoLibrary.Ml.LabelPredictor.csproj", "{0B7C5959-B552-42A1-A8EE-28C6BC20D3E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,5 +44,9 @@ Global
 		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E32E1FF7-6458-43FC-A49C-24A1D6EDFAA8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B7C5959-B552-42A1-A8EE-28C6BC20D3E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B7C5959-B552-42A1-A8EE-28C6BC20D3E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B7C5959-B552-42A1-A8EE-28C6BC20D3E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B7C5959-B552-42A1-A8EE-28C6BC20D3E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
