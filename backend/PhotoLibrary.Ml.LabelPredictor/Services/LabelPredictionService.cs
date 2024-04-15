@@ -16,9 +16,9 @@ public class LabelPredictionService: IRequestHandler<PredictLabelRequest, LabelP
         return Task.FromResult(
             new LabelPredictionResult(
                 predictionResult.PredictedLabel, 
-                Convert.ToDecimal(predictionResult.Score[0]),
-                Convert.ToDecimal(predictionResult.Score[1]),
-                Convert.ToDecimal(predictionResult.Score[2])
+                Convert.ToDecimal(predictionResult?.Score?[0] ?? -1),
+                Convert.ToDecimal(predictionResult?.Score?[1] ?? -1),
+                Convert.ToDecimal(predictionResult?.Score?[2] ?? -1)
                 )
             );
     }
