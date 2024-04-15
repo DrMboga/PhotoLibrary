@@ -33,4 +33,14 @@ public static class ConfigurationService
         return rootFolderToSet ?? "Empty";
 
     }
+
+    public static SambaCredentials GetSambaCredentials()
+    {
+        var configuration = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .Build();
+        var login = configuration.GetSection("LabelPredictor:SambaLogin").Value;
+        var password = configuration.GetSection("LabelPredictor:SambaPassword").Value;
+        return new SambaCredentials(login ?? string.Empty, password ?? string.Empty);
+    }
 }

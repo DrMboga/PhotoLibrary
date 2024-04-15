@@ -12,6 +12,8 @@ var connectionString = ConfigurationService.GetConnectionString();
 var rootFolderToSubstitute = ConfigurationService.GetRootFolderToSubstitute();
 var rootFolderToSet = ConfigurationService.GetRootFolderToSet();
 
+var credentials = ConfigurationService.GetSambaCredentials();
+
 Console.ForegroundColor = ConsoleColor.Yellow;
 Console.WriteLine("Settings:");
 Console.WriteLine($"connectionString: '{connectionString}'");
@@ -25,6 +27,7 @@ var serviceCollection = new ServiceCollection()
     .AddDbContextFactory<PhotoLibraryBackendDbContext>(
             options =>
                 options.UseNpgsql(connectionString))
+    .AddSingleton(credentials)
     .BuildServiceProvider();
 
 var mediator = serviceCollection.GetRequiredService<IMediator>();
