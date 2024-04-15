@@ -11,4 +11,9 @@ var mediator = serviceCollection.GetRequiredService<IMediator>();
 
 var connectionString = await mediator.Send(new GetConnectionStringRequest());
 
-Console.WriteLine(connectionString);
+var imagePath = @"C:\Users\mikhail.shabanov\source\repos\DrMboga\photo-library-lib\To print\IMG_0335.JPG";
+
+var label = await mediator.Send(new PredictLabelRequest(imagePath));
+// mediaFileInfo.TagLabel = label.Label;
+
+Console.WriteLine(label.Label);
