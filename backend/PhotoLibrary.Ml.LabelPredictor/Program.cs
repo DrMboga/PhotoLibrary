@@ -50,14 +50,14 @@ while (true) {
 
     foreach (var mediaInfo in bunchOfMedias)
     {
-        // TODO: Substitute path
-        var label = await mediator.Send(new PredictLabelRequest(mediaInfo.FullFileName));
+        var relativePath = Path.GetRelativePath(rootFolderToSubstitute, mediaInfo.FullFileName);
+        var label = await mediator.Send(new PredictLabelRequest(Path.Combine(rootFolderToSet, relativePath)));
         await mediator.Publish(new SetMediaLabelNotification(mediaInfo.MediaId, label.Label));
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write(label.Label);
         Console.ResetColor();
-        Console.WriteLine($" - [{mediaInfo.MediaId}] '{mediaInfo.FullFileName}'");
+        Console.WriteLine($" - [{mediaInfo.MediaId}] '{Path.Combine(rootFolderToSet, relativePath)}'");
 
         if (stopProcessing > 0) {
             break;
