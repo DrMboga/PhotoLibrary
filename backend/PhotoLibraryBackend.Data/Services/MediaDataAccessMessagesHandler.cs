@@ -202,7 +202,7 @@ order by "DateTimeOriginalUtc"
         {
             var medias = await context.Media
                 .AsNoTracking()
-                .Where(m => m.TagLabel == null && !videoExtensions.Contains(m.FileExt.ToLower()))
+                .Where(m => m.TagLabel == null && m.Deleted == false && !videoExtensions.Contains(m.FileExt.ToLower()))
                 .Select(m => new { m.Id, m.FullPath })
                 .Take(request.BunchSize)
                 .ToArrayAsync();
