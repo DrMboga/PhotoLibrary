@@ -6,9 +6,19 @@ using PhotoLibrary.Ml.LabelPredictor;
 using PhotoLibraryBackend.Common;
 using PhotoLibraryBackend.Data;
 
-const int BunchOfMediasSize = 10;
+const int BunchOfMediasSize = 100;
 
 var connectionString = ConfigurationService.GetConnectionString();
+var rootFolderToSubstitute = ConfigurationService.GetRootFolderToSubstitute();
+var rootFolderToSet = ConfigurationService.GetRootFolderToSet();
+
+Console.ForegroundColor = ConsoleColor.Yellow;
+Console.WriteLine("Settings:");
+Console.WriteLine($"connectionString: '{connectionString}'");
+Console.WriteLine($"rootFolderToSubstitute: '{rootFolderToSubstitute}'");
+Console.WriteLine($"rootFolderToSet: '{rootFolderToSet}'");
+Console.ResetColor();
+
 
 var serviceCollection = new ServiceCollection()
     .AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(AppDomain.CurrentDomain.GetAssemblies()))
@@ -18,12 +28,47 @@ var serviceCollection = new ServiceCollection()
     .BuildServiceProvider();
 
 var mediator = serviceCollection.GetRequiredService<IMediator>();
+int stopProcessing = 0;
+var exitEvent = new ManualResetEvent(false);
 
-var bunchOfMedias = await mediator.Send(new GetBunchOfMediasWithEmptyLabelRequest(BunchOfMediasSize));
+// Handle Ctrl+C exit gracefully
+Console.CancelKeyPress += (sender, e) => {
+    Interlocked.Exchange(ref stopProcessing, 1);
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("-== Cancellation requested ==-");
+    Console.ResetColor();
+    exitEvent.WaitOne();
+    Console.WriteLine("-== Exit ==-");
+};
 
-foreach (var mediaInfo in bunchOfMedias)
-{
-    var label = await mediator.Send(new PredictLabelRequest(mediaInfo.FullFileName));
-    Console.WriteLine($" - '{label.Label}': {mediaInfo.MediaId}-'{mediaInfo.FullFileName}'");
-    // mediaFileInfo.TagLabel = label.Label;
+
+while (true) {
+    var bunchOfMedias = await mediator.Send(new GetBunchOfMediasWithEmptyLabelRequest(BunchOfMediasSize));
+    Console.ForegroundColor = ConsoleColor.Green;
+    Console.WriteLine($"{bunchOfMedias.Length} medias read from DB");
+    Console.ResetColor();
+
+    foreach (var mediaInfo in bunchOfMedias)
+    {
+        // TODO: Substitute path
+        var label = await mediator.Send(new PredictLabelRequest(mediaInfo.FullFileName));
+        // TODO: mediaFileInfo.TagLabel = label.Label;
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write(label.Label);
+        Console.ResetColor();
+        Console.WriteLine($" - [{mediaInfo.MediaId}] '{mediaInfo.FullFileName}'");
+
+        if (stopProcessing > 0) {
+            break;
+        }
+    }
+
+    if (stopProcessing > 0) {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("Exit requested");
+        Console.ResetColor();
+        exitEvent.Set();
+        break;
+    }
 }
+
