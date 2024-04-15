@@ -39,8 +39,9 @@ public static class ConfigurationService
         var configuration = new ConfigurationBuilder()
             .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
             .Build();
+        var address = configuration.GetSection("LabelPredictor:SambaAddress").Value;
         var login = configuration.GetSection("LabelPredictor:SambaLogin").Value;
         var password = configuration.GetSection("LabelPredictor:SambaPassword").Value;
-        return new SambaCredentials(login ?? string.Empty, password ?? string.Empty);
+        return new SambaCredentials(address ?? string.Empty, login ?? string.Empty, password ?? string.Empty);
     }
 }

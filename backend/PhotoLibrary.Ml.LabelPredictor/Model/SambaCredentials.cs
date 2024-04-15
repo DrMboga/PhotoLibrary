@@ -1,3 +1,3 @@
 ﻿namespace PhotoLibrary.Ml.LabelPredictor;
 
-public record SambaCredentials (string Login, string Password);
+public record SambaCredentials (string Address, string Login, string Password);
