@@ -12,7 +12,9 @@ public class MediaDataAccessMessagesHandler:
     IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
     IRequestHandler<GetMediasOfTheDayRequest, MediaFileInfo[]>,
     IRequestHandler<GetMediaByIdRequest, MediaFileInfo>,
-    IRequestHandler<GetBunchOfMediasWithEmptyLabelRequest, (long MediaId, string FullFileName)[]>
+    IRequestHandler<GetBunchOfMediasWithEmptyLabelRequest, (long MediaId, string FullFileName)[]>,
+    INotificationHandler<SetMediaLabelNotification>,
+    IRequestHandler<GetLabeledMediasInfoRequest, (long labeledMediaCount, long totalMediaCount)>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -212,5 +214,48 @@ order by "DateTimeOriginalUtc"
 
             return [..result];
         }
+    }
+
+    public async Task Handle(SetMediaLabelNotification notification, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media.Where(m => m.Id == notification.MediaId).FirstOrDefaultAsync();
+            if (media != null)
+            {
+                media.TagLabel = notification.Label;
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+
+    public async Task<(long labeledMediaCount, long totalMediaCount)> Handle(GetLabeledMediasInfoRequest request, CancellationToken cancellationToken)
+    {
+        long total = 0;
+        long labeled = 0;
+
+        string countAllQuery = "select count(*) from \"Media\"";
+        string countLabeledQuery = "select count(*) from \"Media\" where \"TagLabel\" is not null";
+
+        using (var context = _dbContextFactory.CreateDbContext())
+        using(var connection = context.Database.GetDbConnection())
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = countAllQuery;
+            await connection.OpenAsync();
+            total = (long)((await command.ExecuteScalarAsync()) ?? 0);
+
+        }
+
+        using (var context = _dbContextFactory.CreateDbContext())
+        using(var connection = context.Database.GetDbConnection())
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = countLabeledQuery;
+            await connection.OpenAsync();
+            labeled = (long)((await command.ExecuteScalarAsync()) ?? 0);
+        }
+
+        return (labeledMediaCount: labeled, totalMediaCount: total);
     }
 }

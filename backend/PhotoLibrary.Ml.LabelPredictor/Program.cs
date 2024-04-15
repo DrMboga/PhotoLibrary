@@ -52,7 +52,8 @@ while (true) {
     {
         // TODO: Substitute path
         var label = await mediator.Send(new PredictLabelRequest(mediaInfo.FullFileName));
-        // TODO: mediaFileInfo.TagLabel = label.Label;
+        await mediator.Publish(new SetMediaLabelNotification(mediaInfo.MediaId, label.Label));
+
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write(label.Label);
         Console.ResetColor();
@@ -62,6 +63,13 @@ while (true) {
             break;
         }
     }
+
+    var labelsInfo = await mediator.Send(new GetLabeledMediasInfoRequest());
+    var percentage = Convert.ToInt32(100 * Convert.ToDecimal(labelsInfo.labeledMediaCount) / Convert.ToDecimal(labelsInfo.totalMediaCount));
+
+    Console.ForegroundColor = ConsoleColor.Magenta;
+    Console.WriteLine($"{labelsInfo.labeledMediaCount:N0} from {labelsInfo.totalMediaCount} labels marked ({percentage}%)");
+    Console.ResetColor();
 
     if (stopProcessing > 0) {
         Console.ForegroundColor = ConsoleColor.Red;
