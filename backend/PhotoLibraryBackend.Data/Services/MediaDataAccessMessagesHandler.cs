@@ -11,7 +11,8 @@ public class MediaDataAccessMessagesHandler:
     INotificationHandler<ChangeMediaAlbumNotification>,
     IRequestHandler<GetMediaListByAlbumDataBaseRequest, MediaFileInfo[]>,
     IRequestHandler<GetMediasOfTheDayRequest, MediaFileInfo[]>,
-    IRequestHandler<GetMediaByIdRequest, MediaFileInfo>
+    IRequestHandler<GetMediaByIdRequest, MediaFileInfo>,
+    IRequestHandler<GetBunchOfMediasWithEmptyLabelRequest, (long MediaId, string FullFileName)[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -189,6 +190,27 @@ order by "DateTimeOriginalUtc"
                 .Where(m => m.Id == request.MediaId)
                 .SingleAsync();
             return media;
+        }
+    }
+
+    public async Task<(long MediaId, string FullFileName)[]> Handle(GetBunchOfMediasWithEmptyLabelRequest request, CancellationToken cancellationToken)
+    {
+        string[] videoExtensions = [".avi", ".mov", ".mp4"];
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var medias = await context.Media
+                .AsNoTracking()
+                .Where(m => m.TagLabel == null && !videoExtensions.Contains(m.FileExt.ToLower()))
+                .Select(m => new { m.Id, m.FullPath })
+                .Take(request.BunchSize)
+                .ToArrayAsync();
+            var result = new List<(long MediaId, string FullFileName)>();
+            foreach (var media in medias)
+            {
+                result.Add((MediaId: media.Id, FullFileName: media.FullPath));
+            }
+
+            return [..result];
         }
     }
 }

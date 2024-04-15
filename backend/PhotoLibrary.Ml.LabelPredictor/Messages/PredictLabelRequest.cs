@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using PhotoLibraryBackend.Common;
 
 namespace PhotoLibrary.Ml.LabelPredictor;
 
