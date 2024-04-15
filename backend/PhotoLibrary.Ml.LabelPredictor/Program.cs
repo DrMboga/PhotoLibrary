@@ -55,7 +55,7 @@ while (true) {
     {
         var relativePath = Path.GetRelativePath(rootFolderToSubstitute, mediaInfo.FullFileName);
         var label = await mediator.Send(new PredictLabelRequest(Path.Combine(rootFolderToSet, relativePath)));
-        // await mediator.Publish(new SetMediaLabelNotification(mediaInfo.MediaId, label.Label));
+        await mediator.Publish(new SetMediaLabelNotification(mediaInfo.MediaId, label.Label));
 
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.Write(label.Label);
