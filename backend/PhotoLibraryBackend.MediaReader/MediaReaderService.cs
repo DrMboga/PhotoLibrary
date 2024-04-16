@@ -73,16 +73,23 @@ public class MediaReaderService :
     {
         try {
             var photosOfTheDay = await _mediator.Send(new GetMediasOfTheDayRequest(notification.Month, notification.Day));
-            var photosOfTheDayIds = photosOfTheDay
+            var allPhotosOfTheDayIds = photosOfTheDay
                 .Where(m => m.FileExt.GetMediaType() != MediaType.Video)
                 .Select(m => m.Id)
                 .ToArray();
 
-            if(photosOfTheDayIds != null && photosOfTheDayIds.Length > 0)
+            var peoplePhotosOfTheDayIds = photosOfTheDay
+                .Where(m => !string.IsNullOrEmpty(m.TagLabel) && m.TagLabel == "People")
+                .Select(m => m.Id)
+                .ToArray();
+            
+            var idsToChoose = peoplePhotosOfTheDayIds.Length > 0 ? peoplePhotosOfTheDayIds : allPhotosOfTheDayIds;
+
+            if(idsToChoose != null && idsToChoose.Length > 0)
             {
                 var rand = new Random();
-                var randomIndex = rand.Next(0, photosOfTheDayIds.Length - 1);
-                await _mediator.Publish(new WriteImageToBotNotification(photosOfTheDayIds[randomIndex]));
+                var randomIndex = rand.Next(0, idsToChoose.Length - 1);
+                await _mediator.Publish(new WriteImageToBotNotification(idsToChoose[randomIndex]));
             }
         } catch(Exception e) 
         {
