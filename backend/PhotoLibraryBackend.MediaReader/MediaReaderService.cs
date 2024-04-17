@@ -7,7 +7,8 @@ public class MediaReaderService :
     IRequestHandler<ReadNextPhotosChunkRequest, MediaInfo[]>,
     IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>,
     IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>,
-    INotificationHandler<SendRandomPhotoOfTheDayToBotNotification>
+    INotificationHandler<SendRandomPhotoOfTheDayToBotNotification>,
+    IRequestHandler<GetMediasByLabelRequest, MediaInfo[]>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -95,5 +96,19 @@ public class MediaReaderService :
         {
             _logger.ReportImporterStepError("Error sending random photo of the day", e);
         }
+    }
+
+    public async Task<MediaInfo[]> Handle(GetMediasByLabelRequest request, CancellationToken cancellationToken)
+    {
+        var dateFrom = request.DateFrom.ToDateTime().ToUniversalTime();
+        var dateTo = request.DateTo.ToDateTime().ToUniversalTime();
+        var medias = await _mediator.Send(new GetMediasByLabelDataRequest(dateFrom, dateTo, request.LabelName));
+        var resultMedias = new List<MediaInfo>();
+
+        foreach (var media in medias.Reverse())
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
+        }
+        return [.. resultMedias];
     }
 }

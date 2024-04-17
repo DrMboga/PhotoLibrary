@@ -72,4 +72,11 @@ public class MediaController: ControllerBase
     {
         return _mediator.Send(new GetMediaListOfTheDayRequest(today));
     }
+
+    // https://localhost:7056/media/MediasByLabel?dateFrom=15871138348&dateTo=1713351434&label=People
+    [HttpGet()]
+    public Task<MediaInfo[]> MediasByLabel(long dateFrom, long dateTo, string label)
+    {
+        return _mediator.Send(new GetMediasByLabelRequest(dateFrom, dateTo, label));
+    }
 }
