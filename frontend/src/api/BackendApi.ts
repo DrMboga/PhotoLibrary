@@ -214,6 +214,29 @@ const backendAPI = {
     const result = await parseJSON(responseWithStatus);
     return result ?? [];
   },
+  async getMediasByLabel(
+    dateFrom: number,
+    dateTo: number,
+    label: string,
+    authToken?: string,
+  ): Promise<MediaInfo[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/media/MediasByLabel?dateFrom=${dateFrom}&dateTo=${dateTo}&label=${label}`;
+    const response = await fetch(url, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? [];
+  },
 };
 
 export { backendAPI };

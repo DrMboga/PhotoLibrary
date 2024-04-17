@@ -16,6 +16,8 @@ import { AlbumsPage } from './photos/AlbumsPage';
 import { LoginForm } from './authentication/LoginForm';
 import { MediasOfTheDayPage } from './photos/MediasOfTheDayPage';
 import TodayIcon from '@mui/icons-material/Today';
+import { MediasByLabelPage } from './photos/MediasByLabelPage';
+import SellIcon from '@mui/icons-material/Sell';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -52,6 +54,18 @@ export const pages: PageRouteInfo[] = [
       </RequireAuth>
     ),
     iconElement: <TodayIcon fontSize="small" />,
+    showMenuButton: true,
+  },
+  {
+    key: 'mediasbylabel',
+    route: 'mediasbylabel',
+    displayName: 'Labels',
+    element: (
+      <RequireAuth>
+        <MediasByLabelPage />
+      </RequireAuth>
+    ),
+    iconElement: <SellIcon fontSize="small" />,
     showMenuButton: true,
   },
   {
