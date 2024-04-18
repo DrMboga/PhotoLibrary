@@ -12,7 +12,7 @@ import { MediaInfo } from '../model/media-info';
 import { useAppSelector } from '../storeHooks';
 import { selectToken } from '../authentication/authSlice';
 import { backendAPI } from '../api/BackendApi';
-import { Alert, Box, Divider, InputLabel, Select, TextField, Typography } from '@mui/material';
+import { Alert, Box, Button, Select, TextField } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { MediaCard } from './MediaCard';
 import { MediaPreview } from './MediaPreview';
@@ -35,24 +35,32 @@ export function MediasByLabelPage() {
   const [photos, setPhotos] = useState<MediaInfo[]>([]);
   const [selectedMedia, setSelectedMedia] = useState<MediaInfo>();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [load, setLoad] = useState(false);
+  const [loadButtonDisabled, setLoadButtonDisabled] = useState(false);
 
   const authToken = useAppSelector(selectToken);
 
   useEffect(() => {
+    if (!load) {
+      return;
+    }
     setIsLoading(true);
     backendAPI
       .getMediasByLabel(dateFrom, dateTo, selectedLabel, authToken)
       .then((media) => {
         setIsLoading(false);
         setError(undefined);
-        setPhotos(media);
+        setPhotos(media.sort((a, b) => a.dateTimeOriginal - b.dateTimeOriginal));
+        setLoad(false);
+        setLoadButtonDisabled(true);
       })
       .catch((err) => {
         setIsLoading(false);
         setPhotos([]);
         setError(err.message);
+        setLoad(false);
       });
-  }, [dateFrom, dateTo, selectedLabel, authToken]);
+  }, [dateFrom, dateTo, selectedLabel, authToken, load]);
 
   const handleInputChange = (event: any) => {
     const { name, value } = event.target;
@@ -77,6 +85,8 @@ export function MediasByLabelPage() {
     if (name === labelSelect) {
       setSelectedLabel(value);
     }
+    setPhotos([]);
+    setLoadButtonDisabled(false);
   };
 
   const handleCardClick = (media: MediaInfo) => {
@@ -103,6 +113,10 @@ export function MediasByLabelPage() {
       changedPhoto.isFavorite = album.includes('Fav');
     }
     setPhotos(photosCopy);
+  };
+
+  const onShowClicked = () => {
+    setLoad(true);
   };
 
   return (
@@ -148,6 +162,15 @@ export function MediasByLabelPage() {
             <MenuItem value={'Document'}>Document</MenuItem>
             <MenuItem value={'Other'}>Other</MenuItem>
           </Select>
+
+          <Button
+            variant="contained"
+            size="small"
+            onClick={onShowClicked}
+            disabled={loadButtonDisabled}
+          >
+            Show
+          </Button>
         </Box>
         <Box
           sx={{
