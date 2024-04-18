@@ -276,6 +276,7 @@ order by "DateTimeOriginalUtc"
                     m.TagLabel != null &&
                     m.TagLabel == request.LabelName &&
                     m.Deleted == false)
+                .OrderBy(m => m.DateTimeOriginalUtc)
                 .ToArrayAsync();
             return media ?? [];
         }
