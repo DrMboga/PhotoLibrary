@@ -1,5 +1,6 @@
 import { ImportStepReport, MediaInfo } from '../model/media-info';
 import { backendUrl, checkStatus, parseJSON } from './ApiHelper';
+import { MediaGeoLocationSummary } from '../model/media-geo-location-summary';
 
 const backendAPI = {
   async aboutBackend(): Promise<string> {
@@ -227,6 +228,24 @@ const backendAPI = {
       throw new Error('Please login');
     }
     let url = `${backendUrl}/media/MediasByLabel?dateFrom=${dateFrom}&dateTo=${dateTo}&label=${label}`;
+    const response = await fetch(url, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? [];
+  },
+  async getGeoLocationSummary(authToken?: string): Promise<MediaGeoLocationSummary[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/mediageolocation/RegionsInfo`;
     const response = await fetch(url, {
       method: 'get',
       headers: new Headers({
