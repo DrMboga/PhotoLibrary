@@ -8,7 +8,8 @@ public class MediaReaderService :
     IRequestHandler<ReadPreviousPhotosChunkRequest, MediaInfo[]>,
     IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>,
     INotificationHandler<SendRandomPhotoOfTheDayToBotNotification>,
-    IRequestHandler<GetMediasByLabelRequest, MediaInfo[]>
+    IRequestHandler<GetMediasByLabelRequest, MediaInfo[]>,
+    IRequestHandler<GetMediaInfosByRegionAndDateRequest, MediaInfo[]>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -106,6 +107,18 @@ public class MediaReaderService :
         var resultMedias = new List<MediaInfo>();
 
         foreach (var media in medias.Reverse())
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
+        }
+        return [.. resultMedias];
+    }
+
+    public async Task<MediaInfo[]> Handle(GetMediaInfosByRegionAndDateRequest request, CancellationToken cancellationToken)
+    {
+        var medias = await _mediator.Send(new GetMediaFilesByRegionAndDateRequest(request.Region, request.Year, request.Month));
+        var resultMedias = new List<MediaInfo>();
+
+        foreach (var media in medias)
         {
             resultMedias.Add(media.ToMediaInfoMessage());
         }

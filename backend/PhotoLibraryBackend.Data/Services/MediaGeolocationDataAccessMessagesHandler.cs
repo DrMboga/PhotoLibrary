@@ -7,7 +7,8 @@ namespace PhotoLibraryBackend.Data;
 public class MediaGeolocationDataAccessMessagesHandler : 
     IRequestHandler<GetMediaGeoLocationSummaryRequest, MediaGeoSummary[]>,
     IRequestHandler<GetRandomMediaByRegionRequest, MediaFileInfo?>,
-    IRequestHandler<GetMediaGeoLocationRegionSummaryRequest, MediaGeoLocationRegionSummaryDto[]>
+    IRequestHandler<GetMediaGeoLocationRegionSummaryRequest, MediaGeoLocationRegionSummaryDto[]>,
+    IRequestHandler<GetMediaFilesByRegionAndDateRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -36,7 +37,7 @@ public class MediaGeolocationDataAccessMessagesHandler :
 SELECT m.*
 FROM ""Media"" m
 	INNER JOIN ""Address"" a ON m.""MediaAddressId"" = a.""AddressId""
-WHERE m.""TagLabel"" = 'People' AND a.""Region"" = @Region
+WHERE m.""TagLabel"" = 'People' AND a.""Region"" = @Region  AND m.""Deleted"" = false
 ORDER BY RANDOM() LIMIT 1
         ";
 
@@ -60,7 +61,7 @@ SELECT
 	COUNT(m.""Id"") photoscount
 FROM ""Media"" m
 	INNER JOIN ""Address"" a ON a.""AddressId"" = m.""MediaAddressId""
-WHERE a.""Region"" = @Region
+WHERE a.""Region"" = @Region AND m.""Deleted"" = false
 GROUP BY CONCAT(CAST(DATE_PART('year', m.""DateTimeOriginalUtc"") AS VARCHAR(4)), '-', RIGHT(CONCAT('00', CAST(DATE_PART('month', m.""DateTimeOriginalUtc"") AS VARCHAR(2))), 2)),
 	DATE_PART('year', m.""DateTimeOriginalUtc""),
 	DATE_PART('month', m.""DateTimeOriginalUtc"")
@@ -89,5 +90,27 @@ ORDER BY CONCAT(CAST(DATE_PART('year', m.""DateTimeOriginalUtc"") AS VARCHAR(4))
         }
 
         return [.. result];
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetMediaFilesByRegionAndDateRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .AsNoTracking()
+                .Include(m => m.MediaAddress)
+                .AsNoTracking()
+                .Include(m => m.Album)
+                .AsNoTracking()
+                .Where(m => 
+                    m.DateTimeOriginalUtc.Year == request.Year && 
+                    m.DateTimeOriginalUtc.Month == request.Month &&
+                    m.Deleted == false &&
+                    m.MediaAddress != null &&
+                    m.MediaAddress.Region == request.Region)
+                .OrderBy(m => m.DateTimeOriginalUtc)
+                .ToArrayAsync();
+            return media ?? [];
+        }
     }
 }

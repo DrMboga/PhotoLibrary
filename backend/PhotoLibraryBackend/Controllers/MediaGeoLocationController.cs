@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhotoLibraryBackend.Common.Messages;
 
 namespace PhotoLibraryBackend;
 
 [ApiController]
 [Route("mediageolocation/[action]")]
-// [Authorize("EmailShouldBeConfirmed")]
+[Authorize("EmailShouldBeConfirmed")]
 public class MediaGeoLocationController: ControllerBase
 {
     private readonly IMediator _mediator;
@@ -34,5 +35,12 @@ public class MediaGeoLocationController: ControllerBase
     public Task<MediaGeoLocationRegionSummaryDto[]> RegionSummary(string region)
     {
         return _mediator.Send(new GetMediaGeoLocationRegionSummaryRequest(region));
+    }
+
+    // https://localhost:7056/mediageolocation/MediasByRegionAndDate?region=Saarland&year=2021&month=12
+    [HttpGet()]
+    public Task<MediaInfo[]> MediasByRegionAndDate(string region, int year, int month )
+    {
+        return _mediator.Send(new GetMediaInfosByRegionAndDateRequest(region, year, month));
     }
 }
