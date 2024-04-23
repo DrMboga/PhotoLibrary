@@ -6,7 +6,8 @@ namespace PhotoLibraryBackend.Data;
 
 public class MediaGeolocationDataAccessMessagesHandler : 
     IRequestHandler<GetMediaGeoLocationSummaryRequest, MediaGeoSummary[]>,
-    IRequestHandler<GetRandomMediaByRegionRequest, MediaFileInfo?>
+    IRequestHandler<GetRandomMediaByRegionRequest, MediaFileInfo?>,
+    IRequestHandler<GetMediaGeoLocationRegionSummaryRequest, MediaGeoLocationRegionSummaryDto[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -47,5 +48,46 @@ ORDER BY RANDOM() LIMIT 1
                 .FromSqlRaw(query, regionParameter)
                 .FirstOrDefaultAsync();
         }
+    }
+
+    public async Task<MediaGeoLocationRegionSummaryDto[]> Handle(GetMediaGeoLocationRegionSummaryRequest request, CancellationToken cancellationToken)
+    {
+        string query = @"
+SELECT 
+	CONCAT(CAST(DATE_PART('year', m.""DateTimeOriginalUtc"") AS VARCHAR(4)), '-', RIGHT(CONCAT('00', CAST(DATE_PART('month', m.""DateTimeOriginalUtc"") AS VARCHAR(2))), 2)) monthly,
+	DATE_PART('year', m.""DateTimeOriginalUtc"") yearpart,
+	DATE_PART('month', m.""DateTimeOriginalUtc"") monthpart,
+	COUNT(m.""Id"") photoscount
+FROM ""Media"" m
+	INNER JOIN ""Address"" a ON a.""AddressId"" = m.""MediaAddressId""
+WHERE a.""Region"" = @Region
+GROUP BY CONCAT(CAST(DATE_PART('year', m.""DateTimeOriginalUtc"") AS VARCHAR(4)), '-', RIGHT(CONCAT('00', CAST(DATE_PART('month', m.""DateTimeOriginalUtc"") AS VARCHAR(2))), 2)),
+	DATE_PART('year', m.""DateTimeOriginalUtc""),
+	DATE_PART('month', m.""DateTimeOriginalUtc"")
+ORDER BY CONCAT(CAST(DATE_PART('year', m.""DateTimeOriginalUtc"") AS VARCHAR(4)), '-', RIGHT(CONCAT('00', CAST(DATE_PART('month', m.""DateTimeOriginalUtc"") AS VARCHAR(2))), 2))       
+        ";
+        var regionParameter = new NpgsqlParameter("Region", request.Region);
+
+        var result = new List<MediaGeoLocationRegionSummaryDto>();
+
+        using (var context = _dbContextFactory.CreateDbContext())
+        using(var connection = context.Database.GetDbConnection())
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = query;
+            command.Parameters.Add(regionParameter);
+            await connection.OpenAsync();
+            var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
+            {
+                var monthly = reader.GetString(0);
+                var yearPart = Convert.ToInt32(reader.GetDouble(1));
+                var monthPart = Convert.ToInt32(reader.GetDouble(2));
+                var mediasCount = Convert.ToInt32(reader.GetInt64(3));
+                result.Add(new MediaGeoLocationRegionSummaryDto(monthly, yearPart, monthPart, mediasCount));
+            }
+        }
+
+        return [.. result];
     }
 }

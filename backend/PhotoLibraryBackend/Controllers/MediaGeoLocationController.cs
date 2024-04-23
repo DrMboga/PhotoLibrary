@@ -5,7 +5,7 @@ namespace PhotoLibraryBackend;
 
 [ApiController]
 [Route("mediageolocation/[action]")]
-[Authorize("EmailShouldBeConfirmed")]
+// [Authorize("EmailShouldBeConfirmed")]
 public class MediaGeoLocationController: ControllerBase
 {
     private readonly IMediator _mediator;
@@ -27,5 +27,12 @@ public class MediaGeoLocationController: ControllerBase
             result.Add(new MediaGeoLocationSummaryDto(regionSummary.Region, regionSummary.Country, regionSummary.MediasCount, randomMedia?.ThumbnailWidth, randomMedia?.ThumbnailHeight, randomMedia?.Thumbnail));
         }
         return [.. result];
+    }
+
+    // https://localhost:7056/mediageolocation/RegionSummary?region=Moscow%20City
+    [HttpGet()]
+    public Task<MediaGeoLocationRegionSummaryDto[]> RegionSummary(string region)
+    {
+        return _mediator.Send(new GetMediaGeoLocationRegionSummaryRequest(region));
     }
 }
