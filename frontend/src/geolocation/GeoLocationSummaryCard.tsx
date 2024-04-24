@@ -1,11 +1,11 @@
 // @flow
 import * as React from 'react';
-import { MediaGeoLocationSummary } from '../model/media-geo-location-summary';
+import { MediaGeoLocationRegionsInfo } from '../model/media-geo-location-regions-info';
 import { Box, Card, CardContent, CardMedia, Typography } from '@mui/material';
 import MmsIcon from '@mui/icons-material/Mms';
 
 type Props = {
-  geolocationSummary: MediaGeoLocationSummary;
+  geolocationSummary: MediaGeoLocationRegionsInfo;
   onClick: (region: string) => void;
 };
 

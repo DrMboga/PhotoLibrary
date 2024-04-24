@@ -1,4 +1,4 @@
-export interface MediaGeoLocationSummary {
+export interface MediaGeoLocationRegionsInfo {
   region: string;
   country: string;
   mediasCount: number;

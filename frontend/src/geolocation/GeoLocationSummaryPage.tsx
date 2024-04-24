@@ -3,7 +3,7 @@ import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { useAppSelector } from '../storeHooks';
 import { selectToken } from '../authentication/authSlice';
-import { MediaGeoLocationSummary } from '../model/media-geo-location-summary';
+import { MediaGeoLocationRegionsInfo } from '../model/media-geo-location-regions-info';
 import { backendAPI } from '../api/BackendApi';
 import { Alert, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -12,14 +12,14 @@ import { GeoLocationSummaryCard } from './GeoLocationSummaryCard';
 export function GeoLocationSummaryPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
-  const [places, setPlaces] = useState<MediaGeoLocationSummary[]>([]);
+  const [places, setPlaces] = useState<MediaGeoLocationRegionsInfo[]>([]);
 
   const authToken = useAppSelector(selectToken);
 
   useEffect(() => {
     setIsLoading(true);
     backendAPI
-      .getGeoLocationSummary(authToken)
+      .getGeoLocationRegionsInfo(authToken)
       .then((placesInfo) => {
         setIsLoading(false);
         setError(undefined);

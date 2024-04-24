@@ -1,6 +1,6 @@
 import { ImportStepReport, MediaInfo } from '../model/media-info';
 import { backendUrl, checkStatus, parseJSON } from './ApiHelper';
-import { MediaGeoLocationSummary } from '../model/media-geo-location-summary';
+import { MediaGeoLocationRegionsInfo } from '../model/media-geo-location-regions-info';
 
 const backendAPI = {
   async aboutBackend(): Promise<string> {
@@ -238,7 +238,7 @@ const backendAPI = {
     const result = await parseJSON(responseWithStatus);
     return result ?? [];
   },
-  async getGeoLocationSummary(authToken?: string): Promise<MediaGeoLocationSummary[]> {
+  async getGeoLocationRegionsInfo(authToken?: string): Promise<MediaGeoLocationRegionsInfo[]> {
     if (!backendUrl) {
       throw new Error('Please specify Backend URL in environment settings');
     }
