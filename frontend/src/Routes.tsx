@@ -20,6 +20,7 @@ import { MediasByLabelPage } from './photos/MediasByLabelPage';
 import SellIcon from '@mui/icons-material/Sell';
 import PlaceIcon from '@mui/icons-material/Place';
 import { GeoLocationSummaryPage } from './geolocation/GeoLocationSummaryPage';
+import { GeoLocationRegionPage } from './geolocation/GeoLocationRegionPage';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -48,7 +49,7 @@ export const pages: PageRouteInfo[] = [
   },
   {
     key: 'mediaoftheday',
-    route: 'mediaoftheday',
+    route: '/mediaoftheday',
     displayName: 'Today',
     element: (
       <RequireAuth>
@@ -60,7 +61,7 @@ export const pages: PageRouteInfo[] = [
   },
   {
     key: 'mediasbylabel',
-    route: 'mediasbylabel',
+    route: '/mediasbylabel',
     displayName: 'Labels',
     element: (
       <RequireAuth>
@@ -72,7 +73,7 @@ export const pages: PageRouteInfo[] = [
   },
   {
     key: 'places',
-    route: 'places',
+    route: '/places',
     displayName: 'Places',
     element: (
       <RequireAuth>
@@ -125,6 +126,18 @@ export const pages: PageRouteInfo[] = [
     route: '/login',
     displayName: 'Login',
     element: <LoginForm />,
+    iconElement: <InfoIcon fontSize="small" />,
+    showMenuButton: false,
+  },
+  {
+    key: 'region-info',
+    route: '/region/:region',
+    displayName: 'Region',
+    element: (
+      <RequireAuth>
+        <GeoLocationRegionPage />
+      </RequireAuth>
+    ),
     iconElement: <InfoIcon fontSize="small" />,
     showMenuButton: false,
   },

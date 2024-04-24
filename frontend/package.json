@@ -9,6 +9,7 @@
     "@microsoft/signalr": "^8.0.0",
     "@mui/icons-material": "^5.14.15",
     "@mui/material": "^5.14.15",
+    "@mui/x-tree-view": "^7.3.0",
     "@reduxjs/toolkit": "^1.9.7",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",

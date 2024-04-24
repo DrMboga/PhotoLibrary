@@ -8,6 +8,7 @@ import { backendAPI } from '../api/BackendApi';
 import { Alert, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { GeoLocationSummaryCard } from './GeoLocationSummaryCard';
+import { useNavigate } from 'react-router-dom';
 
 export function GeoLocationSummaryPage() {
   const [isLoading, setIsLoading] = useState(false);
@@ -15,6 +16,8 @@ export function GeoLocationSummaryPage() {
   const [places, setPlaces] = useState<MediaGeoLocationRegionsInfo[]>([]);
 
   const authToken = useAppSelector(selectToken);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     setIsLoading(true);
@@ -33,7 +36,7 @@ export function GeoLocationSummaryPage() {
   }, [authToken]);
 
   const handlePlaceClick = (region: string) => {
-    console.log(`Region ${region} clicked`);
+    navigate(`/region/${region}`);
   };
 
   return (
