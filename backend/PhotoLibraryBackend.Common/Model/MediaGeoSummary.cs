@@ -1,3 +1,3 @@
 ﻿namespace PhotoLibraryBackend.Common;
 
-public record MediaGeoSummary (string Region, string Country, int MediasCount);
+public record MediaGeoSummary (string Region, string Country, int MediasCount, DateTime DateOfLastPhoto);

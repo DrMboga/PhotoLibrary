@@ -22,10 +22,10 @@ public class MediaGeolocationDataAccessMessagesHandler :
         using (var context = _dbContextFactory.CreateDbContext())
         {
             var mediaGeoSummary = await context.Address.AsNoTracking()
-                .Where(a => a.Region != null)
-                .Join(context.Media, m => m.AddressId, a => a.MediaAddressId, (address, media) => new {address.Region, address.Country, media.Id})
+                .Where(a => a.Region != null && a.Region != "")
+                .Join(context.Media, m => m.AddressId, a => a.MediaAddressId, (address, media) => new {address.Region, address.Country, media.Id, media.DateTimeOriginalUtc})
                 .GroupBy(j => new {j.Region, j.Country})
-                .Select(g => new MediaGeoSummary(g.Key.Region!, g.Key.Country!, g.Count()))
+                .Select(g => new MediaGeoSummary(g.Key.Region!, g.Key.Country!, g.Count(), g.Max(j => j.DateTimeOriginalUtc)))
                 .ToArrayAsync();
             return mediaGeoSummary ?? [];
         }
@@ -37,16 +37,17 @@ public class MediaGeolocationDataAccessMessagesHandler :
 SELECT m.*
 FROM ""Media"" m
 	INNER JOIN ""Address"" a ON m.""MediaAddressId"" = a.""AddressId""
-WHERE m.""TagLabel"" = 'People' AND a.""Region"" = @Region  AND m.""Deleted"" = false
+WHERE m.""TagLabel"" = @TagLabel AND a.""Region"" = @Region  AND m.""Deleted"" = false
 ORDER BY RANDOM() LIMIT 1
         ";
 
+        var tagParameter = new NpgsqlParameter("TagLabel", request.TagLabel);
         var regionParameter = new NpgsqlParameter("Region", request.Region);
 
         using (var context = _dbContextFactory.CreateDbContext())
         {
             return await context.Media
-                .FromSqlRaw(query, regionParameter)
+                .FromSqlRaw(query, tagParameter, regionParameter)
                 .FirstOrDefaultAsync();
         }
     }

@@ -22,9 +22,10 @@ public class MediaGeoLocationController: ControllerBase
     {
         var result = new List<MediaGeoLocationSummaryDto>();
         var mediaGeoSummary = await _mediator.Send(new GetMediaGeoLocationSummaryRequest());
-        foreach (var regionSummary in mediaGeoSummary)
+        foreach (var regionSummary in mediaGeoSummary.OrderByDescending(x => x.DateOfLastPhoto))
         {
-            var randomMedia = await _mediator.Send(new GetRandomMediaByRegionRequest(regionSummary.Region));
+            var randomMedia = await _mediator.Send(new GetRandomMediaByRegionRequest(regionSummary.Region, "People"));
+            randomMedia ??= await _mediator.Send(new GetRandomMediaByRegionRequest(regionSummary.Region, "Other"));
             result.Add(new MediaGeoLocationSummaryDto(regionSummary.Region, regionSummary.Country, regionSummary.MediasCount, randomMedia?.ThumbnailWidth, randomMedia?.ThumbnailHeight, randomMedia?.Thumbnail));
         }
         return [.. result];

@@ -2,4 +2,4 @@
 
 namespace PhotoLibraryBackend.Common;
 
-public record class GetRandomMediaByRegionRequest(string Region): IRequest<MediaFileInfo?>;
+public record class GetRandomMediaByRegionRequest(string Region, string TagLabel): IRequest<MediaFileInfo?>;
