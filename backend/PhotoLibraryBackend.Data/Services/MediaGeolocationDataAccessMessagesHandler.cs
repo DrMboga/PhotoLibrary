@@ -22,8 +22,8 @@ public class MediaGeolocationDataAccessMessagesHandler :
         using (var context = _dbContextFactory.CreateDbContext())
         {
             var mediaGeoSummary = await context.Address.AsNoTracking()
-                .Where(a => a.Region != null && a.Region != "")
-                .Join(context.Media, m => m.AddressId, a => a.MediaAddressId, (address, media) => new {address.Region, address.Country, media.Id, media.DateTimeOriginalUtc})
+                .Join(context.Media, m => m.AddressId, a => a.MediaAddressId, (address, media) => new {address.Region, address.Country, media.Id, media.DateTimeOriginalUtc, media.Deleted})
+                .Where(a => a.Region != null && a.Region != "" && a.Deleted == false)
                 .GroupBy(j => new {j.Region, j.Country})
                 .Select(g => new MediaGeoSummary(g.Key.Region!, g.Key.Country!, g.Count(), g.Max(j => j.DateTimeOriginalUtc)))
                 .ToArrayAsync();
