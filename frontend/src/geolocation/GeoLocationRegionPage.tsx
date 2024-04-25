@@ -10,12 +10,32 @@ import { Alert, Box } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import { SimpleTreeView } from '@mui/x-tree-view/SimpleTreeView';
 import { TreeItem } from '@mui/x-tree-view/TreeItem';
+import { GeoLocationRegionPhotos } from './GeoLocationRegionPhotos';
+import PlaceIcon from '@mui/icons-material/Place';
 
 export function GeoLocationRegionPage() {
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
   const { region } = useParams();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [regionSummary, setRegionSummary] = useState<MediaGeoLocationRegionSummary[]>([]);
+  const [yearsSet, setYearsSet] = useState<number[]>([]);
+  const [selectedMonth, setSelectedMonth] = useState<{ year: number; month: number } | undefined>(
+    undefined,
+  );
 
   const authToken = useAppSelector(selectToken);
 
@@ -27,6 +47,8 @@ export function GeoLocationRegionPage() {
           setIsLoading(false);
           setError(undefined);
           setRegionSummary(regionInfo);
+          const years = [...new Set(regionInfo.map((r) => r.yearPart))];
+          setYearsSet(years);
         })
         .catch((err) => {
           setIsLoading(false);
@@ -53,26 +75,35 @@ export function GeoLocationRegionPage() {
       {isLoading && <CircularProgress />}
       {error && <Alert severity="error">{error}</Alert>}
       {!isLoading && !error && regionSummary.length > 0 && (
-        <Box>
-          {/*{regionSummary.map((r) => (*/}
-          {/*  <p key={r.monthly}>*/}
-          {/*    {r.monthly}: {r.mediasCount}*/}
-          {/*  </p>*/}
-          {/*))}*/}
+        <Box sx={{ width: '100%', height: '100%', display: 'flex' }}>
           <SimpleTreeView
             aria-label="file system navigator"
-            sx={{ height: 200, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+            sx={{ height: '100%', flexGrow: 1, maxWidth: 400, minWidth: 200, overflowY: 'auto' }}
           >
-            <TreeItem itemId="1" label="Applications">
-              <TreeItem itemId="2" label="Calendar" />
-            </TreeItem>
-            <TreeItem itemId="5" label="Documents">
-              <TreeItem itemId="10" label="OSS" />
-              <TreeItem itemId="6" label="MUI">
-                <TreeItem itemId="8" label="index.js" />
+            <h4>
+              <Box sx={{ display: 'flex', gap: '2px', alignItems: 'center' }}>
+                <PlaceIcon fontSize="small" />
+                {region}
+              </Box>
+            </h4>
+            {yearsSet.map((year) => (
+              <TreeItem key={`tree-item-${year}`} itemId={year.toString()} label={year.toString()}>
+                {regionSummary
+                  .filter((r) => r.yearPart === year)
+                  .map((r) => (
+                    <TreeItem
+                      key={`tree-item-${r.monthly}`}
+                      itemId={r.monthly}
+                      label={`${monthNames[r.monthPart - 1]} (${r.mediasCount} media)`}
+                      onClick={() => setSelectedMonth({ year, month: r.monthPart })}
+                    />
+                  ))}
               </TreeItem>
-            </TreeItem>
+            ))}
           </SimpleTreeView>
+          <Box sx={{ height: '100%', flexGrow: 2 }}>
+            <GeoLocationRegionPhotos region={region} monthly={selectedMonth} />
+          </Box>
         </Box>
       )}
     </Box>

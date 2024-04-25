@@ -278,6 +278,29 @@ const backendAPI = {
     const result = await parseJSON(responseWithStatus);
     return result ?? [];
   },
+  async getGeoLocationRegionMedias(
+    region: string,
+    year: number,
+    month: number,
+    authToken?: string,
+  ): Promise<MediaInfo[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/mediageolocation/MediasByRegionAndDate?region=${region}&year=${year}&month=${month}`;
+    const response = await fetch(url, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? [];
+  },
 };
 
 export { backendAPI };
