@@ -10,6 +10,7 @@ class EnvironmentParameters {
     [string]$PhotoLibraryLocalConvertedVideosFolder
     [string]$TelegramBotToken
     [string]$TelegramChatId
+    [string]$FrontendGoogleMapsApiKey
 }
 
 function ReadParameters {
@@ -80,6 +81,10 @@ function ReadParameters {
             }
             'TELEGRAM_CHAT_ID' { 
                 $envParametersObject.TelegramChatId = $keyValue[1]
+                continue
+            }
+            'GOOGLE_MAPS_API' { 
+                $envParametersObject.FrontendGoogleMapsApiKey = $keyValue[1]
                 continue
             }
         }
@@ -163,8 +168,23 @@ function ChangeFrontendApplicationSettings {
             }
         }
         else {
-            # leave the line unmodified
-            $line
+            if($line -match 'REACT_APP_GOOGLE_MAPS_API_KEY') {
+                $ParamKeyValue = $line -split '='
+                if ($ParamKeyValue.Length -eq 2) {
+                    $NewApiKey
+                    if ($IsProduction) {
+                        $NewApiKey = $EnvironmentParams.FrontendGoogleMapsApiKey
+                        Write-Host "Frontend environment. Replacing google maps api key from '$($ParamKeyValue[1])' to '$($NewApiKey)'"
+                        $line -replace $ParamKeyValue[1], $NewApiKey
+                    }
+                } else {
+                    $line
+                }
+            }
+            else {
+                # leave the line unmodified
+                $line
+            }
         }
     }
 

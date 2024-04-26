@@ -202,6 +202,7 @@ POSITION_STACK_API_KEY=<API Key>
 PHOTO_LIBRARY_BACKEND_DEV_URL=http://localhost:5101
 TELEGRAM_BOT_TOKEN=<Your bot token>
 TELEGRAM_CHAT_ID=<Your chat id>
+GOOGLE_MAPS_API=<Your Api Key>
 ```
 
 1. ssh:

@@ -79,6 +79,7 @@ export const MediaPreview = ({
     setIsFavorite(media?.isFavorite ?? false);
     setIsImportant(checkIsImportant(media?.albumName));
     setIsPrint(checkIsPrint(media?.albumName));
+    setShowMap(false);
 
     const isAppleQuickTimeVideo =
       media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase().includes('mov');
