@@ -32,6 +32,7 @@ import StarOutlineIcon from '@mui/icons-material/StarOutline';
 import LocalPrintshopIcon from '@mui/icons-material/LocalPrintshop';
 import LocalPrintshopOutlinedIcon from '@mui/icons-material/LocalPrintshopOutlined';
 import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch';
+import { MapView } from '../geolocation/MapView';
 
 type Props = {
   media?: MediaInfo;
@@ -67,6 +68,9 @@ export const MediaPreview = ({
   const [mediaLoading, setMediaLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [useConvertedVideo, setUseConvertedVideo] = useState(false);
+  const [showMap, setShowMap] = useState<boolean>(false);
+  const [mediaWidth, setMediaWidth] = useState<number>(0);
+  const [mediaHeight, setMediaHeight] = useState<number>(0);
 
   useEffect(() => {
     if (!media || !open) {
@@ -79,6 +83,16 @@ export const MediaPreview = ({
     const isAppleQuickTimeVideo =
       media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase().includes('mov');
     setUseConvertedVideo(isAppleQuickTimeVideo);
+
+    if (media.mediaType === MediaType.IMAGE) {
+      setMediaHeight(media.thumbnailHeight * 2.4);
+      setMediaWidth(media.thumbnailWidth * 2.4);
+    }
+
+    if (media.mediaType === MediaType.VIDEO) {
+      setMediaHeight(media.thumbnailHeight === 0 ? 367 : media.thumbnailHeight * 2.2);
+      setMediaWidth(media.thumbnailWidth === 0 ? 493 : media.thumbnailWidth * 2.2);
+    }
 
     setMediaLoading(true);
     backendAPI
@@ -179,27 +193,35 @@ export const MediaPreview = ({
 
       {error && <Alert severity="error">{error}</Alert>}
       {mediaLoading && <CircularProgress />}
-      {!mediaLoading && media.mediaType === MediaType.IMAGE && (
+      {!mediaLoading && !showMap && media.mediaType === MediaType.IMAGE && (
         <TransformWrapper>
           <TransformComponent>
             <img
               src={blobToImage(mediaDataAsUint8)}
               alt={media.fileName}
-              style={{ height: media.thumbnailHeight * 2.4 }}
+              style={{ height: mediaHeight }}
             />
           </TransformComponent>
         </TransformWrapper>
       )}
-      {!mediaLoading && media.mediaType === MediaType.VIDEO && mediaData && (
+      {!mediaLoading && !showMap && media.mediaType === MediaType.VIDEO && mediaData && (
         <video
           autoPlay
           muted
           playsInline
           controls
-          width={media.thumbnailWidth === 0 ? 493 : media.thumbnailWidth * 2.2}
-          height={media.thumbnailHeight === 0 ? 367 : media.thumbnailHeight * 2.2}
+          width={mediaWidth}
+          height={mediaHeight}
           src={URL.createObjectURL(mediaData)}
         ></video>
+      )}
+      {!mediaLoading && showMap && media.latitude && media.longitude && (
+        <MapView
+          latitude={media.latitude}
+          longitude={media.longitude}
+          boxWidth={mediaWidth}
+          boxHeight={mediaHeight}
+        />
       )}
       <DialogContent sx={{ paddingTop: '1px', paddingBottom: '0px' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
@@ -240,6 +262,7 @@ export const MediaPreview = ({
                 gap: '3px',
                 marginTop: '2px',
               }}
+              onClick={() => setShowMap(!showMap)}
             >
               <PlaceIcon fontSize="small" />
               <Typography
