@@ -301,6 +301,56 @@ const backendAPI = {
     const result = await parseJSON(responseWithStatus);
     return result ?? [];
   },
+  async getDeletedMedias(authToken?: string): Promise<MediaInfo[]> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    let url = `${backendUrl}/media/GetDeletedMedias`;
+    const response = await fetch(url, {
+      method: 'get',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    const responseWithStatus = checkStatus(response);
+    const result = await parseJSON(responseWithStatus);
+    return result ?? [];
+  },
+  async restoreDeletedMedia(mediaId: string, authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/media/RestoreDeletedMedia?mediaId=${mediaId}`, {
+      method: 'post',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+      }),
+    });
+    checkStatus(response);
+  },
+  async deleteBunchOfMedias(mediaIds: number[], authToken?: string): Promise<void> {
+    if (!backendUrl) {
+      throw new Error('Please specify Backend URL in environment settings');
+    }
+    if (!authToken) {
+      throw new Error('Please login');
+    }
+    const response = await fetch(`${backendUrl}/media/DeleteMedias`, {
+      method: 'delete',
+      headers: new Headers({
+        Authorization: `Bearer ${authToken}`,
+        'Content-Type': 'application/json',
+      }),
+      body: JSON.stringify(mediaIds),
+    });
+    checkStatus(response);
+  },
 };
 
 export { backendAPI };

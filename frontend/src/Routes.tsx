@@ -21,6 +21,8 @@ import SellIcon from '@mui/icons-material/Sell';
 import PlaceIcon from '@mui/icons-material/Place';
 import { GeoLocationSummaryPage } from './geolocation/GeoLocationSummaryPage';
 import { GeoLocationRegionPage } from './geolocation/GeoLocationRegionPage';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { DeletedMediasPage } from './photos/DeletedMediasPage';
 
 export const pages: PageRouteInfo[] = [
   {
@@ -111,6 +113,18 @@ export const pages: PageRouteInfo[] = [
         showMenuButton: true,
       },
     ],
+    showMenuButton: true,
+  },
+  {
+    key: 'deleted',
+    route: '/deleted',
+    displayName: 'Deleted',
+    element: (
+      <RequireAuth>
+        <DeletedMediasPage />
+      </RequireAuth>
+    ),
+    iconElement: <DeleteIcon fontSize="small" />,
     showMenuButton: true,
   },
   {
