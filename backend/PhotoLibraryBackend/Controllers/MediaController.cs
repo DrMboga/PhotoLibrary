@@ -41,6 +41,23 @@ public class MediaController: ControllerBase
         await _mediator.Publish(new DeleteMediaNotification(mediaId));
         return Ok();
     }
+    /*
+curl -X 'DELETE' 
+  'https://localhost:7056/media/DeleteMedias' 
+    -H 'Content-Type: application/json' 
+  -d '[
+  2, 3, 4, 5, 6
+]'    
+    */
+    [HttpDelete()]
+    public async Task<IActionResult> DeleteMedias([FromBody] long[] mediaIds)
+    {
+        foreach (var mediaId in mediaIds)
+        {
+            await _mediator.Publish(new DeleteMediaNotification(mediaId));
+        }
+        return Ok();
+    }
 
     // https://localhost:7056/media/SetMediaAlbum?mediaId=42&isFavorite=true&isToPrint=true
     [HttpPut()]
@@ -78,5 +95,22 @@ public class MediaController: ControllerBase
     public Task<MediaInfo[]> MediasByLabel(long dateFrom, long dateTo, string label)
     {
         return _mediator.Send(new GetMediasByLabelRequest(dateFrom, dateTo, label));
+    }
+
+    // http://localhost:5101/media/GetDeletedMedias
+
+    [HttpGet()]
+    public Task<MediaInfo[]> GetDeletedMedias()
+    {
+        return _mediator.Send(new GetDeletedMediasRequest());
+
+    }
+
+    // http://localhost:5101/media/RestoreDeletedMedia?mediaId=2
+    [HttpPost()]
+    public async Task<IActionResult> RestoreDeletedMedia(long mediaId)
+    {
+        await _mediator.Publish(new RestoreDeletedMediaNotification(mediaId));
+        return Ok();
     }
 }

@@ -9,7 +9,8 @@ public class MediaReaderService :
     IRequestHandler<GetMediaListOfTheDayRequest, MediaInfo[]>,
     INotificationHandler<SendRandomPhotoOfTheDayToBotNotification>,
     IRequestHandler<GetMediasByLabelRequest, MediaInfo[]>,
-    IRequestHandler<GetMediaInfosByRegionAndDateRequest, MediaInfo[]>
+    IRequestHandler<GetMediaInfosByRegionAndDateRequest, MediaInfo[]>,
+    IRequestHandler<GetDeletedMediasRequest, MediaInfo[]>
 {
     private const int PhotosSizeChunk = 100;
     private readonly string _folderPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "Assets");
@@ -123,5 +124,18 @@ public class MediaReaderService :
             resultMedias.Add(media.ToMediaInfoMessage());
         }
         return [.. resultMedias];
+    }
+
+    public async Task<MediaInfo[]> Handle(GetDeletedMediasRequest request, CancellationToken cancellationToken)
+    {
+        var medias = await _mediator.Send(new GetDeletedMediasFromDbRequest());
+        var resultMedias = new List<MediaInfo>();
+
+        foreach (var media in medias)
+        {
+            resultMedias.Add(media.ToMediaInfoMessage());
+        }
+        return [.. resultMedias];
+        
     }
 }

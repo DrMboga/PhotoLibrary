@@ -15,7 +15,8 @@ public class MediaDataAccessMessagesHandler:
     IRequestHandler<GetBunchOfMediasWithEmptyLabelRequest, (long MediaId, string FullFileName)[]>,
     INotificationHandler<SetMediaLabelNotification>,
     IRequestHandler<GetLabeledMediasInfoRequest, (long labeledMediaCount, long totalMediaCount)>,
-    IRequestHandler<GetMediasByLabelDataRequest, MediaFileInfo[]>
+    IRequestHandler<GetMediasByLabelDataRequest, MediaFileInfo[]>,
+    IRequestHandler<GetDeletedMediasFromDbRequest, MediaFileInfo[]>
 {
     private readonly IDbContextFactory<PhotoLibraryBackendDbContext> _dbContextFactory;
 
@@ -91,7 +92,7 @@ public class MediaDataAccessMessagesHandler:
                 .FirstOrDefaultAsync();
             if (media != null)
             {
-                media.Deleted = true;
+                media.Deleted = notification.Deleted;
             }
             await context.SaveChangesAsync();
         }
@@ -277,6 +278,18 @@ order by "DateTimeOriginalUtc"
                     m.TagLabel == request.LabelName &&
                     m.Deleted == false)
                 .OrderBy(m => m.DateTimeOriginalUtc)
+                .ToArrayAsync();
+            return media ?? [];
+        }
+    }
+
+    public async Task<MediaFileInfo[]> Handle(GetDeletedMediasFromDbRequest request, CancellationToken cancellationToken)
+    {
+        using (var context = _dbContextFactory.CreateDbContext())
+        {
+            var media = await context.Media
+                .AsNoTracking()
+                .Where(m => m.Deleted == true)
                 .ToArrayAsync();
             return media ?? [];
         }

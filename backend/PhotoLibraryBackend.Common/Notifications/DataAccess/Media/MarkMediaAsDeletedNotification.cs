@@ -2,4 +2,4 @@
 
 namespace PhotoLibraryBackend.Common;
 
-public record class MarkMediaAsDeletedNotification(long MediaId): INotification;
+public record class MarkMediaAsDeletedNotification(long MediaId, bool Deleted): INotification;
