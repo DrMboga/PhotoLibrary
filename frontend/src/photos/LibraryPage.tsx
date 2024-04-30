@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../storeHooks';
 import {
   selectDateOfFirstPhoto,
@@ -7,7 +7,7 @@ import {
   setLoadingBottom,
   setLoadingTop,
 } from './photosSlice';
-import { Alert, Box, IconButton } from '@mui/material';
+import { Alert, Badge, Box, FormControlLabel, IconButton, Switch } from '@mui/material';
 import { MediaCard } from './MediaCard';
 import { ScrollableBox } from '../components/ScrollableBox';
 import { currentDateLinuxTime, dateFromUnixTime } from '../helpers/date-helper';
@@ -20,6 +20,8 @@ import { MediaInfo } from '../model/media-info';
 import Drawer from '@mui/material/Drawer';
 import EditCalendarIcon from '@mui/icons-material/EditCalendar';
 import { DatesFilterComponent } from './DatesFilterComponent';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { backendAPI } from '../api/BackendApi';
 
 const topBarHeight = 56;
 const oneYear = 31536000;
@@ -35,6 +37,9 @@ function LibraryPage() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [lastRequestTime, setLastRequestTime] = useState(currentDateLinuxTime());
+  const [selectMultipleMedia, setSelectMultipleMedia] = useState<boolean>(false);
+  const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
+  const [triggeredDeleteMultiple, setTriggeredDeleteMultiple] = useState<boolean>(false);
 
   const {
     connection,
@@ -46,6 +51,8 @@ function LibraryPage() {
     handleAlbumMarkChanged,
     loadingTop,
     loadingBottom,
+    handleDeleteSeveralCards,
+    authToken,
   } = useMediaSignalRHub(dateOfFirstPhoto);
 
   const handleScrollToTop = (): void => {
@@ -105,6 +112,37 @@ function LibraryPage() {
     }
   };
 
+  const handleCardCheck = (mediaId: string) => {
+    if (selectedMediaIds.includes(mediaId)) {
+      const copy = [...selectedMediaIds];
+      const index = copy.indexOf(mediaId);
+      copy.splice(index, 1);
+      setSelectedMediaIds(copy);
+    } else {
+      setSelectedMediaIds([...selectedMediaIds, mediaId]);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedMediaIds.length === 0) {
+      return;
+    }
+    if (!selectMultipleMedia) {
+      setSelectedMediaIds([]);
+    }
+  }, [selectMultipleMedia, selectedMediaIds]);
+
+  useEffect(() => {
+    if (!triggeredDeleteMultiple || selectedMediaIds.length === 0) {
+      return;
+    }
+    backendAPI.deleteBunchOfMedias(selectedMediaIds, authToken).then(() => {
+      setTriggeredDeleteMultiple(false);
+      handleDeleteSeveralCards(selectedMediaIds);
+      setSelectedMediaIds([]);
+    });
+  }, [triggeredDeleteMultiple, selectedMediaIds, authToken]);
+
   return (
     <>
       {error && <Alert severity="error">{error}</Alert>}
@@ -114,17 +152,37 @@ function LibraryPage() {
           newDateSelected={newDateSelectedHandle}
         />
       </Drawer>
-      <Box sx={{ display: 'flex', gap: '5px' }}>
-        <p>
-          {dateOfFirstPhoto && dateOfLastPhoto
-            ? `${dateFromUnixTime(dateOfFirstPhoto).toLocaleString('ru-RU')} - ${dateFromUnixTime(
-                dateOfLastPhoto,
-              ).toLocaleString('ru-RU')}`
-            : ''}
-        </p>
-        <IconButton color="secondary" aria-label="Select date" onClick={toggleDrawer(true)}>
-          <EditCalendarIcon fontSize="small" />
-        </IconButton>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+        <Box sx={{ display: 'flex', gap: '5px' }}>
+          <p>
+            {dateOfFirstPhoto && dateOfLastPhoto
+              ? `${dateFromUnixTime(dateOfFirstPhoto).toLocaleString('ru-RU')} - ${dateFromUnixTime(
+                  dateOfLastPhoto,
+                ).toLocaleString('ru-RU')}`
+              : ''}
+          </p>
+          <IconButton color="secondary" aria-label="Select date" onClick={toggleDrawer(true)}>
+            <EditCalendarIcon fontSize="small" />
+          </IconButton>
+        </Box>
+        <Box sx={{ display: 'flex', gap: '5px' }}>
+          <FormControlLabel
+            control={
+              <Switch
+                value={selectMultipleMedia}
+                onClick={() => setSelectMultipleMedia(!selectMultipleMedia)}
+              />
+            }
+            label="Select multiple"
+          />
+          {selectedMediaIds.length > 0 && (
+            <IconButton aria-label="delete" onClick={() => setTriggeredDeleteMultiple(true)}>
+              <Badge badgeContent={selectedMediaIds.length} color="secondary">
+                <DeleteIcon />
+              </Badge>
+            </IconButton>
+          )}
+        </Box>
       </Box>
       <ScrollableBox
         indent={topBarHeight}
@@ -151,6 +209,8 @@ function LibraryPage() {
                 key={`media-card-id-${photo.id}`}
                 media={photo}
                 onClick={handleCardClick}
+                showSelect={selectMultipleMedia}
+                onSelect={handleCardCheck}
               />
             ))}
           <IconButton color="primary" aria-label="more..." onClick={handleScrollToBottom}>

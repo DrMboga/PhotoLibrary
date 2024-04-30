@@ -334,7 +334,7 @@ const backendAPI = {
     });
     checkStatus(response);
   },
-  async deleteBunchOfMedias(mediaIds: number[], authToken?: string): Promise<void> {
+  async deleteBunchOfMedias(mediaIds: string[], authToken?: string): Promise<void> {
     if (!backendUrl) {
       throw new Error('Please specify Backend URL in environment settings');
     }

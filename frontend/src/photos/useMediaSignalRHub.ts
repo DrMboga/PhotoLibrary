@@ -105,6 +105,10 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     setPhotos(photos.filter((m) => m.id !== mediaIdToDelete));
   };
 
+  const handleDeleteSeveralCards = (mediasToDelete: string[]) => {
+    setPhotos(photos.filter((m) => !mediasToDelete.includes(m.id)));
+  };
+
   const handleAlbumMarkChanged = (mediaId: string, album: string) => {
     const changedMedia = photos.find((m) => m.id === mediaId);
     if (!changedMedia) {
@@ -202,5 +206,7 @@ export const useMediaSignalRHub = (dateOfLastPhoto: number | undefined) => {
     handleAlbumMarkChanged,
     loadingTop,
     loadingBottom,
+    handleDeleteSeveralCards,
+    authToken,
   };
 };
