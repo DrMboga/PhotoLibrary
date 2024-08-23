@@ -64,7 +64,7 @@ public class TelegramBotService :
         }
 
         var client = _clientFactory.CreateClient("TelegramBotApi");
-        client.Timeout = TimeSpan.FromSeconds(10);
+        client.Timeout = TimeSpan.FromMinutes(10);
         using MultipartFormDataContent multipartContent = new();
         multipartContent.Add(new StringContent(_settings.TelegramChatId, Encoding.UTF8, MediaTypeNames.Text.Plain), "chat_id");
         multipartContent.Add(new StringContent(caption.ToString(), Encoding.UTF8, MediaTypeNames.Text.Plain), "caption");

@@ -270,4 +270,7 @@ sudo systemctl list-units --type=service --all
 # Service status
  sudo systemctl status keycloak
  (q for exit)
+
+# Service status last 100 rows
+ sudo journalctl -u photo-library.service -n 100 --no-pager
 ```
