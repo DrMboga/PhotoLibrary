@@ -94,4 +94,12 @@ public class WorkerController: ControllerBase
         var logs = await _mediator.Send(new GetImporterLogsRequest(pageSize ?? 100));
         return logs.ToStepReports();
     }
+
+    [HttpPost()]
+    public async Task<IActionResult> SendPhotoOfTheDay() 
+    {
+        var today = DateTime.Now;
+        await _mediator.Publish(new SendRandomPhotoOfTheDayToBotNotification(today.Month, today.Day));
+        return Ok();
+    }
 }
