@@ -27,7 +27,7 @@ public class MediaMetadataService :
 
     public Task<byte[]?> Handle(MakePhotoThumbnailRequest request, CancellationToken cancellationToken)
     {
-        return Task.FromResult(request.filePath.MakePhotoThumbnail(request.DoubleSize));
+        return Task.FromResult(request.filePath.MakePhotoThumbnail(request.DoubleSize, request.Orientation));
     }
 
     public async Task<byte[]?> Handle(MakeVideoThumbnailRequest request, CancellationToken cancellationToken)

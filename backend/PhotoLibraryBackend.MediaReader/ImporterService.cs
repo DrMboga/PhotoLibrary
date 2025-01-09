@@ -136,6 +136,10 @@ public class ImporterService : IImporterService
                         mediaFileInfo.ThumbnailHeight = newHeight;
                     }
                 }
+                // TODO: If media file is heic
+                // else if () {
+                //     mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(mediaFilePath, false, mediaFileInfo.Orientation));
+                // }
                 else
                 {
                     mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(mediaFilePath));

@@ -68,7 +68,7 @@ public static class MediaHelper
     /// </summary>
     /// <param name="filePath">Full path to a file</param>
     /// <returns>Thumbnail as byte array</returns>
-    public static byte[]? MakePhotoThumbnail(this string filePath, bool doubleSize = false) 
+    public static byte[]? MakePhotoThumbnail(this string filePath, bool doubleSize = false, ExifOrientation? orientation = null) 
     {
         var fileName = Path.GetFileName(filePath);
         using Image image = Image.Load(filePath);
@@ -76,6 +76,11 @@ public static class MediaHelper
 
         var (newWidth, newHeight) = CalculateNewDimensions(image.Width, image.Height, doubleSize);
         image.Mutate(x => x.Resize(newWidth, newHeight));
+
+        if (orientation != null)
+        {
+            image.Mutate(x => x.Rotate(orientation.Value.ToSixLaboursRotateMode()));
+        }
 
         using var ms = new MemoryStream();
         if (image.Metadata?.DecodedImageFormat != null)
@@ -204,6 +209,16 @@ public static class MediaHelper
             file.LastWriteTimeUtc.ToUniversalTime(),
             file.LastAccessTimeUtc.ToUniversalTime()];
         return times.Min();
+    }
+
+    private static RotateMode ToSixLaboursRotateMode(this ExifOrientation orientation) {
+        return orientation switch
+        {
+            ExifOrientation.Rotate180 => RotateMode.Rotate180,
+            ExifOrientation.Rotate90CW => RotateMode.Rotate270,
+            ExifOrientation.Rotate270CW => RotateMode.Rotate90,
+            _ => RotateMode.None,
+        };
     }
 }
 
