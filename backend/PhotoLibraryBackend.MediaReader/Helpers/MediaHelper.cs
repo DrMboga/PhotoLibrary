@@ -47,7 +47,7 @@ public static class MediaHelper
     /// <param name="file">File information.</param>
     /// <param name="mediaType">Full media info.</param>
     /// <returns></returns>
-    public static MediaFileInfo GetMediaFileInfo(this FileInfo file, MediaType mediaType)
+    public static MediaFileInfo GetMediaFileInfo(this FileInfo file, MediaType mediaType, FileInfo? temporaryFileInfo = null)
     {
         var mediaFileInfo = new MediaFileInfo
         {
@@ -63,6 +63,9 @@ public static class MediaHelper
         if (mediaType == MediaType.Image)
         {
             ReadExifMetadata(file.FullName, mediaFileInfo);
+        } else if (mediaType == MediaType.Heic && temporaryFileInfo != null)
+        {
+            ReadExifMetadata(temporaryFileInfo.FullName, mediaFileInfo);
         }
 
         return mediaFileInfo;

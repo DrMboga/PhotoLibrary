@@ -103,13 +103,14 @@ public class ImporterService : IImporterService
             }
 
             // 2. Fill the media metadata according to media type
+            FileInfo? temporaryFileInfo = null;
             if (mediaType == MediaType.Heic)
             {
                 string temporaryConvertedFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(mediaFilePath));
                 await _mediator.Publish(new ConvertHeicImageNotification(mediaFilePath, temporaryConvertedFilePath));
-                fileInfo = new FileInfo(temporaryConvertedFilePath);
+                temporaryFileInfo = new FileInfo(temporaryConvertedFilePath);
             }
-            var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value);
+            var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value, temporaryFileInfo);
             mediaFileInfo.FolderId = folderId;
             // 3. Create media thumbnail
             try
