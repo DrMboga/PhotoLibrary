@@ -6,7 +6,8 @@
 import * as pb_1 from "google-protobuf";
 export enum MediaType {
     IMAGE = 0,
-    VIDEO = 1
+    VIDEO = 1,
+    HEIC = 2
 }
 export enum ImportStepReportSeverity {
     INFORMATION = 0,

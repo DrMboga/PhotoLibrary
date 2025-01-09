@@ -45,10 +45,11 @@ namespace PhotoLibraryBackend.Common.Messages {
             "QggKBl92ZW51ZUINCgtfaXNGYXZvcml0ZUIMCgpfYWxidW1OYW1lInMKEElt",
             "cG9ydFN0ZXBSZXBvcnQSCgoCaWQYASABKAkSEQoJdGltZXN0YW1wGAIgASgD",
             "EisKCHNldmVyaXR5GAMgASgOMhkuSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5",
-            "EhMKC3N0ZXBNZXNzYWdlGAQgASgJKiEKCU1lZGlhVHlwZRIJCgVJTUFHRRAA",
-            "EgkKBVZJREVPEAEqQwoYSW1wb3J0U3RlcFJlcG9ydFNldmVyaXR5Eg8KC0lO",
-            "Rk9STUFUSU9OEAASCwoHV0FSTklORxABEgkKBUVSUk9SEAJCJqoCI1Bob3Rv",
-            "TGlicmFyeUJhY2tlbmQuQ29tbW9uLk1lc3NhZ2VzYgZwcm90bzM="));
+            "EhMKC3N0ZXBNZXNzYWdlGAQgASgJKisKCU1lZGlhVHlwZRIJCgVJTUFHRRAA",
+            "EgkKBVZJREVPEAESCAoESEVJQxACKkMKGEltcG9ydFN0ZXBSZXBvcnRTZXZl",
+            "cml0eRIPCgtJTkZPUk1BVElPThAAEgsKB1dBUk5JTkcQARIJCgVFUlJPUhAC",
+            "QiaqAiNQaG90b0xpYnJhcnlCYWNrZW5kLkNvbW1vbi5NZXNzYWdlc2IGcHJv",
+            "dG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::PhotoLibraryBackend.Common.Messages.MediaType), typeof(global::PhotoLibraryBackend.Common.Messages.ImportStepReportSeverity), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -63,6 +64,7 @@ namespace PhotoLibraryBackend.Common.Messages {
   public enum MediaType {
     [pbr::OriginalName("IMAGE")] Image = 0,
     [pbr::OriginalName("VIDEO")] Video = 1,
+    [pbr::OriginalName("HEIC")] Heic = 2,
   }
 
   public enum ImportStepReportSeverity {

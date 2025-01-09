@@ -5,6 +5,7 @@ option csharp_namespace = "PhotoLibraryBackend.Common.Messages";
 enum MediaType {
     IMAGE = 0;
     VIDEO = 1;
+    HEIC = 2;
 }
 
 enum ImportStepReportSeverity {
