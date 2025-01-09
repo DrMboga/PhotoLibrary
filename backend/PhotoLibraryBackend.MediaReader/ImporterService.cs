@@ -103,6 +103,12 @@ public class ImporterService : IImporterService
             }
 
             // 2. Fill the media metadata according to media type
+            if (mediaType == MediaType.Heic)
+            {
+                string temporaryConvertedFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(mediaFilePath));
+                await _mediator.Publish(new ConvertHeicImageNotification(mediaFilePath, temporaryConvertedFilePath));
+                fileInfo = new FileInfo(temporaryConvertedFilePath);
+            }
             var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value);
             mediaFileInfo.FolderId = folderId;
             // 3. Create media thumbnail
@@ -136,10 +142,10 @@ public class ImporterService : IImporterService
                         mediaFileInfo.ThumbnailHeight = newHeight;
                     }
                 }
-                // TODO: If media file is heic
-                // else if () {
-                //     mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(mediaFilePath, false, mediaFileInfo.Orientation));
-                // }
+                else if (mediaType == MediaType.Heic) {
+                    mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(fileInfo.FullName, false, mediaFileInfo.Orientation));
+                    await _mediator.Publish(new DeleteTemporaryConvertedHeicNotification(fileInfo.FullName));
+                }
                 else
                 {
                     mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(mediaFilePath));

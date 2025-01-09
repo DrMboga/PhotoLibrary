@@ -4,6 +4,7 @@ using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using PhotoLibraryBackend.Common.Messages;
 
 namespace PhotoLibraryBackend.MediaReader;
 
@@ -40,8 +41,22 @@ public class TelegramBotService :
 
     public async Task Handle(WriteImageToBotNotification notification, CancellationToken cancellationToken)
     {
-        var media = await _mediator.Send(new GetMediaByIdRequest(notification.MediaId));
-        var thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(media.FullPath, true));
+        var media = await _mediator.Send(new GetMediaByIdRequest(notification.MediaId), cancellationToken);
+        byte[]? thumbnail;
+        var mediaType = media.FileExt.GetMediaType();
+        if(mediaType == MediaType.Heic)
+        {
+            string temporaryConvertedFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(media.FullPath), cancellationToken);
+            await _mediator.Publish(new ConvertHeicImageNotification(media.FullPath, temporaryConvertedFilePath), cancellationToken);
+            var fileInfo = new FileInfo(temporaryConvertedFilePath);
+            var mediaFileInfo = fileInfo.GetMediaFileInfo(mediaType.Value);
+            thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(temporaryConvertedFilePath, true, mediaFileInfo.Orientation), cancellationToken);
+            await _mediator.Publish(new DeleteTemporaryConvertedHeicNotification(temporaryConvertedFilePath), cancellationToken);
+        }
+        else 
+        {
+            thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(media.FullPath, true), cancellationToken);
+        }
         if (thumbnail == null)
         {
             return;

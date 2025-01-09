@@ -9,6 +9,7 @@ public static class MediaHelper
     const int ThumbnailLongestSide = 224;
 
     private static readonly string[] ImageExtensions = [".jpg", ".png", ".jpeg", ".webp", ".avif", ".bmp"];
+    private static readonly string[] HighEfficiencyImageContainerExtensions = [".heic"];
     private static readonly string[] VideoExtensions = [".mov", ".mp4", ".avi", ".ogv", ".ogg", ".mpg", ".mpeg", ".m4v", ".3gp"];
     private static readonly string[] MiscellaneousExtensions = [".aae"];
 
@@ -26,6 +27,10 @@ public static class MediaHelper
         if (VideoExtensions.Contains(extension.ToLower()))
         {
             return MediaType.Video;
+        }
+        if (HighEfficiencyImageContainerExtensions.Contains(extension.ToLower()))
+        {
+            return MediaType.Heic;
         }
 
         if (MiscellaneousExtensions.Contains(extension.ToLower()))

@@ -49,3 +49,9 @@ protoc --proto_path=protobuf --csharp_out=backend/PhotoLibraryBackend.Common --c
 ```bash
 protoc --proto_path=protobuf --ts_out=frontend/src/model media-info.proto
 ```
+
+# Install HEIC tools to host Linux OS
+
+```bash
+sudo apt install libheif-examples
+```

@@ -29,7 +29,18 @@ public class MediaController: ControllerBase
             realFilePath = await _mediator.Send(new GetPathOfConvertedVideoRequest(filePath));
         }
         var fileInfo = new FileInfo(realFilePath);
+        var mediaType = fileInfo.Extension.GetMediaType();
+        if(mediaType == MediaType.Heic)
+        {
+            realFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(filePath));
+            await _mediator.Publish(new ConvertHeicImageNotification(filePath, realFilePath));
+        }
         var fileStream = System.IO.File.OpenRead(realFilePath);
+        if(mediaType == MediaType.Heic)
+        {
+            // TODO: Subscribe to some FileStream event and remove temporary file
+            // await _mediator.Publish(new DeleteTemporaryConvertedHeicNotification(realFilePath));
+        }
         var mimeType = await _mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
         return File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true); 
     }
