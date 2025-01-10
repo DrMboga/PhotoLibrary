@@ -143,9 +143,9 @@ public class ImporterService : IImporterService
                         mediaFileInfo.ThumbnailHeight = newHeight;
                     }
                 }
-                else if (mediaType == MediaType.Heic) {
-                    mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(fileInfo.FullName, false, mediaFileInfo.Orientation));
-                    await _mediator.Publish(new DeleteTemporaryConvertedHeicNotification(fileInfo.FullName));
+                else if (mediaType == MediaType.Heic && temporaryFileInfo != null) {
+                    mediaFileInfo.Thumbnail = await _mediator.Send(new MakePhotoThumbnailRequest(temporaryFileInfo.FullName, false, mediaFileInfo.Orientation));
+                    await _mediator.Publish(new DeleteTemporaryConvertedHeicNotification(temporaryFileInfo.FullName));
                 }
                 else
                 {
