@@ -31,13 +31,17 @@ public class MediaController: ControllerBase
         }
         var fileInfo = new FileInfo(realFilePath);
         var mediaType = fileInfo.Extension.GetMediaType();
+        string mimeType = "image/jpeg";
         if(mediaType == MediaType.Heic)
         {
             realFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(filePath));
             await _mediator.Publish(new ConvertHeicImageNotification(filePath, realFilePath));
         }
+        else 
+        {
+            mimeType = await _mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
+        }
         var fileStream = System.IO.File.OpenRead(realFilePath);
-        var mimeType = await _mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
         return new DeletableFileStreamResult(fileStream, mimeType, fileInfo.Name, mediaType == MediaType.Heic ? realFilePath : null); 
     }
 
