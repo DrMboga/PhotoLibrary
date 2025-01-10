@@ -31,18 +31,16 @@ public class MediaController: ControllerBase
         }
         var fileInfo = new FileInfo(realFilePath);
         var mediaType = fileInfo.Extension.GetMediaType();
-        string mimeType = "image/jpeg";
         if(mediaType == MediaType.Heic)
         {
             realFilePath = await _mediator.Send(new GetPathOfConvertedHeicRequest(filePath));
             await _mediator.Publish(new ConvertHeicImageNotification(filePath, realFilePath));
-        }
-        else 
-        {
-            mimeType = await _mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
+            fileInfo = new FileInfo(realFilePath);
         }
         var fileStream = System.IO.File.OpenRead(realFilePath);
-        return new DeletableFileStreamResult(fileStream, mimeType, fileInfo.Name, mediaType == MediaType.Heic ? realFilePath : null); 
+        var mimeType = await _mediator.Send(new GetMimeTypeRequest(fileInfo.Extension));
+        return File(fileStream, contentType: mimeType, fileDownloadName: fileInfo.Name, enableRangeProcessing: true);
+        // return new DeletableFileStreamResult(fileStream, mimeType, fileInfo.Name, mediaType == MediaType.Heic ? realFilePath : null); 
     }
 
     // https://localhost:7056/media/DeleteMedia?mediaId=234
