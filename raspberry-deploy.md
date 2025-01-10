@@ -165,6 +165,14 @@ http://192.168.0.65:8850/swagger/index.html
 
 ## Frontend
 
+1. Add permissions to nginx to frontend folders:
+
+```bash
+sudo gpasswd -a www-data pi
+
+chmod g+x /home/pi && chmod g+x /home/pi/projects && chmod g+x /home/pi/projects/photo-library && chmod g+x /home/pi/projects/photo-library/frontend && chmod g+x /home/pi/projects/photo-library/frontend/static && chmod g+x /home/pi/projects/photo-library/frontend/static/css && chmod g+x /home/pi/projects/photo-library/frontend/static/js
+```
+
 ```json
 server {
     listen 8860;

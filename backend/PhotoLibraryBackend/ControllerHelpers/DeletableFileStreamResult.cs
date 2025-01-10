@@ -17,9 +17,9 @@ public class DeletableFileStreamResult : FileStreamResult
     {
         await base.ExecuteResultAsync(context);
 
-        if(_originalFileFullPath != null && File.Exists(_originalFileFullPath))
-        {
-            File.Delete(_originalFileFullPath);
-        }
+        // if(_originalFileFullPath != null && File.Exists(_originalFileFullPath))
+        // {
+        //     File.Delete(_originalFileFullPath);
+        // }
     }
 }
