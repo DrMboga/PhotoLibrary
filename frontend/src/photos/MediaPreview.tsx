@@ -194,7 +194,7 @@ export const MediaPreview = ({
 
       {error && <Alert severity="error">{error}</Alert>}
       {mediaLoading && <CircularProgress />}
-      {!mediaLoading && !showMap && media.mediaType === MediaType.IMAGE && (
+      {!mediaLoading && !showMap && media.mediaType !== MediaType.VIDEO && (
         <TransformWrapper>
           <TransformComponent>
             <img
