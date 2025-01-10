@@ -18,8 +18,8 @@ public class HeicFileConverterService:
 
     public Task<string> Handle(GetPathOfConvertedHeicRequest request, CancellationToken cancellationToken)
     {
-        var relativePath = Path.GetRelativePath(_settings.PhotoLibraryPath, request.OriginalFilePath);
-        var fullPathToConvertedHeic = Path.Combine(_settings.ConvertedVideosFolder, relativePath.Replace(Path.GetExtension(request.OriginalFilePath), ".jpg"));
+        var fileInfo = new FileInfo(request.OriginalFilePath);
+        var fullPathToConvertedHeic = Path.Combine(_settings.ConvertedVideosFolder, fileInfo.Name.Replace(Path.GetExtension(request.OriginalFilePath), ".jpg"));
         return Task.FromResult(fullPathToConvertedHeic);
     }
 
