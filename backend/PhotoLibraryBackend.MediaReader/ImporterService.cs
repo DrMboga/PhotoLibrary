@@ -41,7 +41,7 @@ public class ImporterService : IImporterService
         await _mediator.Publish(new MediaImportFinished());
     }
 
-    private async Task<FolderInfo[]> GetAllFoldersAsFlatList(string folderPath, long? parentFolderId)
+    public async Task<FolderInfo[]> GetAllFoldersAsFlatList(string folderPath, long? parentFolderId)
     {
         var directories = Directory.GetDirectories(folderPath);
         if(directories == null || directories.Length == 0)
@@ -64,7 +64,7 @@ public class ImporterService : IImporterService
         return [.. result];
     }
 
-    private async Task<bool> ImportMediaFile(string mediaFilePath, long folderId)
+    public async Task<bool> ImportMediaFile(string mediaFilePath, long folderId)
     {
         try
         {

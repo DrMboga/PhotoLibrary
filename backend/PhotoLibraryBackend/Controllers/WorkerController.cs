@@ -102,4 +102,18 @@ public class WorkerController: ControllerBase
         await _mediator.Publish(new SendRandomPhotoOfTheDayToBotNotification(today.Month, today.Day));
         return Ok();
     }
+
+    [HttpPost()]
+    public async Task<IActionResult> SaveFoldersStructure()
+    {
+        await _mediator.Publish(new SaveFoldersStructureNotification());
+        return Ok();
+    }
+
+    [HttpPost()]
+    public async Task<IActionResult> ImportOneMediaFile(string mediaFilePath, long folderId)
+    {
+        var imported = await _mediator.Send(new SaveOneImageRequest(mediaFilePath, folderId));
+        return imported ? Ok() : BadRequest();
+    }
 }
