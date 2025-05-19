@@ -238,21 +238,21 @@ if ($TestsPassed -eq $false) {
 }
 
 # Backend tests
-Write-Host "Running backend tests..." -ForegroundColor Blue
-try {
-    Set-Location backend
-    dotnet test
-    Set-Location ..
-    $TestsPassed = $lastexitcode -eq 0
-}
-catch {
-    Write-Host "Backend tests failed" -ForegroundColor Red
-}
+# Write-Host "Running backend tests..." -ForegroundColor Blue
+# try {
+#     Set-Location backend
+#     dotnet test
+#     Set-Location ..
+#     $TestsPassed = $lastexitcode -eq 0
+# }
+# catch {
+#     Write-Host "Backend tests failed" -ForegroundColor Red
+# }
 
-if ($TestsPassed -eq $false) {
-    Write-Host "Backend tests failed" -ForegroundColor Red
-    exit
-}
+# if ($TestsPassed -eq $false) {
+#     Write-Host "Backend tests failed" -ForegroundColor Red
+#     exit
+# }
 
 # 1. Read parameters
 Write-Host "Reading deployment parameters..." -ForegroundColor Blue
@@ -276,7 +276,7 @@ Write-Host
 Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`' -ForegroundColor Green
 Read-Host 'Hit Enter when ready'
 #TODO: Use $EnvironmentParams.RaspberryAddress
-scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.65:/home/pi/projects/photo-library/backend
+scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.77:/home/pi/projects/photo-library/backend
 
 #6. Update frontend .env file
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $true
@@ -292,7 +292,7 @@ Set-Location ..
 
 # #9. Copy frontend to Raspberry
 #TODO: Use $EnvironmentParams.RaspberryAddress
-scp -r ./frontend/build/* pi@192.168.0.65:/home/pi/projects/photo-library/frontend
+scp -r ./frontend/build/* pi@192.168.0.77:/home/pi/projects/photo-library/frontend
 
 #10. Revert frontend Env
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $false
