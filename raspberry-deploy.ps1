@@ -276,7 +276,7 @@ Write-Host
 Write-Host 'Please open ssh session and run `sudo systemctl stop photo-library.service`' -ForegroundColor Green
 Read-Host 'Hit Enter when ready'
 #TODO: Use $EnvironmentParams.RaspberryAddress
-scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@192.168.0.77:/home/pi/projects/photo-library/backend
+scp -r ./backend/PhotoLibraryBackend/bin/release/net8.0/linux-arm64/publish/* pi@raspberrypi:/home/pi/projects/photo-library/backend
 
 #6. Update frontend .env file
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $true
@@ -292,7 +292,7 @@ Set-Location ..
 
 # #9. Copy frontend to Raspberry
 #TODO: Use $EnvironmentParams.RaspberryAddress
-scp -r ./frontend/build/* pi@192.168.0.77:/home/pi/projects/photo-library/frontend
+scp -r ./frontend/build/* pi@raspberrypi:/home/pi/projects/photo-library/frontend
 
 #10. Revert frontend Env
 ChangeFrontendApplicationSettings $EnvironmentParams '.\frontend\.env' $false

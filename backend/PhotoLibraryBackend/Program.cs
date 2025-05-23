@@ -13,7 +13,7 @@ using Serilog;
 
 
 // For deploy on Raspberry PI home server
-const string HostServer = "192.168.0.77:8850";
+const string HostServer = "raspberrypi:8850";
 
 const string AllowCors = "AllowEverything";
 
@@ -33,7 +33,10 @@ builder.Services.AddCors(options =>
         policy =>
         {
             policy
-                .WithOrigins("http://localhost:3000", "http://localhost:3000/", "http://192.168.0.65:8860", "http://192.168.0.65:8860/", "http://192.168.0.77:8860", "http://192.168.0.77:8860/")
+                .WithOrigins("http://localhost:3000", "http://localhost:3000/", 
+                    "http://raspberrypi:8860", "https://raspberrypi:8860/", 
+                    "http://192.168.0.65:8860", "http://192.168.0.65:8860/", 
+                    "http://192.168.0.77:8860", "http://192.168.0.77:8860/")
                 .AllowAnyHeader()
                 .AllowAnyMethod()
                 .AllowCredentials()
