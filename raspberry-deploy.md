@@ -46,6 +46,12 @@ sudo apt install nginx
 sudo systemctl start nginx
 ```
 
+## Install HEIC converter tool
+
+```bash
+sudo apt install imagemagick heif-gdk-pixbuf
+```
+
 ## Photo library backend initial setup as service
 
 - Change values in `appsettings.json`
