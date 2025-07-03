@@ -25,7 +25,7 @@ public class HeicFileConverterService:
 
     public async Task Handle(ConvertHeicImageNotification notification, CancellationToken cancellationToken)
     {
-        await $"heif-convert {notification.HeicFileFullPath} {notification.JpegFileFullPath}".Bash(_logger);
+        await $"convert \"{notification.HeicFileFullPath}\" \"{notification.JpegFileFullPath}\"".Bash(_logger);
     }
 
     public Task Handle(DeleteTemporaryConvertedHeicNotification notification, CancellationToken cancellationToken)
