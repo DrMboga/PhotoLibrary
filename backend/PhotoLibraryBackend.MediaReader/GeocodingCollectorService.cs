@@ -1,21 +1,24 @@
 ﻿
 using System.Globalization;
 using System.Text.Json;
+using PhotoLibraryBackend.MediaReader.Model;
 
 namespace PhotoLibraryBackend.MediaReader;
 
 public class GeocodingCollectorService : INotificationHandler<StartCollectGeocodingDataNotification>
 {
     private readonly IMediator _mediator;
-    private readonly string _positionStackUrl;
+    private readonly string _nominatimUrl;
     private readonly IHttpClientFactory _clientFactory;
 
     public GeocodingCollectorService(IMediator mediator, PhotoLibrarySettings photoLibrarySettings, IHttpClientFactory clientFactory)
     {
         _mediator = mediator;
-        _positionStackUrl = $"v1/reverse?access_key={photoLibrarySettings.PositionStackApiKey}";
+        _nominatimUrl = "reverse?format=json&accept-language=en";
         _clientFactory = clientFactory;
     }
+
+    // https://nominatim.openstreetmap.org/reverse?lat=49.2315&lon=7.0013&format=json
 
     public async Task Handle(StartCollectGeocodingDataNotification notification, CancellationToken cancellationToken)
     {
@@ -32,20 +35,17 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
                 int percent = Convert.ToInt32(100 * (Convert.ToDecimal(currentAddressIndex) / Convert.ToDecimal(emptyAddresses.Length)));
                 try
                 {
-                    var geocodingInfos = await GetGeocodingInfo(address.Latitude, address.Longitude);
-                    if (geocodingInfos != null)
+                    var geocodingInfo = await GetGeocodingInfo(address.Latitude, address.Longitude);
+                    if (geocodingInfo?.Address != null)
                     {
-                        var closestAddress = geocodingInfos.Where(a => a.Type == "address").OrderBy(a => a.Distance).FirstOrDefault();
-                        var closestVenue = geocodingInfos.Where(a => a.Type == "venue").OrderBy(a => a.Distance).FirstOrDefault();
-
-                        address.Country = closestAddress?.Country ?? (closestVenue?.Country ?? string.Empty);
-                        address.Region = closestAddress?.Region ?? (closestVenue?.Region ?? string.Empty);
-                        address.Locality = closestAddress?.Locality ?? (closestVenue?.Locality ?? string.Empty);
-                        address.AddressName = closestAddress?.Name;
-                        address.AddressLabel = closestAddress?.Label;
-                        address.VenueName = closestVenue?.Name;
-                        address.VenueLabel = closestVenue?.Label;
-                        address.AddressDistance = closestAddress?.Distance;
+                        address.Country = geocodingInfo.Address.Country ?? string.Empty;
+                        address.Region = geocodingInfo.Address.State ?? string.Empty;
+                        address.Locality = geocodingInfo.Address.City ?? string.Empty;
+                        address.AddressName = $"{(geocodingInfo.Address.Road ?? string.Empty)} {(geocodingInfo.Address.HouseNumber ?? string.Empty)} ";
+                        address.AddressLabel = geocodingInfo.DisplayName ?? string.Empty;
+                        address.VenueName = geocodingInfo.Name  ?? string.Empty;
+                        address.VenueLabel = $"Class: {(geocodingInfo.Class ?? string.Empty)}; Type: {(geocodingInfo.Type ?? string.Empty)}";
+                        address.AddressDistance = geocodingInfo.Importance;
                         address.AddressReadDate = DateTime.UtcNow.ToUniversalTime();
 
                         // Save address
@@ -89,18 +89,20 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
         await _mediator.Publish(new ReportGeocodingDataCollectionStepNotification(reportMessage, progress));
     }
 
-    private async Task<PositionStackResponse[]?> GetGeocodingInfo(decimal latitude, decimal longitude)
+    private async Task<NominatimApiResponse?> GetGeocodingInfo(decimal latitude, decimal longitude)
     {
-        string query = $"&query={latitude.ToString(CultureInfo.GetCultureInfo("en-US"))},{longitude.ToString(CultureInfo.GetCultureInfo("en-US"))}";
-        string url = $"{_positionStackUrl}{query}";
-        var client = _clientFactory.CreateClient("PositionStackApi");
+        string query = $"&lat={latitude.ToString(CultureInfo.GetCultureInfo("en-US"))}&lon={longitude.ToString(CultureInfo.GetCultureInfo("en-US"))}";
+        string url = $"{_nominatimUrl}{query}";
+        var client = _clientFactory.CreateClient("NominatimApi");
         var positionStackResponse = await client.GetAsync(url);
         positionStackResponse.EnsureSuccessStatusCode();
 
         var stringResponse = await positionStackResponse.Content.ReadAsStringAsync();
-        var positionStackItemsDeserialized = JsonSerializer.Deserialize<PositionStackApiResponse>(stringResponse,
+        var positionStackItemsDeserialized = JsonSerializer.Deserialize<NominatimApiResponse>(stringResponse,
             new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
-        return positionStackItemsDeserialized?.Data;
+        // NOTE: It is important to wait 1 second after each request!
+        await Task.Delay(TimeSpan.FromSeconds(1));
+        return positionStackItemsDeserialized;
     }
 }
