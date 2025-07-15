@@ -65,7 +65,6 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
 // GeolocationService
 builder.Services.AddHttpClient("NominatimApi", c =>
 {
-    c.BaseAddress = new Uri("https://nominatim.openstreetmap.org/");
     c.DefaultRequestHeaders.Add("Accept", "*/*");
     c.DefaultRequestHeaders.Add("User-Agent", "Mike's photo library");
     c.Timeout =  TimeSpan.FromSeconds(10);
