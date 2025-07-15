@@ -10,18 +10,15 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
     private readonly IMediator _mediator;
     private readonly string _nominatimUrl;
     private readonly IHttpClientFactory _clientFactory;
-    private readonly ILogger<GeocodingCollectorService> _logger;
 
     public GeocodingCollectorService(
         IMediator mediator, 
         PhotoLibrarySettings photoLibrarySettings, 
-        IHttpClientFactory clientFactory,
-        ILogger<GeocodingCollectorService> logger)
+        IHttpClientFactory clientFactory)
     {
         _mediator = mediator;
         _nominatimUrl = "reverse?format=json&accept-language=en";
         _clientFactory = clientFactory;
-        _logger = logger;
     }
 
     // https://nominatim.openstreetmap.org/reverse?lat=49.2315&lon=7.0013&format=json
@@ -104,7 +101,6 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
         positionStackResponse.EnsureSuccessStatusCode();
 
         var stringResponse = await positionStackResponse.Content.ReadAsStringAsync();
-        _logger.LogInformation(stringResponse);
         var positionStackItemsDeserialized = JsonSerializer.Deserialize<NominatimApiResponse>(stringResponse,
             new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
 
