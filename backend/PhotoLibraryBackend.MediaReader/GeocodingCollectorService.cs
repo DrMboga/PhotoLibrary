@@ -92,10 +92,8 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
 
     private async Task<NominatimApiResponse?> GetGeocodingInfo(decimal latitude, decimal longitude)
     {
-        // string query = $"&lat={latitude.ToString(CultureInfo.GetCultureInfo("en-US"))}&lon={longitude.ToString(CultureInfo.GetCultureInfo("en-US"))}";
-        // string url = $"{_nominatimUrl}{query}";
-        string url =
-            $"https://nominatim.openstreetmap.org/reverse?format=json&accept-language=en&lat={latitude.ToString(CultureInfo.GetCultureInfo("en-US"))}&lon={longitude.ToString(CultureInfo.GetCultureInfo("en-US"))}";
+        string query = $"&lat={latitude.ToString(CultureInfo.GetCultureInfo("en-US"))}&lon={longitude.ToString(CultureInfo.GetCultureInfo("en-US"))}";
+        string url = $"{_nominatimUrl}{query}";
         var client = _clientFactory.CreateClient("NominatimApi");
         var positionStackResponse = await client.GetAsync(url);
         positionStackResponse.EnsureSuccessStatusCode();
