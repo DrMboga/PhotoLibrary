@@ -40,7 +40,7 @@ public class GeocodingCollectorService : INotificationHandler<StartCollectGeocod
                     {
                         address.Country = geocodingInfo.Address.Country ?? string.Empty;
                         address.Region = geocodingInfo.Address.State ?? string.Empty;
-                        address.Locality = geocodingInfo.Address.City ?? string.Empty;
+                        address.Locality = geocodingInfo.Address.City ?? (geocodingInfo.Address.Town ?? (geocodingInfo.Address.Village ?? string.Empty));
                         address.AddressName = $"{(geocodingInfo.Address.Road ?? string.Empty)} {(geocodingInfo.Address.HouseNumber ?? string.Empty)} ";
                         address.AddressLabel = geocodingInfo.DisplayName ?? string.Empty;
                         address.VenueName = geocodingInfo.Name  ?? string.Empty;
