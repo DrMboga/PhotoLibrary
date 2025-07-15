@@ -5,7 +5,6 @@ class EnvironmentParameters {
     [string]$PhotoDbConnectionString
     [string]$IdentityDbConnectionString
     [string]$PhotoLibraryBackendUrl
-    [string]$PositionStackApiKey
     [string]$PhotoLibraryBackendDevUrl
     [string]$PhotoLibraryLocalConvertedVideosFolder
     [string]$TelegramBotToken
@@ -63,10 +62,6 @@ function ReadParameters {
                 $envParametersObject.PhotoLibraryBackendUrl = $keyValue[1]
                 continue
             }
-            'POSITION_STACK_API_KEY' { 
-                $envParametersObject.PositionStackApiKey = $keyValue[1]
-                continue
-            }
             'PHOTO_LIBRARY_BACKEND_DEV_URL' { 
                 $envParametersObject.PhotoLibraryBackendDevUrl = $keyValue[1]
                 continue
@@ -103,7 +98,6 @@ function ChangeBackendApplicationSettings {
     $PhotoLobrarySectionContent = $AppSettingsContent.PhotoLibrary
     $PhotoLobrarySectionContent.PhotoLibraryPath = $EnvironmentParams.PhotoLibraryLocalPath
     $PhotoLobrarySectionContent.PhotoLibraryDeletedFolder = $EnvironmentParams.PhotoLibraryLocalDeleteFolder
-    $PhotoLobrarySectionContent.PositionStackApiKey = $EnvironmentParams.PositionStackApiKey
     $PhotoLobrarySectionContent.ConvertedVideosFolder = $EnvironmentParams.PhotoLibraryLocalConvertedVideosFolder
     $PhotoLobrarySectionContent.TelegramBotToken = $EnvironmentParams.TelegramBotToken
     $PhotoLobrarySectionContent.TelegramChatId = $EnvironmentParams.TelegramChatId
