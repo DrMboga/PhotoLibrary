@@ -85,7 +85,7 @@ export const MediaPreview = ({
       media.mediaType === MediaType.VIDEO && media.fileExtension.toLowerCase().includes('mov');
     setUseConvertedVideo(isAppleQuickTimeVideo);
 
-    if (media.mediaType === MediaType.IMAGE) {
+    if (media.mediaType === MediaType.IMAGE || media.mediaType === MediaType.HEIC) {
       setMediaHeight(media.thumbnailHeight * 2.4);
       setMediaWidth(media.thumbnailWidth * 2.4);
     }
@@ -100,7 +100,7 @@ export const MediaPreview = ({
       .downloadMedia(media.fullPath, isAppleQuickTimeVideo, authToken)
       .then((value) => {
         value.arrayBuffer().then((valueAsArray) => {
-          const mediaType = media.mediaType === MediaType.IMAGE ? 'image' : 'video';
+          const mediaType = (media.mediaType === MediaType.IMAGE || media.mediaType === MediaType.HEIC) ? 'image' : 'video';
           const ext = media.fileExtension.toLowerCase().replace('.', '');
           const blob = new Blob([valueAsArray], {
             type: `${mediaType}/${isAppleQuickTimeVideo ? 'mp4' : ext}`,
