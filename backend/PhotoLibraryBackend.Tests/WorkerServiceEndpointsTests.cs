@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Nodes;
+﻿using System.Reflection;
+using System.Text.Json.Nodes;
 
 namespace PhotoLibraryBackend.Tests;
 
@@ -20,6 +21,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
     [Fact]
     public async Task Root_ShouldReturnResult()
     {
+        var version = Assembly.GetEntryAssembly()?.GetName().Version;
         // Setup
         var libraryInfo = new LibraryInfo(5, new DateTime(2000, 1, 1, 15, 0, 0), new DateTime(2024, 3, 14, 17, 29, 15));
         _mediatorMock.Setup(m => m.Send(It.IsAny<GetLibraryInfoRequest>(), It.IsAny<CancellationToken>()))
@@ -35,7 +37,7 @@ public class WorkerServiceEndpointsTests: IClassFixture<MockedWebApplicationFact
         var expectedTo = $"{libraryInfo.DateOfNewestPhoto:dd.MM.yyyy HH:mm}";
         var expectedFrom = $"{libraryInfo.DateOfEarliestPhoto:dd.MM.yyyy HH:mm}";
 
-        Assert.Equal($"Photo library backend version 15.0.0.0\r\nThere are {libraryInfo.MediaFilesCount} media files in the library\r\nDate of last photo: {expectedTo}; date of first photo: {expectedFrom}", responseAsString);
+        Assert.Equal($"Photo library backend version {version}\r\nThere are {libraryInfo.MediaFilesCount} media files in the library\r\nDate of last photo: {expectedTo}; date of first photo: {expectedFrom}", responseAsString);
     }
 
     [Fact]
