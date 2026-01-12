@@ -1,0 +1,47 @@
+﻿services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: dbPassWord123
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./docker-db-init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      
+  photolibrarybackend:
+    image: photolibrarybackend
+    build:
+      context: .
+      dockerfile: PhotoLibraryBackend/Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+
+      # Connection strings: use service name `db` as host
+      ConnectionStrings__photo-db: "Host=db;Port=5432;Database=photo;Username=postgres;Password=dbPassWord123"
+      ConnectionStrings__photo-identity-db: "Host=db;Port=5432;Database=photo-identity;Username=postgres;Password=dbPassWord123"
+
+      # PhotoLibrary paths inside container
+      PhotoLibrary__PhotoLibraryPath: "/data/lib"
+      PhotoLibrary__PhotoLibraryDeletedFolder: "/data/deleted"
+      PhotoLibrary__ConvertedVideosFolder: "/data/converted"
+
+    volumes:
+      # Host folders -> container folders
+      - "C:/Users/Mike/Projects/photo-library-lib:/data/lib:ro"
+      - "C:/Users/Mike/Projects/photo-library-lib-deleted:/data/deleted:rw"
+      - "C:/Users/Mike/Projects/photo-library-lib-converted:/data/converted:rw"
+
+    ports:
+      - "8080:8080"
+
+
+volumes:
+  pgdata:
